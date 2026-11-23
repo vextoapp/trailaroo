@@ -1,0 +1,150 @@
+/* Open Trails design tokens.
+   Source of truth for M0: these names map 1:1 to the Tailwind theme.
+   Colours are hex only so check.mjs can verify contrast.
+   mockups.js always sets data-theme (dark | light), resolving "system" from the OS. */
+
+:root {
+  /* Type */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-numeric: var(--font-sans);
+  --step--1: 0.8125rem;  /* 13px  meta */
+  --step-0: 1rem;        /* 16px  body */
+  --step-1: 1.1875rem;   /* 19px  card title */
+  --step-2: 1.5rem;      /* 24px  section */
+  --step-3: 2rem;        /* 32px  page title */
+  --step-4: 2.75rem;     /* 44px  record stats */
+  --step-5: 4.5rem;      /* 72px  pocket mode */
+  --leading: 1.5;
+  --leading-tight: 1.15;
+
+  /* Space (4px grid) */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
+
+  /* Radius: small for chips and inputs, medium for cards, large for sheets */
+  --radius-s: 6px;
+  --radius-m: 12px;
+  --radius-l: 20px;
+
+  /* Targets */
+  --tap: 44px;
+  --tap-trail: 56px; /* record screen, gloves */
+}
+
+/* ---------- Look A: Eucalyptus ---------- */
+[data-look="eucalyptus"] { --font-sans: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+
+[data-look="eucalyptus"][data-theme="dark"] {
+  --bg: #16201E;
+  --surface: #1F2B28;
+  --surface-2: #283633;
+  --text: #E9F0ED;
+  --text-muted: #A8B8B2;
+  --border: #6A7F78;
+  --accent: #8FD6BE;
+  --accent-contrast: #0D2720;
+  --focus: #F2C94C;
+  --danger: #FF8E80;
+  --warn: #F2BA52;
+  --ok: #82D69C;
+  --diff-easy: #5FCB8C;
+  --diff-moderate: #F0B43C;
+  --diff-hard: #FF776D;
+  --diff-veryhard: #E9F0ED;
+  --fam-foot: #E8A317;
+  --fam-technical: #D98CB6;
+  --fam-bike: #63BBEB;
+  --fam-vehicle: #F0884A;
+  --fam-snow: #B4D7F0;
+  --fam-water: #35C79D;
+  --map-land: #1C2826;
+  --map-contour: #2C3C38;
+  --map-water: #1F3A44;
+}
+
+[data-look="eucalyptus"][data-theme="light"] {
+  --bg: #F1F4F1;
+  --surface: #FFFFFF;
+  --surface-2: #E3EAE6;
+  --text: #15211E;
+  --text-muted: #485A55;
+  --border: #6E817B;
+  --accent: #1C6956;
+  --accent-contrast: #FFFFFF;
+  --focus: #0B5CAD;
+  --danger: #B3261E;
+  --warn: #8A5A00;
+  --ok: #1E7A3E;
+  --diff-easy: #1E7A3E;
+  --diff-moderate: #A35F00;
+  --diff-hard: #C0362C;
+  --diff-veryhard: #15211E;
+  --fam-foot: #A86A00;
+  --fam-technical: #A8457F;
+  --fam-bike: #1F72AD;
+  --fam-vehicle: #B34800;
+  --fam-snow: #3B6B96;
+  --fam-water: #00775A;
+  --map-land: #E6ECE4;
+  --map-contour: #CBD6CC;
+  --map-water: #BBD8E2;
+}
+
+/* ---------- Look B: Signal ---------- */
+[data-look="signal"] { --font-sans: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+
+[data-look="signal"][data-theme="dark"] {
+  --bg: #1A1C1F;
+  --surface: #25282C;
+  --surface-2: #30343A;
+  --text: #EEF0F2;
+  --text-muted: #AEB4BB;
+  --border: #6C737B;
+  --accent: #FF8B3D;
+  --accent-contrast: #241000;
+  --focus: #7CC4FF;
+  --danger: #FF8E80;
+  --warn: #F2BA52;
+  --ok: #82D69C;
+  --diff-easy: #5FCB8C;
+  --diff-moderate: #F0B43C;
+  --diff-hard: #FF776D;
+  --diff-veryhard: #EEF0F2;
+  --fam-foot: #E8A317;
+  --fam-technical: #D98CB6;
+  --fam-bike: #63BBEB;
+  --fam-vehicle: #F0884A;
+  --fam-snow: #B4D7F0;
+  --fam-water: #35C79D;
+  --map-land: #202326;
+  --map-contour: #33383D;
+  --map-water: #1E3440;
+}
+
+[data-look="signal"][data-theme="light"] {
+  --bg: #F5F6F7;
+  --surface: #FFFFFF;
+  --surface-2: #E7EAED;
+  --text: #191B1D;
+  --text-muted: #4F555B;
+  --border: #737A81;
+  --accent: #C2410C;
+  --accent-contrast: #FFFFFF;
+  --focus: #0B5CAD;
+  --danger: #B3261E;
+  --warn: #8A5A00;
+  --ok: #1E7A3E;
+  --diff-easy: #1E7A3E;
+  --diff-moderate: #A35F00;
+  --diff-hard: #C0362C;
+  --diff-veryhard: #191B1D;
+  --fam-foot: #A86A00;
+  --fam-technical: #A8457F;
+  --fam-bike: #1F72AD;
+  --fam-vehicle: #B34800;
+  --fam-snow: #3B6B96;
+  --fam-water: #00775A;
+  --map-land: #EBEDEA;
+  --map-contour: #D3D7D3;
+  --map-water: #C2DAE4;
+}

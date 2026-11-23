@@ -1,0 +1,115 @@
+// Mock-up checks. Run: node docs/mockups/check.mjs
+// No dependencies. Exits 1 if any check fails.
+import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
+import { join, dirname, relative } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = dirname(fileURLToPath(import.meta.url));
+const failures = [];
+const fail = (check, msg) => failures.push(`${check}: ${msg}`);
+
+function walk(dir) {
+  return readdirSync(dir).flatMap((name) => {
+    const p = join(dir, name);
+    return statSync(p).isDirectory() ? walk(p) : [p];
+  });
+}
+const files = walk(root).filter((f) => /\.(html|css|js|svg)$/.test(f));
+const read = (f) => readFileSync(f, "utf8");
+const rel = (f) => relative(root, f);
+
+// ---------- contrast ----------
+function luminance(hex) {
+  const n = hex.replace("#", "");
+  const full = n.length === 3 ? [...n].map((c) => c + c).join("") : n;
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255);
+  const lin = (c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+}
+export function contrast(a, b) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+const tokensPath = join(root, "tokens.css");
+if (!existsSync(tokensPath)) {
+  fail("contrast", "tokens.css is missing");
+} else {
+  const css = read(tokensPath);
+  const blocks = [...css.matchAll(/\[data-look="([\w-]+)"\]\[data-theme="(dark|light)"\]\s*\{([^}]*)\}/g)];
+  if (blocks.length === 0) fail("contrast", "no [data-look][data-theme] colour blocks found in tokens.css");
+  const pairs = [
+    ["text", "bg", 4.5], ["text", "surface", 4.5], ["text", "surface-2", 4.5],
+    ["text-muted", "bg", 4.5], ["text-muted", "surface", 4.5],
+    ["accent-contrast", "accent", 4.5], ["accent", "bg", 3], ["accent", "surface", 3],
+    ["border", "bg", 3], ["border", "surface", 3], ["focus", "bg", 3], ["focus", "surface", 3],
+    ["danger", "surface", 4.5], ["warn", "surface", 4.5], ["ok", "surface", 4.5],
+  ];
+  for (const [, look, theme, body] of blocks) {
+    const v = Object.fromEntries([...body.matchAll(/--([\w-]+):\s*(#[0-9a-fA-F]{3,6})\s*;/g)].map((m) => [m[1], m[2]]));
+    const extra = Object.keys(v).filter((k) => /^(diff|fam)-/.test(k)).flatMap((k) => [[k, "bg", 3], [k, "surface", 3]]);
+    for (const [fg, bg, min] of [...pairs, ...extra]) {
+      if (!v[fg] || !v[bg]) { fail("contrast", `${look}/${theme}: --${fg} or --${bg} missing`); continue; }
+      const r = contrast(v[fg], v[bg]);
+      if (r < min) fail("contrast", `${look}/${theme}: --${fg} on --${bg} is ${r.toFixed(2)}:1, needs ${min}:1`);
+    }
+  }
+}
+
+// ---------- no-external ----------
+const forbidden = [
+  [/<script[^>]+src=["']https?:/i, "external script"],
+  [/<link[^>]+href=["']https?:/i, "external stylesheet or font"],
+  [/@import/i, "@import"],
+  [/url\(\s*["']?https?:/i, "external url() in CSS"],
+  [/<(iframe|img|source|video|audio|embed|object)[^>]+(src|data)=["']https?:/i, "external media"],
+  [/\bfetch\(\s*["']https?:/i, "external fetch"],
+];
+for (const f of files.filter((f) => !f.endsWith("check.mjs"))) {
+  const s = read(f);
+  for (const [re, what] of forbidden) if (re.test(s)) fail("no-external", `${rel(f)} has an ${what}`);
+}
+
+// ---------- links ----------
+for (const f of files.filter((f) => /\.(html|css)$/.test(f))) {
+  const s = read(f);
+  const refs = [...s.matchAll(/(?:href|src)=["']([^"']+)["']/g), ...s.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/g)].map((m) => m[1]);
+  for (const ref of refs) {
+    if (/^(https?:|#|mailto:|tel:|data:|javascript:)/.test(ref)) continue;
+    const path = ref.split(/[?#]/)[0];
+    if (!path) continue;
+    if (!existsSync(join(dirname(f), path))) fail("links", `${rel(f)} links to missing ${ref}`);
+  }
+}
+
+// ---------- maps have a text version ----------
+for (const f of files.filter((f) => f.endsWith(".html"))) {
+  const s = read(f);
+  const maps = [...s.matchAll(/<[a-z]+[^>]*class="(?:[^"]*\s)?map(?:\s[^"]*)?"[^>]*>/g)].map((m) => m[0]);
+  for (const tag of maps) if (!/aria-label=/.test(tag)) fail("maps", `${rel(f)}: a .map has no aria-label`);
+  if (maps.length && !/data-text-version/.test(s)) fail("maps", `${rel(f)}: has a map but no [data-text-version]`);
+}
+
+// ---------- app name only from config ----------
+for (const f of files.filter((f) => f.endsWith(".html"))) {
+  const s = read(f).replace(/<title>[\s\S]*?<\/title>/g, "");
+  if (s.includes("Open Trails")) fail("app-name", `${rel(f)} hard-codes the app name; use data-app-name`);
+}
+
+// ---------- screens exist and share the base files ----------
+const screens = ["explore", "trail", "record", "saved", "activity", "profile"];
+if (existsSync(join(root, "index.html"))) {
+  for (const name of screens) {
+    const p = join(root, `${name}.html`);
+    if (!existsSync(p)) { fail("screens", `${name}.html is missing`); continue; }
+    const s = read(p);
+    for (const base of ["tokens.css", "mockups.css", "mockups.js"]) if (!s.includes(base)) fail("screens", `${name}.html does not load ${base}`);
+  }
+}
+
+if (failures.length) {
+  console.error(failures.map((l) => `FAIL ${l}`).join("\n"));
+  console.error(`\n${failures.length} problem(s).`);
+  process.exit(1);
+}
+console.log(`OK contrast, no-external, links, maps, app-name, screens (${files.length} files)`);

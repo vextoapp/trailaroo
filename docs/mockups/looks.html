@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Trails mock-ups: pick a look</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, sans-serif; background: #DADFDC; color: #15211E; line-height: 1.5; }
+  .intro { max-width: 68ch; padding: 32px 16px 8px; margin: 0 auto; }
+  .intro h1 { font-size: 2rem; line-height: 1.15; margin: 0 0 8px; }
+  .intro p { margin: 0 0 8px; }
+  .looks { display: grid; gap: 24px; padding: 16px; max-width: 1400px; margin: 0 auto; }
+  @media (min-width: 1400px) { .looks { grid-template-columns: minmax(0,1fr) minmax(0,1fr); } }
+  .look > h2 { font-size: 1.5rem; margin: 8px 0 4px; }
+  .look > p { margin: 0 0 12px; max-width: 60ch; }
+  .themes { display: grid; gap: 12px; grid-template-columns: 1fr; }
+  @media (min-width: 600px) { .themes { grid-template-columns: minmax(0,1fr) minmax(0,1fr); } }
+
+  .panel { background: var(--bg); color: var(--text); font-family: var(--font-sans); border-radius: var(--radius-l); padding: var(--space-4); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+  .panel h3 { margin: 0; font-size: var(--step--1); color: var(--text-muted); font-weight: 600; }
+
+  .card { background: var(--surface); border-radius: var(--radius-m); overflow: hidden; }
+  .card svg.topo { display: block; width: 100%; height: auto; aspect-ratio: 400 / 132; background: var(--map-land); }
+  .topo use { stroke: var(--map-contour); fill: none; stroke-width: 1.5; }
+  .topo .route { stroke: var(--accent); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .topo .start { fill: var(--accent); stroke: var(--surface); stroke-width: 3; }
+  .card-body { padding: var(--space-3) var(--space-4) var(--space-4); }
+  .card-title { font-size: var(--step-1); font-weight: 700; margin: 0; line-height: var(--leading-tight); }
+  .card-park { color: var(--text-muted); font-size: var(--step--1); margin: 2px 0 8px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+
+  .difficulty { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+  .difficulty svg { width: 14px; height: 14px; }
+  .difficulty[data-level="easy"] { color: var(--diff-easy); }
+  .difficulty[data-level="moderate"] { color: var(--diff-moderate); }
+  .difficulty[data-level="hard"] { color: var(--diff-hard); }
+  .difficulty[data-level="veryhard"] { color: var(--diff-veryhard); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .chip { min-height: var(--tap); padding: 0 var(--space-4); border-radius: 999px; border: 1.5px solid var(--border); background: transparent; color: var(--text); font: inherit; font-size: var(--step--1); font-weight: 600; }
+  .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+  .chip:focus-visible, .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--surface); border-radius: var(--radius-m); padding: var(--space-3) var(--space-2); text-align: center; }
+  .stat .value { font-size: clamp(1.1rem, 2.1vw, 1.75rem); font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; display: block; }
+  .stat .label { color: var(--text-muted); font-size: var(--step--1); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--step--1); }
+
+  .fire { display: grid; gap: 6px; justify-items: start; background: var(--surface); border-radius: var(--radius-m); padding: var(--space-3); border-left: 6px solid #64BF30; }
+  .afdrs { font-weight: 800; font-size: var(--step--1); padding: 4px 8px; border-radius: var(--radius-s); background: #64BF30; color: #0B1A04; }
+  .fire p { margin: 0; font-size: var(--step--1); }
+  .fire .src { color: var(--text-muted); }
+
+  .btn { min-height: var(--tap); border: 0; border-radius: var(--radius-s); padding: 0 var(--space-5); font: inherit; font-weight: 700; background: var(--accent); color: var(--accent-contrast); }
+  .families { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: var(--step--1); }
+  .families span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--c); margin-right: 6px; }
+  .verdict { max-width: 68ch; margin: 8px auto 48px; padding: 0 16px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="contours" viewBox="0 0 400 132">
+      <path d="M-10 110 C60 80 110 120 170 92 S290 40 410 70"/>
+      <path d="M-10 88 C50 60 120 96 180 70 S300 18 410 46"/>
+      <path d="M-10 64 C70 40 120 70 190 48 S310 0 410 22"/>
+      <path d="M120 132 C150 112 210 118 240 132"/>
+      <path d="M262 64 c18 -20 58 -18 64 2 c6 20 -28 34 -48 26 c-14 -6 -24 -16 -16 -28z"/>
+      <path d="M276 64 c10 -10 32 -8 34 4 c2 10 -16 16 -26 12 c-8 -4 -12 -10 -8 -16z"/>
+    </symbol>
+    <symbol id="shape-easy" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="currentColor"/></symbol>
+    <symbol id="shape-moderate" viewBox="0 0 14 14"><path d="M7 1 L13 13 H1 Z" fill="currentColor"/></symbol>
+    <symbol id="shape-hard" viewBox="0 0 14 14"><path d="M7 0.5 L13.5 7 L7 13.5 L0.5 7 Z" fill="currentColor"/></symbol>
+    <symbol id="shape-veryhard" viewBox="0 0 14 14"><rect x="1.5" y="1.5" width="11" height="11" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<header class="intro">
+  <h1>Pick a look</h1>
+  <p>Two directions for the same parts: a trail card, filter chips, the Record stats, the difficulty legend and a fire-danger notice. Each is shown in dark and light mode. Fonts show as your system font until the font files are added.</p>
+</header>
+
+<main class="looks">
+  <template id="panel">
+    <h3>Trail card</h3>
+    <article class="card">
+      <svg class="topo" viewBox="0 0 400 132" role="img" aria-label="Route sketch of Gibraltar Peak, out and back">
+        <use href="#contours"/>
+        <path class="route" d="M40 118 C90 104 120 112 160 86 S240 60 292 66"/>
+        <circle class="start" cx="40" cy="118" r="7"/>
+      </svg>
+      <div class="card-body">
+        <p class="card-title">Gibraltar Peak</p>
+        <p class="card-park">Tidbinbilla Nature Reserve</p>
+        <div class="facts">
+          <span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="#shape-moderate"/></svg>Moderate</span>
+          <span>★ 4.6 (212)</span><span>8.2 km</span><span>520 m up</span><span>About 3 h</span>
+        </div>
+      </div>
+    </article>
+
+    <h3>Filters</h3>
+    <div class="chips">
+      <button class="chip" aria-pressed="true">Hiking</button>
+      <button class="chip" aria-pressed="false">Easy</button>
+      <button class="chip" aria-pressed="false">Under 10 km</button>
+      <button class="chip" aria-pressed="false">Dogs allowed</button>
+    </div>
+
+    <h3>Recording</h3>
+    <div class="stats">
+      <div class="stat"><span class="value">1:12:40</span><span class="label">time</span></div>
+      <div class="stat"><span class="value">4.6</span><span class="label">km</span></div>
+      <div class="stat"><span class="value">15:48</span><span class="label">min/km</span></div>
+    </div>
+    <div><button class="btn">Pause</button></div>
+
+    <h3>Difficulty</h3>
+    <div class="legend">
+      <span class="difficulty" data-level="easy"><svg aria-hidden="true"><use href="#shape-easy"/></svg>Easy</span>
+      <span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="#shape-moderate"/></svg>Moderate</span>
+      <span class="difficulty" data-level="hard"><svg aria-hidden="true"><use href="#shape-hard"/></svg>Hard</span>
+      <span class="difficulty" data-level="veryhard"><svg aria-hidden="true"><use href="#shape-veryhard"/></svg>Very hard</span>
+    </div>
+
+    <h3>Activity families</h3>
+    <div class="families">
+      <span style="--c: var(--fam-foot)">On foot</span>
+      <span style="--c: var(--fam-technical)">Technical</span>
+      <span style="--c: var(--fam-bike)">Bike</span>
+      <span style="--c: var(--fam-vehicle)">Vehicle</span>
+      <span style="--c: var(--fam-snow)">Snow</span>
+      <span style="--c: var(--fam-water)">Water and camp</span>
+    </div>
+
+    <h3>Safety</h3>
+    <div class="fire" role="note">
+      <span class="afdrs">Moderate</span>
+      <p>Fire danger today in the ACT. No total fire ban.</p>
+      <p class="src">ACT ESA · updated 9:30 am today</p>
+    </div>
+  </template>
+
+  <section class="look" aria-labelledby="a">
+    <h2 id="a">A. Eucalyptus</h2>
+    <p>Blue-green of eucalypt leaves on deep bush green. Calm, and it stays clear of the reds and ambers used for difficulty and fire danger. Font: Public Sans (open licence).</p>
+    <div class="themes">
+      <div class="panel" data-look="eucalyptus" data-theme="dark"></div>
+      <div class="panel" data-look="eucalyptus" data-theme="light"></div>
+    </div>
+  </section>
+
+  <section class="look" aria-labelledby="b">
+    <h2 id="b">B. Signal orange</h2>
+    <p>Trail-marker orange on granite grey. Louder and easy to spot in sun, but close to the amber, orange and red used for difficulty and fire danger. Font: Atkinson Hyperlegible Next (open licence, built for low vision).</p>
+    <div class="themes">
+      <div class="panel" data-look="signal" data-theme="dark"></div>
+      <div class="panel" data-look="signal" data-theme="light"></div>
+    </div>
+  </section>
+</main>
+
+<p class="verdict">Sample data. Map sketches are drawings, not real maps.</p>
+
+<script>
+  const tpl = document.getElementById("panel");
+  document.querySelectorAll(".panel").forEach((p) => p.append(tpl.content.cloneNode(true)));
+  document.addEventListener("click", (e) => {
+    const chip = e.target.closest(".chip");
+    if (chip) chip.setAttribute("aria-pressed", chip.getAttribute("aria-pressed") === "true" ? "false" : "true");
+  });
+</script>
+</body>
+</html>
