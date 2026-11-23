@@ -3,7 +3,14 @@
 Free, open, community-driven trail app (AllTrails alternative). Installable PWA, with a Capacitor app-store wrapper added in M8.
 The full product spec is docs/SPEC.md. Read the relevant section before starting any task. Decisions are in SPEC > Risks and open questions > Decisions made.
 
+## Who it's for
+- Hikers in the ACT and NSW using it on the trail: offline, accurate safety info and honest recording come first.
+- Open-source contributors maintaining it: a fresh clone runs with one command, decisions are written down in public, and this file only holds rules every contributor needs.
+- Success means both: real hikers rely on it, and people other than the founder keep it going.
+
 ## Decisions (do not change without asking)
+- Work is tracked in GitHub Issues and a GitHub Project board (milestones M0–M8, one label per activity family). Not Linear.
+- Railway workspace: VextoApps (Pro). Maintainers deploy; contributors use PR preview deploys. Confirm the workspace before creating anything on Railway.
 - Licence: AGPL-3.0, public repo. Data: ODbL dump of the trail database; community text CC BY-SA.
 - Launch region: ACT + NSW first, then Australia, then global. Region list is config, not code.
 - Activities: all 20 AllTrails activities, grouped into 6 families (SPEC > Activities). Difficulty, routing and recording presets are per family.
@@ -42,6 +49,12 @@ The full product spec is docs/SPEC.md. Read the relevant section before starting
 - Performance budget: under 200 KB JS on first load excluding MapLibre; Lighthouse 95+.
 - One milestone at a time, small PRs. Use plan mode before each milestone. Tick the acceptance checks in docs/SPEC.md when done; record any changed decision in SPEC.
 
+## Design reference
+- docs/mockups/ is the approved look. docs/mockups/tokens.css is the source for the M0 design tokens.
+- Change the mock-ups first, then the app, so they never drift apart.
+- View: open docs/mockups/index.html in a browser. Check: node docs/mockups/check.mjs.
+
 ## Commands
+- node docs/mockups/check.mjs (mock-up checks: contrast, no external calls, links; works before M0)
 - pnpm dev / pnpm test / pnpm lint / pnpm typecheck / pnpm e2e
 - pnpm db:migrate / pnpm db:seed (loads ACT sample data)
