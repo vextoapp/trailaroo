@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gibraltar Peak · Open Trails mock-up</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="mockups.css">
+<script src="mockups.js"></script>
+<style>
+  .trail-layout { display: grid; gap: var(--space-5); grid-template-areas: "head" "side" "body"; }
+  .t-head { grid-area: head; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+  .t-side { grid-area: side; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); align-content: start; }
+  .t-body { grid-area: body; min-width: 0; }
+  @media (min-width: 1024px) {
+    .main { max-width: 1240px; }
+    .trail-layout { grid-template-columns: minmax(0, 1fr) minmax(360px, 440px); grid-template-areas: "head side" "body side"; column-gap: var(--space-6); }
+    .t-side { align-self: start; }
+  }
+
+  .hero { position: relative; border-radius: var(--radius-l); overflow: hidden; aspect-ratio: 16 / 9; background: var(--surface-2); }
+  .hero > svg { width: 100%; height: 100%; }
+  .hero .sky { fill: var(--surface-2); }
+  .hero .far { fill: var(--map-contour); }
+  .hero .mid { fill: var(--border); }
+  .hero .near { fill: var(--surface); }
+  .hero .rock { fill: var(--text-muted); }
+  .hero .photo-count { left: auto; right: var(--space-3); bottom: var(--space-3); }
+  .hero .credit { position: absolute; left: var(--space-3); bottom: var(--space-3); background: var(--surface); color: var(--text-muted); font-size: 0.6875rem; padding: 2px 8px; border-radius: 999px; }
+  .hero-actions { position: absolute; top: var(--space-3); left: var(--space-3); right: var(--space-3); display: flex; justify-content: space-between; align-items: flex-start; }
+  .hero-actions .actions { flex-wrap: nowrap; }
+  .hero-actions .btn-icon { background: var(--surface); border-color: var(--surface); }
+
+  .title-block { display: grid; gap: var(--space-2); }
+  .title-block .line { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); align-items: center; }
+  .key-stats { --cols: 4; background: var(--surface); border-radius: var(--radius-m); padding: var(--space-4); }
+  .key-stats .value { font-size: var(--step-1); }
+  @media (max-width: 420px) { .key-stats { --cols: 2; row-gap: var(--space-4); } }
+  .estimate { display: grid; gap: var(--space-1); padding: var(--space-3) var(--space-4); border-radius: var(--radius-m); background: var(--surface); }
+  .estimate summary { cursor: pointer; color: var(--accent); font-size: var(--step--1); font-weight: 650; min-height: 32px; display: inline-flex; align-items: center; }
+  .estimate ul { margin: var(--space-2) 0 0; padding-left: 1.2em; font-size: var(--step--1); color: var(--text-muted); }
+  .safety { display: grid; gap: var(--space-2); }
+  .main-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+  .main-actions .btn { white-space: normal; text-align: center; }
+  .main-actions .btn-primary { grid-column: 1 / -1; min-height: var(--tap-trail); font-size: var(--step-1); }
+  @media (min-width: 640px) { .main-actions { display: flex; flex-wrap: wrap; } }
+
+  .trail-map { aspect-ratio: 4 / 3; }
+  .map-modes { position: absolute; left: var(--space-3); top: var(--space-3); display: flex; gap: var(--space-2); }
+  .map-modes .btn { box-shadow: 0 1px 3px rgb(0 0 0 / 0.25); }
+  .scrub-dot { fill: var(--focus); stroke: var(--map-route-casing); stroke-width: 4; }
+
+  .prose { max-width: 68ch; display: grid; gap: var(--space-3); }
+  .prose .byline { font-size: var(--step--1); color: var(--text-muted); }
+  .sights .card { display: grid; }
+  .sights .pic { aspect-ratio: 3 / 2; background: var(--surface-2); display: grid; place-items: center; color: var(--text-muted); }
+  .sights .pic svg { width: 36px; height: 36px; }
+  .sights .body { padding: var(--space-3); display: grid; gap: 2px; }
+
+  .weather { display: grid; gap: var(--space-3); }
+  .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--space-1); text-align: center; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+  .days > div { display: grid; gap: 2px; justify-items: center; padding: var(--space-2) 0; border-radius: var(--radius-s); }
+  .days > div:first-child { background: var(--surface-2); }
+  .days .icon { width: 22px; height: 22px; color: var(--text-muted); }
+  .wx-facts { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font-size: var(--step--1); }
+  .wx-facts span { display: inline-flex; gap: 6px; align-items: center; }
+
+  .busy { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: end; gap: 3px; height: 96px; margin-top: var(--space-3); }
+  .busy span { background: var(--accent); border-radius: 3px 3px 0 0; opacity: 0.85; }
+  .busy span.now { background: var(--focus); opacity: 1; }
+  .busy-axis { display: grid; grid-template-columns: repeat(4, 1fr); font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+  .review-summary { display: grid; gap: var(--space-4); grid-template-columns: auto minmax(0, 1fr); align-items: center; }
+  .big-rating { font-size: var(--step-4); font-weight: 750; line-height: 1; }
+  .dist { display: grid; gap: 4px; font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+  .dist div { display: grid; grid-template-columns: 1ch minmax(0, 1fr) 3ch; gap: var(--space-2); align-items: center; }
+  .dist i { display: block; height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+  .dist i::before { content: ""; display: block; height: 100%; width: var(--w); background: var(--diff-moderate); }
+  .ai-summary { padding: var(--space-4); border-radius: var(--radius-m); background: var(--surface); display: grid; gap: var(--space-2); }
+  .ai-summary sup a { font-weight: 650; text-decoration: none; padding: 0 2px; }
+  .review { padding: var(--space-4) 0; border-top: 1px solid var(--divider); display: grid; gap: var(--space-2); }
+  .review header { display: flex; gap: var(--space-3); align-items: center; }
+  .stars { display: inline-flex; color: var(--diff-moderate); }
+  .stars svg { width: 15px; height: 15px; }
+  .sources { font-size: var(--step--1); }
+  .sources li { padding: var(--space-2) 0; }
+  table { border-collapse: collapse; width: 100%; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 6px var(--space-2); border-bottom: 1px solid var(--divider); }
+  details.text-version { margin-top: var(--space-2); }
+  details.text-version summary { cursor: pointer; font-size: var(--step--1); font-weight: 650; color: var(--accent); min-height: var(--tap); display: flex; align-items: center; }
+  .steps { margin: 0; padding-left: 1.4em; font-size: var(--step--1); display: grid; gap: var(--space-2); }
+</style>
+</head>
+<body data-screen="trail">
+<a class="skip" href="#main">Skip to content</a>
+<nav class="nav" aria-label="Main"></nav>
+<main id="main" class="main">
+<div class="trail-layout">
+
+  <div class="t-head">
+    <div class="hero">
+      <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect class="sky" width="800" height="450"/>
+        <path class="far" d="M0 250 L120 200 L230 230 L360 160 L470 205 L600 150 L800 210 V450 H0z"/>
+        <path class="mid" d="M0 320 L140 270 L260 300 L420 230 L520 260 L640 215 L800 280 V450 H0z"/>
+        <path class="rock" d="M420 232 c10 -24 40 -30 58 -12 c12 -14 36 -10 40 8 l4 22 h-104z"/>
+        <path class="near" d="M0 390 C140 350 260 380 400 340 S640 320 800 360 V450 H0z"/>
+      </svg>
+      <div class="hero-actions">
+        <a class="btn btn-icon" href="explore.html" aria-label="Back to Explore"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-back"/></svg></a>
+        <span class="actions">
+          <button type="button" class="btn btn-icon" aria-label="Share Gibraltar Peak"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-share"/></svg></button>
+          <button type="button" class="btn btn-icon" aria-pressed="true" aria-label="Saved: Gibraltar Peak"><svg class="icon-s" aria-hidden="true" style="color: var(--accent)"><use href="icons.svg#i-saved-fill"/></svg></button>
+        </span>
+      </div>
+      <span class="credit">Photo: J. Nguyen, CC BY</span>
+      <span class="photo-count">1 of 24</span>
+    </div>
+
+    <div class="title-block">
+      <h1>Gibraltar Peak</h1>
+      <p class="line"><a href="#">Tidbinbilla Nature Reserve</a><span class="rating"><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg>4.6 <span class="meta">(212 reviews)</span></span></p>
+      <p class="line">
+        <span class="family" data-family="foot"><svg aria-hidden="true"><use href="icons.svg#f-foot"/></svg>Hike</span>
+        <span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg>Moderate</span>
+        <span class="family" data-family="foot"><svg aria-hidden="true"><use href="icons.svg#f-foot"/></svg>Trail run</span>
+        <span class="difficulty" data-level="hard"><svg aria-hidden="true"><use href="icons.svg#d-hard"/></svg>Hard</span>
+      </p>
+    </div>
+
+    <div class="stats key-stats">
+      <div class="stat"><span class="value">8.2 km</span><span class="label">Length</span></div>
+      <div class="stat"><span class="value">520 m</span><span class="label">Elevation gain</span></div>
+      <div class="stat"><span class="value">3 h</span><span class="label">Usual time</span></div>
+      <div class="stat"><span class="value">Out and back</span><span class="label">Route</span></div>
+    </div>
+
+    <details class="estimate">
+      <summary>Your time: about 2 h 40 min</summary>
+      <p class="meta">Based on your last 5 hikes. How we worked this out:</p>
+      <ul>
+        <li>Your average on climbs: 11 min per 100 m up</li>
+        <li>Your average on the flat: 13 min per km</li>
+        <li>Breaks are not included. Add your own.</li>
+      </ul>
+    </details>
+
+    <section class="safety" aria-labelledby="safety-h">
+      <h2 id="safety-h" class="visually-hidden">Safety today</h2>
+      <div class="notice fire" role="note">
+        <svg class="icon" aria-hidden="true"><use href="icons.svg#i-fire"/></svg>
+        <div><span class="afdrs" data-rating="moderate">Moderate</span> <strong>fire danger today.</strong> No total fire ban.</div>
+        <p class="src">ACT Emergency Services Agency, updated 9:30 am today</p>
+      </div>
+      <div class="notice" data-severity="warning" role="note">
+        <svg class="icon" aria-hidden="true"><use href="icons.svg#i-alert"/></svg>
+        <div><strong>Gates close at 6 pm.</strong> Cars left inside after closing are locked in overnight.</div>
+        <p class="src">ACT Parks and Conservation, posted 22 Nov</p>
+      </div>
+      <div class="notice" data-severity="ok" role="note">
+        <svg class="icon" aria-hidden="true"><use href="icons.svg#i-sunset"/></svg>
+        <div>Start by <strong>4:50 pm</strong> to finish before sunset at 8:02 pm at your pace.</div>
+      </div>
+    </section>
+
+    <div class="main-actions">
+      <a class="btn btn-primary" href="record.html"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-play"/></svg>Start this trail</a>
+      <button type="button" class="btn"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-download"/></svg>Download, 6.4 MB</button>
+      <button type="button" class="btn" data-open-sheet="directions-sheet"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-car"/></svg>Directions</button>
+      <button type="button" class="btn" data-open-sheet="more-sheet">More</button>
+    </div>
+  </div>
+
+  <aside class="t-side" aria-label="Map and elevation">
+    <div class="map trail-map" role="region" aria-label="Map of Gibraltar Peak: an out and back route from Dalsetta car park north-east up to the summit. A text version follows the map.">
+      <svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <use href="icons.svg#terrain" class="terrain"/>
+        <use href="icons.svg#terrain-water" class="creek"/>
+        <path class="route-casing" d="M110 520 C190 500 230 470 300 450 S380 380 430 340 S520 300 560 250 S600 210 610 200"/>
+        <path id="trail-route" class="route" d="M110 520 C190 500 230 470 300 450 S380 380 430 340 S520 300 560 250 S600 210 610 200"/>
+        <path class="route-arrows" d="M222 480 l14 -2 -9 -10 M392 372 l14 -4 -9 -10 M528 290 l14 -6 -10 -9"/>
+        <circle class="pin-start" cx="110" cy="520" r="14"/>
+        <g class="poi-icon"><circle class="poi" cx="70" cy="560" r="16"/><use href="icons.svg#i-parking" x="60" y="550" width="20" height="20"/></g>
+        <g class="poi-icon"><circle class="poi" cx="150" cy="560" r="16"/><use href="icons.svg#i-toilet" x="140" y="550" width="20" height="20"/></g>
+        <g class="poi-icon"><circle class="poi" cx="330" cy="470" r="16"/><use href="icons.svg#i-water" x="320" y="460" width="20" height="20"/></g>
+        <g class="poi-icon"><circle class="poi" cx="640" cy="180" r="16"/><use href="icons.svg#i-view" x="630" y="170" width="20" height="20"/></g>
+        <g class="poi-icon"><circle class="poi" cx="470" cy="300" r="16"/><use href="icons.svg#i-camera" x="460" y="290" width="20" height="20"/></g>
+        <circle id="scrub-dot" class="scrub-dot" cx="110" cy="520" r="10" hidden/>
+      </svg>
+      <div class="map-controls">
+        <button type="button" class="btn btn-icon" aria-label="Map layers"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-layers"/></svg></button>
+      </div>
+      <div class="map-modes">
+        <button type="button" class="btn">3D flyover</button>
+        <button type="button" class="btn">Photo tour</button>
+      </div>
+      <p class="attribution">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Protomaps, Mapterhorn</p>
+    </div>
+    <details class="text-version" data-text-version>
+      <summary>Route in words</summary>
+      <ol class="steps">
+        <li>Start at Dalsetta car park. Toilets are next to the car park.</li>
+        <li>Follow the fire trail north-east for 1.2 km. Water tank at 1.1 km.</li>
+        <li>Turn left onto the signed Gibraltar Peak track. It climbs steadily, with some steps.</li>
+        <li>At 3.6 km the track passes granite tors. Steepest part: 14% for about 300 m.</li>
+        <li>Reach the summit lookout at 4.1 km. Return the same way.</li>
+      </ol>
+    </details>
+
+    <section class="elev" aria-labelledby="elev-h">
+      <h2 id="elev-h" class="visually-hidden">Elevation profile</h2>
+      <p class="elev-readout" id="elev-readout" aria-live="polite">Drag along the profile or use the arrow keys</p>
+      <svg id="elev" viewBox="0 0 400 160" preserveAspectRatio="none" tabindex="0" role="slider" aria-label="Position along the trail" aria-valuemin="0" aria-valuemax="8.2" aria-valuenow="0" aria-valuetext="Start, 690 metres">
+        <g id="elev-grid"></g>
+        <path id="elev-area" class="area"/>
+        <path id="elev-line" class="line"/>
+        <g id="elev-steep"></g>
+        <line id="elev-cursor" class="cursor" y1="0" y2="140" hidden/>
+      </svg>
+      <details class="text-version">
+        <summary>Elevation as a table</summary>
+        <table><thead><tr><th>Distance</th><th>Height</th><th>Grade</th></tr></thead><tbody id="elev-table"></tbody></table>
+      </details>
+    </section>
+
+    <section class="card card-pad" aria-labelledby="surface-h">
+      <h2 id="surface-h" class="visually-hidden">Surface</h2>
+      <h3 style="font-size: var(--step-0); margin-bottom: var(--space-2)">Surface</h3>
+      <div class="bar" aria-hidden="true">
+        <span style="width: 61%; background: var(--fam-foot)"></span>
+        <span style="width: 22%; background: var(--text-muted)"></span>
+        <span style="width: 12%; background: var(--fam-snow)"></span>
+        <span style="width: 5%; background: var(--fam-technical)"></span>
+      </div>
+      <p class="legend">
+        <span><i style="background: var(--fam-foot)"></i>Dirt 61%</span>
+        <span><i style="background: var(--text-muted)"></i>Rock 22%</span>
+        <span><i style="background: var(--fam-snow)"></i>Gravel 12%</span>
+        <span><i style="background: var(--fam-technical)"></i>Steps 5%</span>
+      </p>
+    </section>
+  </aside>
+
+  <div class="t-body">
+    <section class="section prose" aria-labelledby="about-h">
+      <h2 id="about-h">About this trail</h2>
+      <p>A steady climb through dry eucalypt forest to a granite summit with views across Tidbinbilla valley to the Brindabella Ranges. The last kilometre is steeper, with rock steps and some loose gravel.</p>
+      <p id="more-text" hidden>Kangaroos are common near the car park in the early morning. The summit has no shade, so take more water in summer. Dogs are not allowed in the reserve.</p>
+      <p><button type="button" class="btn btn-quiet" data-toggle="more-text" aria-expanded="false">Read more</button></p>
+      <p class="byline">Written by Canberra Bushwalking Club members, last edited 3 Nov 2026. <a href="#">Suggest an edit</a></p>
+      <h3>Getting there</h3>
+      <p>Dalsetta car park, Tidbinbilla Nature Reserve, 45 min drive from Civic. Reserve entry needs a vehicle pass from ACT Parks. <a href="https://www.tidbinbilla.act.gov.au">Buy a pass on the official site</a>.</p>
+    </section>
+
+    <section class="section sights" aria-labelledby="sights-h">
+      <h2 id="sights-h">Top sights</h2>
+      <div class="hscroll">
+        <article class="card"><div class="pic" aria-hidden="true"><svg><use href="icons.svg#i-view"/></svg></div><div class="body"><h3 style="font-size: var(--step-0)">Summit lookout</h3><p class="meta">Viewpoint at 4.1 km. From OpenStreetMap</p></div></article>
+        <article class="card"><div class="pic" aria-hidden="true"><svg><use href="icons.svg#i-up"/></svg></div><div class="body"><h3 style="font-size: var(--step-0)">Granite tors</h3><p class="meta">Rock formations at 3.6 km. From Wikidata</p></div></article>
+        <article class="card"><div class="pic" aria-hidden="true"><svg><use href="icons.svg#i-water"/></svg></div><div class="body"><h3 style="font-size: var(--step-0)">Mountain Creek</h3><p class="meta">Crossing at 0.6 km. From OpenStreetMap</p></div></article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="tags-h">
+      <h2 id="tags-h">What it's like</h2>
+      <div class="chips wrap" style="gap: var(--space-2)">
+        <span class="tag">Views <span class="conf">92%, map data and 48 votes</span></span>
+        <span class="tag">Wildlife <span class="conf">85%, 31 votes</span></span>
+        <span class="tag">Forest <span class="conf">from map data</span></span>
+        <span class="tag">No dogs <span class="conf">park rule</span></span>
+        <span class="tag">Kid friendly <span class="conf">54%, 12 votes</span></span>
+      </div>
+    </section>
+
+    <section class="section weather" aria-labelledby="wx-h">
+      <div class="section-head"><h2 id="wx-h">Weather at the trailhead</h2><span class="meta">Open-Meteo, updated 10:00 am</span></div>
+      <div class="card card-pad weather">
+        <div class="days">
+          <div><strong>Today</strong><svg class="icon" aria-hidden="true"><use href="icons.svg#i-sun"/></svg><span>27°</span><span class="meta">11°</span></div>
+          <div><strong>Tue</strong><svg class="icon" aria-hidden="true"><use href="icons.svg#i-cloud"/></svg><span>24°</span><span class="meta">12°</span></div>
+          <div><strong>Wed</strong><svg class="icon" aria-hidden="true"><use href="icons.svg#i-rain"/></svg><span>19°</span><span class="meta">10°</span></div>
+          <div><strong>Thu</strong><svg class="icon" aria-hidden="true"><use href="icons.svg#i-rain"/></svg><span>18°</span><span class="meta">9°</span></div>
+          <div><strong>Fri</strong><svg class="icon" aria-hidden="true"><use href="icons.svg#i-cloud"/></svg><span>22°</span><span class="meta">8°</span></div>
+          <div><strong>Sat</strong><svg class="icon" aria-hidden="true"><use href="icons.svg#i-sun"/></svg><span>26°</span><span class="meta">10°</span></div>
+          <div><strong>Sun</strong><svg class="icon" aria-hidden="true"><use href="icons.svg#i-sun"/></svg><span>29°</span><span class="meta">13°</span></div>
+        </div>
+        <p class="wx-facts">
+          <span><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-sun"/></svg>UV 11, extreme</span>
+          <span><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-wind"/></svg>Wind 18 km/h NW</span>
+          <span><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-rain"/></svg>Rain chance 5%</span>
+          <span><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-sunset"/></svg>Sunrise 5:48 am, sunset 8:02 pm</span>
+        </p>
+        <button type="button" class="btn btn-quiet" style="justify-self: start">Hour by hour</button>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="cond-h">
+      <div class="section-head"><h2 id="cond-h">Conditions</h2><button type="button" class="btn">Report conditions</button></div>
+      <div class="safety">
+        <div class="notice" data-severity="warning">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-rain"/></svg>
+          <div><strong>Some wet ground likely.</strong> 14 mm of rain fell in the last 72 hours.</div>
+          <p class="src">Worked out from Open-Meteo rain data, 10:00 am</p>
+        </div>
+        <div class="notice" data-severity="warning">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-users"/></svg>
+          <div><span class="condition">Muddy</span> near the summit steps. Confirmed by 3 people.</div>
+          <p class="src">Reported 2 days ago by Priya K. Expires tomorrow.</p>
+          <div class="actions"><button type="button" class="btn">Still there</button><button type="button" class="btn btn-quiet">Gone now</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="busy-h">
+      <div class="section-head"><h2 id="busy-h">Popular times</h2><span class="meta">From people who chose to share their hikes</span></div>
+      <div class="card card-pad">
+        <div class="chips" data-single role="group" aria-label="Day">
+          <button type="button" class="chip" aria-pressed="false">Thu</button><button type="button" class="chip" aria-pressed="false">Fri</button><button type="button" class="chip" aria-pressed="true">Sat</button><button type="button" class="chip" aria-pressed="false">Sun</button>
+        </div>
+        <div class="busy" role="img" aria-label="Saturday: quiet before 7 am, busiest from 8 to 11 am, quiet again after 3 pm.">
+          <span style="height: 8%"></span><span style="height: 30%"></span><span style="height: 70%"></span><span class="now" style="height: 95%"></span><span style="height: 90%"></span><span style="height: 62%"></span><span style="height: 45%"></span><span style="height: 40%"></span><span style="height: 32%"></span><span style="height: 18%"></span><span style="height: 10%"></span><span style="height: 4%"></span>
+        </div>
+        <div class="busy-axis" aria-hidden="true"><span>6 am</span><span>9 am</span><span>12 pm</span><span>3 pm</span></div>
+        <p class="meta" style="margin-top: var(--space-2)">Usually busy at 9 am on Saturdays. Based on 64 people.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="rev-h">
+      <div class="section-head"><h2 id="rev-h">Reviews</h2><button type="button" class="btn">Write a review</button></div>
+      <div class="review-summary">
+        <div><p class="big-rating num">4.6</p><p class="meta">212 reviews</p></div>
+        <div class="dist" aria-label="Rating breakdown">
+          <div><span>5</span><i style="--w: 72%"></i><span>152</span></div>
+          <div><span>4</span><i style="--w: 18%"></i><span>39</span></div>
+          <div><span>3</span><i style="--w: 6%"></i><span>13</span></div>
+          <div><span>2</span><i style="--w: 2%"></i><span>5</span></div>
+          <div><span>1</span><i style="--w: 1%"></i><span>3</span></div>
+        </div>
+      </div>
+      <div class="ai-summary" style="margin-top: var(--space-4)">
+        <p>Hikers love the summit views and the kangaroos near the start.<sup><a href="#r1" aria-label="Source: review 1">1</a></sup> Several say the last section is steeper than expected<sup><a href="#r2" aria-label="Source: review 2">2</a></sup> and that the summit gets very hot in summer.<sup><a href="#r3" aria-label="Source: review 3">3</a></sup></p>
+        <p class="meta">Summary written by AI from 212 reviews. Each number links to the review it came from.</p>
+      </div>
+      <label class="search" style="margin-top: var(--space-4)"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-search"/></svg><span class="visually-hidden">Search reviews</span><input type="search" name="review-q" autocomplete="off" placeholder="Search reviews, like “mud”…"></label>
+      <div class="chips" style="margin-top: var(--space-2)"><button type="button" class="chip" aria-pressed="false">Most recent</button><button type="button" class="chip" aria-pressed="false">With photos</button><button type="button" class="chip" aria-pressed="false">Trail running</button><button type="button" class="chip" aria-pressed="false">Mentions mud</button></div>
+      <article class="review" id="r1">
+        <header><span class="avatar" aria-hidden="true">PK</span><div><strong>Priya K.</strong><p class="meta">Hiked 21 Nov · Felt moderate</p></div></header>
+        <p class="stars" aria-label="5 stars"><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg></p>
+        <p>Saw six kangaroos before we even left the car park. Views from the top are worth every step. Muddy near the summit after Thursday's rain.</p>
+        <p class="actions"><span class="tag">Muddy</span><span class="tag">Parking: plenty</span><button type="button" class="btn btn-quiet">Helpful (14)</button><a class="btn btn-quiet" href="activity.html">See the hike</a></p>
+      </article>
+      <article class="review" id="r2">
+        <header><span class="avatar" aria-hidden="true">TW</span><div><strong>Tom W.</strong><p class="meta">Ran 16 Nov · Felt hard</p></div></header>
+        <p class="stars" aria-label="4 stars"><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg></p>
+        <p>Great run up, but the last kilometre is steep and rocky. Walked most of it. Plenty of shade until the summit.</p>
+      </article>
+      <p id="r3" class="meta">And 210 more reviews. <a href="#">Show all</a></p>
+    </section>
+
+    <section class="section" aria-labelledby="near-h">
+      <h2 id="near-h">Nearby trails</h2>
+      <ul class="rows">
+        <li><a class="row" href="trail.html"><span class="grow"><strong>Camel Back Fire Trail</strong><span class="meta">2 km away · 9.6 km</span></span><span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg>Moderate</span></a></li>
+        <li><a class="row" href="trail.html"><span class="grow"><strong>Lyrebird trail</strong><span class="meta">3 km away · 2.2 km</span></span><span class="difficulty" data-level="easy"><svg aria-hidden="true"><use href="icons.svg#d-easy"/></svg>Easy</span></a></li>
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="src-h">
+      <h2 id="src-h">About this data</h2>
+      <ul class="sources rows">
+        <li class="row"><span class="grow">Route and paths from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ODbL</span><span class="end">Checked 22 Nov</span></li>
+        <li class="row"><span class="grow">Elevation from Mapterhorn (Copernicus 30 m)</span><span class="end">Oct 2026</span></li>
+        <li class="row"><span class="grow">Park boundary from CAPAD 2024, CC BY 4.0</span><span class="end">2024</span></li>
+        <li class="row"><span class="grow">Weather from Open-Meteo, CC BY 4.0</span><span class="end">10:00 am</span></li>
+        <li class="row"><span class="grow">Fire danger from ACT ESA</span><span class="end">9:30 am</span></li>
+      </ul>
+    </section>
+
+    <p class="sample-note">Sample data. Maps and photos are drawings, not real.</p>
+  </div>
+</div>
+</main>
+
+<dialog class="sheet" id="directions-sheet" aria-labelledby="dir-title">
+  <div class="sheet-head"><h2 id="dir-title">Getting to the trailhead</h2><button type="button" class="btn btn-icon btn-quiet" data-close aria-label="Close"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-close"/></svg></button></div>
+  <div class="sheet-body">
+    <ul class="rows">
+      <li><a class="row" href="#"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-car"/></svg><span class="grow"><strong>Drive</strong><span class="meta">45 min from Civic. Vehicle pass needed.</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+      <li><div class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-bus"/></svg><span class="grow"><strong>Public transport</strong><span class="meta">No buses within 10 km of this trailhead.</span></span></div></li>
+      <li><a class="row" href="#"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-walk"/></svg><span class="grow"><strong>Walk from the Visitor Centre</strong><span class="meta">3.4 km, about 50 min</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+    </ul>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="more-sheet" aria-labelledby="more-title">
+  <div class="sheet-head"><h2 id="more-title">More for this trail</h2><button type="button" class="btn btn-icon btn-quiet" data-close aria-label="Close"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-close"/></svg></button></div>
+  <div class="sheet-body">
+    <ul class="rows">
+      <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-route"/></svg><span class="grow">Customise this route</span></button></li>
+      <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-saved"/></svg><span class="grow">Add to a list</span></button></li>
+      <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-export"/></svg><span class="grow">Export GPX, KML or FIT</span></button></li>
+      <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-edit"/></svg><span class="grow">Suggest an edit</span></button></li>
+      <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-flag"/></svg><span class="grow">Report a problem</span></button></li>
+    </ul>
+  </div>
+</dialog>
+
+<script>
+  // Elevation profile: sample heights every 100 m along the out and back route.
+  const N = 82, KM = 8.2, W = 400, H = 140;
+  const out = (d) => { const t = Math.min(d / 4.1, 1); return 690 + 348 * (t * t * (3 - 2 * t)) + 22 * Math.sin(t * 9) * (1 - t); };
+  const E = Array.from({ length: N + 1 }, (_, i) => { const d = i / 10; return Math.round(out(d <= 4.1 ? d : KM - d)); });
+  const lo = 650, hi = 1060;
+  const x = (i) => (i / N) * W, y = (e) => H - ((e - lo) / (hi - lo)) * H;
+  const pts = E.map((e, i) => `${x(i).toFixed(1)},${y(e).toFixed(1)}`);
+  document.getElementById("elev-line").setAttribute("d", "M" + pts.join(" L"));
+  document.getElementById("elev-area").setAttribute("d", `M0,${H} L${pts.join(" L")} L${W},${H} Z`);
+  const grade = (i) => i === 0 ? 0 : Math.round(((E[i] - E[i - 1]) / 100) * 100);
+  const steep = document.getElementById("elev-steep");
+  for (let i = 1; i <= N; i++) if (Math.abs(grade(i)) >= 12) steep.insertAdjacentHTML("beforeend", `<path class="steep" d="M${x(i - 1)},${y(E[i - 1])} L${x(i)},${y(E[i])}"/>`);
+  const grid = document.getElementById("elev-grid");
+  [700, 850, 1000].forEach((e) => grid.insertAdjacentHTML("beforeend", `<line class="grid" x1="0" x2="${W}" y1="${y(e)}" y2="${y(e)}"/>`));
+  document.getElementById("elev-table").innerHTML = E.filter((_, i) => i % 5 === 0).map((e, j) => `<tr><td>${(j * 0.5).toFixed(1)} km</td><td>${e.toLocaleString("en-AU")} m</td><td>${grade(j * 5)}%</td></tr>`).join("");
+
+  const maxGrade = Math.max(...E.map((_, i) => Math.abs(grade(i))));
+  document.getElementById("elev-readout").innerHTML = `Highest ${Math.max(...E).toLocaleString("en-AU")} m <span>Steepest ${maxGrade}%, shown in red</span> <span>Drag or use arrow keys</span>`;
+  const svg = document.getElementById("elev"), cursor = document.getElementById("elev-cursor");
+  const readout = document.getElementById("elev-readout"), route = document.getElementById("trail-route"), dot = document.getElementById("scrub-dot");
+  const len = route.getTotalLength();
+  let at = 0;
+  function show(i) {
+    at = Math.max(0, Math.min(N, i));
+    const d = at / 10;
+    cursor.hidden = false; dot.hidden = false;
+    cursor.setAttribute("x1", x(at)); cursor.setAttribute("x2", x(at));
+    const p = route.getPointAtLength(len * (d <= 4.1 ? d / 4.1 : (KM - d) / 4.1));
+    dot.setAttribute("cx", p.x); dot.setAttribute("cy", p.y);
+    readout.innerHTML = `${d.toFixed(1)} km <span>${E[at].toLocaleString("en-AU")} m</span> <span>${grade(at)}% grade</span>`;
+    svg.setAttribute("aria-valuenow", d.toFixed(1));
+    svg.setAttribute("aria-valuetext", `${d.toFixed(1)} kilometres, ${E[at]} metres, ${grade(at)} percent grade`);
+  }
+  const fromPointer = (e) => { const r = svg.getBoundingClientRect(); show(Math.round(((e.clientX - r.left) / r.width) * N)); };
+  svg.addEventListener("pointerdown", (e) => { svg.setPointerCapture(e.pointerId); fromPointer(e); });
+  svg.addEventListener("pointermove", (e) => { if (e.buttons || e.pointerType === "mouse") fromPointer(e); });
+  svg.addEventListener("keydown", (e) => {
+    const step = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 10, PageDown: -10 }[e.key];
+    if (step) { e.preventDefault(); show(at + step); }
+    if (e.key === "Home") { e.preventDefault(); show(0); }
+    if (e.key === "End") { e.preventDefault(); show(N); }
+  });
+</script>
+</body>
+</html>
