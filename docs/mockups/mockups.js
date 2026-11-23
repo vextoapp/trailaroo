@@ -21,7 +21,7 @@
     root.dataset.themeMode = mode;
     let meta = document.querySelector('meta[name="theme-color"]');
     if (!meta) { meta = document.createElement("meta"); meta.name = "theme-color"; document.head.append(meta); }
-    meta.content = resolved === "dark" ? "#16201E" : "#F1F4F1"; // matches --bg in tokens.css
+    meta.content = getComputedStyle(root).getPropertyValue("--bg").trim(); // tokens.css is the one source
     document.querySelectorAll("[data-theme-choice]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeChoice === mode)));
     document.querySelectorAll('input[name="theme"]').forEach((i) => { i.checked = i.value === mode; });
   }
@@ -42,6 +42,7 @@
     if (e.origin === location.origin && e.data?.type === "theme") setTheme(e.data.mode, { persist: false });
   });
   apply();
+  document.title += ` · ${APP_NAME}`; // titles hold only the page name
 
   // ---------- navigation (built once here so all six screens share it) ----------
   const NAV = [
@@ -84,6 +85,13 @@
         const group = t.closest("[data-single]");
         if (group) group.querySelectorAll(".chip[aria-pressed]").forEach((c) => c.setAttribute("aria-pressed", "false"));
         t.setAttribute("aria-pressed", group ? "true" : String(t.getAttribute("aria-pressed") !== "true"));
+      }
+
+      // Save button: toggles on and off, swapping the outline icon for the filled one.
+      if (t.matches("[data-save]")) {
+        const on = t.getAttribute("aria-pressed") !== "true";
+        t.setAttribute("aria-pressed", String(on));
+        t.querySelector("use").setAttribute("href", `icons.svg#i-saved${on ? "-fill" : ""}`);
       }
 
       // data-set="view=map" sets <body data-view="map">; CSS decides what shows.

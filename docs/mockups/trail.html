@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Gibraltar Peak · Open Trails mock-up</title>
+<title>Gibraltar Peak mock-up</title>
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="mockups.css">
 <script src="mockups.js"></script>
@@ -110,7 +110,7 @@
         <a class="btn btn-icon" href="explore.html" aria-label="Back to Explore"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-back"/></svg></a>
         <span class="actions">
           <button type="button" class="btn btn-icon" aria-label="Share Gibraltar Peak"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-share"/></svg></button>
-          <button type="button" class="btn btn-icon" aria-pressed="true" aria-label="Saved: Gibraltar Peak"><svg class="icon-s" aria-hidden="true" style="color: var(--accent)"><use href="icons.svg#i-saved-fill"/></svg></button>
+          <button type="button" class="btn btn-icon" data-save aria-pressed="true" aria-label="Save Gibraltar Peak"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved-fill"/></svg></button>
         </span>
       </div>
       <span class="credit">Photo: J. Nguyen, CC BY</span>
@@ -420,7 +420,7 @@
   for (let i = 1; i <= N; i++) if (Math.abs(grade(i)) >= 12) steep.insertAdjacentHTML("beforeend", `<path class="steep" d="M${x(i - 1)},${y(E[i - 1])} L${x(i)},${y(E[i])}"/>`);
   const grid = document.getElementById("elev-grid");
   [700, 850, 1000].forEach((e) => grid.insertAdjacentHTML("beforeend", `<line class="grid" x1="0" x2="${W}" y1="${y(e)}" y2="${y(e)}"/>`));
-  document.getElementById("elev-table").innerHTML = E.filter((_, i) => i % 5 === 0).map((e, j) => `<tr><td>${(j * 0.5).toFixed(1)} km</td><td>${e.toLocaleString("en-AU")} m</td><td>${grade(j * 5)}%</td></tr>`).join("");
+  document.getElementById("elev-table").innerHTML = E.map((e, i) => (i % 5 === 0 || i === 41 || i === N) ? `<tr><td>${(i / 10).toFixed(1)} km</td><td>${e.toLocaleString("en-AU")} m</td><td>${grade(i)}%</td></tr>` : "").join("");
 
   const maxGrade = Math.max(...E.map((_, i) => Math.abs(grade(i))));
   document.getElementById("elev-readout").innerHTML = `Highest ${Math.max(...E).toLocaleString("en-AU")} m <span>Steepest ${maxGrade}%, shown in red</span> <span>Drag or use arrow keys</span>`;

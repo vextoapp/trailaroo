@@ -48,7 +48,9 @@ if (!existsSync(tokensPath)) {
     ["danger", "surface", 4.5], ["warn", "surface", 4.5], ["ok", "surface", 4.5],
   ];
   for (const [, look = "app", theme, body] of blocks) {
-    const v = Object.fromEntries([...body.matchAll(/--([\w-]+):\s*(#[0-9a-fA-F]{3,6})\s*;/g)].map((m) => [m[1], m[2]]));
+    const hexes = [...body.matchAll(/--([\w-]+):\s*(#[0-9a-fA-F]+)\s*;/g)];
+    for (const [, k, hex] of hexes) if (![4, 7].includes(hex.length)) fail("contrast", `${look}/${theme}: --${k} is ${hex}; use 3- or 6-digit hex`);
+    const v = Object.fromEntries(hexes.filter((m) => [4, 7].includes(m[2].length)).map((m) => [m[1], m[2]]));
     const extra = Object.keys(v).filter((k) => /^(diff|fam)-/.test(k)).flatMap((k) => [[k, "bg", 3], [k, "surface", 3]]);
     for (const [fg, bg, min] of [...pairs, ...extra]) {
       if (!v[fg] || !v[bg]) { fail("contrast", `${look}/${theme}: --${fg} or --${bg} missing`); continue; }
@@ -95,7 +97,7 @@ for (const f of htmlFiles) {
 
 // ---------- app name only from config ----------
 for (const f of htmlFiles) {
-  const s = read(f).replace(/<title>[\s\S]*?<\/title>/g, "");
+  const s = read(f);
   if (s.includes("Open Trails")) fail("app-name", `${rel(f)} hard-codes the app name; use data-app-name`);
 }
 
