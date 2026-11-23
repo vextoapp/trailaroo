@@ -52,7 +52,7 @@ The full product spec is docs/SPEC.md. Read the relevant section before starting
 ## Design reference
 - docs/mockups/ is the approved look. docs/mockups/tokens.css is the source for the M0 design tokens.
 - Change the mock-ups first, then the app, so they never drift apart.
-- View: open docs/mockups/index.html in a browser. Check: node docs/mockups/check.mjs.
+- View: python3 -m http.server 4173 --directory docs/mockups, then open http://localhost:4173. Opening the file from disk hides the icons, because browsers block the shared icon file there. Check: node docs/mockups/check.mjs.
 
 ## Commands
 - node docs/mockups/check.mjs (mock-up checks: contrast, no external calls, links; works before M0)
