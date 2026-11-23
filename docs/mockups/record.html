@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Record · Open Trails mock-up</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="mockups.css">
+<script src="mockups.js"></script>
+<style>
+  /* Which parts show in which state. Elements list their states in data-in. */
+  body[data-state="ready"] [data-in]:not([data-in~="ready"]),
+  body[data-state="recording"] [data-in]:not([data-in~="recording"]),
+  body[data-state="offroute"] [data-in]:not([data-in~="offroute"]),
+  body[data-state="gap"] [data-in]:not([data-in~="gap"]),
+  body[data-state="pocket"] [data-in]:not([data-in~="pocket"]) { display: none !important; }
+  body:not([data-state="ready"]) .nav { display: none; }
+  body:not([data-state="ready"]) .main { padding-bottom: var(--space-4); }
+  @media (min-width: 1024px) { body:not([data-state="ready"]) { grid-template-columns: minmax(0, 1fr); } }
+
+  .demo { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); margin-bottom: var(--space-4); border: 1.5px dashed var(--border); border-radius: var(--radius-m); font-size: var(--step--1); }
+  .demo .segmented { flex-wrap: wrap; }
+  .demo .segmented button { min-height: 36px; padding: 0 var(--space-3); font-size: var(--step--1); }
+
+  .ready { display: grid; gap: var(--space-5); max-width: 640px; }
+  .follow { display: flex; align-items: center; gap: var(--space-3); }
+  .settings-rows .row label { flex: 1; display: grid; gap: 2px; cursor: pointer; }
+  .start { min-height: 72px; font-size: var(--step-2); border-radius: var(--radius-l); }
+
+  .live { display: grid; gap: var(--space-3); grid-template-rows: auto minmax(0, 1fr) auto; min-height: calc(100dvh - 120px); }
+  @media (min-width: 1024px) { .live { grid-template-columns: minmax(0, 1fr) 420px; grid-template-rows: auto minmax(0, 1fr); } .live .banner-slot { grid-column: 1 / -1; } .live .panel { grid-row: 2; grid-column: 2; align-self: start; } }
+  .live-map { min-height: 300px; }
+  .panel { background: var(--surface); border-radius: var(--radius-l); padding: var(--space-4); display: grid; gap: var(--space-4); }
+  .big { --cols: 3; text-align: center; }
+  .big .value { font-size: clamp(2rem, 9vw, var(--step-4)); }
+  .big .label { font-size: var(--step-0); }
+  .small { --cols: 4; text-align: center; }
+  .small .value { font-size: var(--step-1); }
+  .progress { display: grid; gap: var(--space-1); font-size: var(--step--1); }
+  .progress .track-bar { height: 10px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+  .progress .track-bar i { display: block; height: 100%; width: 56%; background: var(--accent); }
+  .controls { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) ; gap: var(--space-2); }
+  .controls .btn { min-height: var(--tap-trail); flex-direction: column; gap: 2px; font-size: 0.75rem; padding: var(--space-2) 0; white-space: normal; }
+  .controls .pause { grid-column: 1 / -1; flex-direction: row; font-size: var(--step-1); min-height: 64px; }
+  .notice.loud { border-left-width: 8px; }
+  .notice.loud h3 { font-size: var(--step-1); }
+
+  .pocket { position: fixed; inset: 0; z-index: 50; background: #000000; color: #E9F0ED; display: grid; place-content: center; gap: var(--space-6); text-align: center; padding: var(--space-5); }
+  .pocket .value { font-size: var(--step-5); font-weight: 750; line-height: 1; font-variant-numeric: tabular-nums; }
+  .pocket .label { color: #A8B8B2; font-size: var(--step-1); }
+  .pocket .unlock { justify-self: center; min-height: var(--tap-trail); padding: 0 var(--space-6); border-radius: 999px; border: 2px solid #6A7F78; background: none; color: #E9F0ED; font-weight: 700; font-size: var(--step-0); cursor: pointer; }
+  .coords { font-size: var(--step-2); font-weight: 750; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body data-screen="record" data-state="ready">
+<a class="skip" href="#main">Skip to content</a>
+<nav class="nav" aria-label="Main"></nav>
+<main id="main" class="main">
+
+  <div class="demo" data-in="ready recording offroute gap">
+    <span class="meta">Mock-up only. Show:</span>
+    <div class="segmented" role="group" aria-label="Recording state">
+      <button type="button" data-set="state=ready" aria-pressed="true">Before</button>
+      <button type="button" data-set="state=recording" aria-pressed="false">Recording</button>
+      <button type="button" data-set="state=offroute" aria-pressed="false">Off route</button>
+      <button type="button" data-set="state=gap" aria-pressed="false">Gap</button>
+      <button type="button" data-set="state=pocket" aria-pressed="false">Pocket</button>
+    </div>
+  </div>
+
+  <!-- Before starting -->
+  <div class="ready" data-in="ready">
+    <h1>Record</h1>
+    <section aria-labelledby="act-h">
+      <h2 id="act-h" class="visually-hidden">Activity</h2>
+      <div class="chips wrap" data-single role="group" aria-label="Activity">
+        <button type="button" class="chip" aria-pressed="true"><span class="family" data-family="foot"><svg aria-hidden="true"><use href="icons.svg#f-foot"/></svg></span>Hike</button>
+        <button type="button" class="chip" aria-pressed="false">Walk</button>
+        <button type="button" class="chip" aria-pressed="false">Trail run</button>
+        <button type="button" class="chip" aria-pressed="false"><span class="family" data-family="bike"><svg aria-hidden="true"><use href="icons.svg#f-bike"/></svg></span>Mountain bike</button>
+        <button type="button" class="chip" aria-pressed="false">All 20 activities</button>
+      </div>
+    </section>
+
+    <ul class="rows">
+      <li><a class="row" href="trail.html"><span class="lead"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-route"/></svg></span><span class="grow"><span class="meta">Following</span><strong>Gibraltar Peak</strong><span class="meta">8.2 km, downloaded for offline use</span></span><span class="end">Change</span></a></li>
+    </ul>
+
+    <div class="notice" data-severity="ok" role="note">
+      <svg class="icon" aria-hidden="true"><use href="icons.svg#i-sunset"/></svg>
+      <div>At your pace you'll finish about <strong>5:40 pm</strong>, 2 h 20 min before sunset.</div>
+    </div>
+
+    <div class="notice" role="note">
+      <svg class="icon" aria-hidden="true"><use href="icons.svg#i-info"/></svg>
+      <div><strong>Keep the app open while you record.</strong> Phones stop web apps from using GPS when the screen locks. We keep the screen on and you can switch to a dark pocket screen to save battery.</div>
+    </div>
+
+    <ul class="rows settings-rows">
+      <li class="row"><label for="s-plan"><strong>Tell someone my plan</strong><span class="meta">Sam gets your route now, and an alert with your last position if you're not back by 6:30 pm.</span></label><input id="s-plan" class="switch" type="checkbox" role="switch" checked></li>
+      <li class="row"><label for="s-live"><strong>Share live location</strong><span class="meta">Updates while the app is open. Shows when it last updated.</span></label><input id="s-live" class="switch" type="checkbox" role="switch"></li>
+      <li class="row"><label for="s-batt"><strong>Battery saver</strong><span class="meta">Dimmer screen, GPS every 5 seconds instead of every second.</span></label><input id="s-batt" class="switch" type="checkbox" role="switch"></li>
+      <li class="row"><label for="s-alert"><strong>Wrong-turn alerts</strong><span class="meta">Sound and a banner if you're 30 m off the trail.</span></label><input id="s-alert" class="switch" type="checkbox" role="switch" checked></li>
+    </ul>
+
+    <button type="button" class="btn btn-primary start" data-set="state=recording"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-play"/></svg>Start recording</button>
+    <p class="sample-note">Sample data. Maps are drawings, not real maps.</p>
+  </div>
+
+  <!-- While recording -->
+  <div class="live" data-in="recording offroute gap">
+    <div class="banner-slot">
+      <div class="notice loud" data-severity="danger" role="alert" data-in="offroute">
+        <svg class="icon" aria-hidden="true"><use href="icons.svg#i-alert"/></svg>
+        <div><h3>You're 40 m off the trail</h3><p>The track is behind you to the south-east.</p></div>
+        <div class="actions"><button type="button" class="btn btn-primary">Route back to trail</button><button type="button" class="btn" data-set="state=recording">I'm going this way on purpose</button></div>
+      </div>
+      <div class="notice loud" data-severity="warning" role="alert" data-in="gap">
+        <svg class="icon" aria-hidden="true"><use href="icons.svg#i-cloud-off"/></svg>
+        <div><h3>4 minutes weren't recorded</h3><p>The app was closed from 2:14 to 2:18 pm. How should we fill the gap?</p></div>
+        <div class="actions"><button type="button" class="btn btn-primary" data-set="state=recording">Follow the trail</button><button type="button" class="btn" data-set="state=recording">Straight line</button><button type="button" class="btn btn-quiet" data-set="state=recording">Leave the gap</button></div>
+        <p class="src">Filled distance is marked as estimated in your summary.</p>
+      </div>
+    </div>
+
+    <div class="map live-map" role="region" aria-label="Live map: you are on Gibraltar Peak track, 4.6 km along. The stats panel gives the same information as text.">
+      <svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <use href="icons.svg#terrain" class="terrain"/>
+        <use href="icons.svg#terrain-water" class="creek"/>
+        <path class="route-casing" d="M110 520 C190 500 230 470 300 450 S380 380 430 340 S520 300 560 250 S600 210 610 200"/>
+        <path class="route" d="M110 520 C190 500 230 470 300 450 S380 380 430 340 S520 300 560 250 S600 210 610 200" style="opacity: 0.45"/>
+        <path class="track" d="M110 520 C190 500 230 470 300 450"/>
+        <path class="track" d="M300 450 S380 380 430 340" data-in="recording offroute"/>
+        <path class="track-gap" d="M300 450 C330 430 360 400 380 385" data-in="gap"/>
+        <path class="track" d="M380 385 C400 370 415 352 430 340" data-in="gap"/>
+        <path class="track" d="M430 340 C450 330 470 310 470 300" data-in="offroute"/>
+        <circle class="pin-start" cx="110" cy="520" r="14"/>
+        <g data-in="recording gap"><circle class="me-accuracy" cx="430" cy="340" r="34"/><circle class="me" cx="430" cy="340" r="11"/></g>
+        <g data-in="offroute"><circle class="me-accuracy" cx="470" cy="300" r="34"/><circle class="me" cx="470" cy="300" r="11"/></g>
+      </svg>
+      <div class="map-controls">
+        <button type="button" class="btn btn-icon" aria-label="Map layers"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-layers"/></svg></button>
+        <button type="button" class="btn btn-icon" aria-label="Centre on me"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-locate"/></svg></button>
+        <button type="button" class="btn btn-icon" aria-label="Compass bearing"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-compass"/></svg></button>
+      </div>
+      <p class="attribution">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Protomaps, Mapterhorn</p>
+    </div>
+
+    <section class="panel" aria-labelledby="live-h" data-text-version>
+      <h2 id="live-h" class="visually-hidden">Live stats</h2>
+      <div class="stats big">
+        <div class="stat"><span class="value">1:12</span><span class="label">time</span></div>
+        <div class="stat"><span class="value">4.6</span><span class="label">km</span></div>
+        <div class="stat"><span class="value">15:48</span><span class="label">min/km</span></div>
+      </div>
+      <div class="stats small">
+        <div class="stat"><span class="value">1:04</span><span class="label">moving</span></div>
+        <div class="stat"><span class="value">312</span><span class="label">m up</span></div>
+        <div class="stat"><span class="value">40</span><span class="label">m down</span></div>
+        <div class="stat"><span class="value">1,002</span><span class="label">m high</span></div>
+      </div>
+      <div class="progress">
+        <p><strong>3.6 km to go</strong>, about 55 min. Back before sunset.</p>
+        <div class="track-bar" aria-hidden="true"><i></i></div>
+      </div>
+      <div class="controls">
+        <button type="button" class="btn btn-primary pause"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-pause"/></svg>Pause</button>
+        <button type="button" class="btn"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-pin"/></svg>Waypoint</button>
+        <button type="button" class="btn"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-camera"/></svg>Photo</button>
+        <button type="button" class="btn" data-set="state=pocket"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-lock"/></svg>Pocket</button>
+        <button type="button" class="btn btn-danger" data-open-sheet="sos-sheet"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-sos"/></svg>Emergency</button>
+      </div>
+      <p class="meta"><svg class="icon-s" aria-hidden="true" style="display: inline; vertical-align: -3px"><use href="icons.svg#i-battery"/></svg> Screen stays on. Battery 64%, enough for about 3 h 30 min more.</p>
+    </section>
+  </div>
+
+  <!-- Pocket mode: black screen for OLED, huge numbers -->
+  <div class="pocket" data-in="pocket">
+    <div><p class="value">1:12</p><p class="label">time</p></div>
+    <div><p class="value">4.6 km</p><p class="label">3.6 km to go</p></div>
+    <button type="button" class="unlock" data-set="state=recording">Tap to show the map</button>
+  </div>
+</main>
+
+<dialog class="sheet" id="sos-sheet" aria-labelledby="sos-title">
+  <div class="sheet-head"><h2 id="sos-title">Emergency</h2><button type="button" class="btn btn-icon btn-quiet" data-close aria-label="Close"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-close"/></svg></button></div>
+  <div class="sheet-body">
+    <a class="btn btn-danger btn-block" href="tel:000" style="min-height: var(--tap-trail); font-size: var(--step-1)"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-phone"/></svg>Call 000</a>
+    <p class="meta">No signal? 112 works on any mobile network that reaches you. A personal locator beacon works with no network at all.</p>
+    <div>
+      <p class="meta">Your position, accurate to 8 m</p>
+      <p class="coords">-35.3901, 148.9512</p>
+      <p class="num">35° 23′ 24″ S, 148° 57′ 04″ E</p>
+    </div>
+    <ul class="rows">
+      <li><div class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-car"/></svg><span class="grow"><strong>Nearest road access</strong><span class="meta">Dalsetta car park, 4.6 km back along the trail</span></span></div></li>
+      <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-share"/></svg><span class="grow"><strong>Send my position by text</strong><span class="meta">Opens your messages app with the coordinates filled in</span></span></button></li>
+    </ul>
+  </div>
+</dialog>
+</body>
+</html>
