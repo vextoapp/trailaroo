@@ -46,6 +46,7 @@
   --text: #E9F0ED;
   --text-muted: #A8B8B2;
   --border: #6A7F78;
+  --divider: #2E3E3A;
   --accent: #8FD6BE;
   --accent-contrast: #0D2720;
   --focus: #F2C94C;
@@ -64,7 +65,8 @@
   --fam-water: #35C79D;
   --map-land: #1C2826;
   --map-contour: #2C3C38;
-  --map-water: #1F3A44;
+  --map-water: #2B5566;
+  --map-route-casing: #0E1614;
 }
 
 [data-theme="light"] {
@@ -74,6 +76,7 @@
   --text: #15211E;
   --text-muted: #485A55;
   --border: #6E817B;
+  --divider: #D3DCD7;
   --accent: #1C6956;
   --accent-contrast: #FFFFFF;
   --focus: #0B5CAD;
@@ -92,5 +95,6 @@
   --fam-water: #00775A;
   --map-land: #E6ECE4;
   --map-contour: #CBD6CC;
-  --map-water: #BBD8E2;
+  --map-water: #8FBBCB;
+  --map-route-casing: #FFFFFF;
 }

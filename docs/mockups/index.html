@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Trails mock-ups</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="mockups.css">
+<script src="mockups.js"></script>
+<style>
+  body.gallery { display: block; padding: var(--space-5) var(--space-4) var(--space-8); }
+  .gallery-head { max-width: 72ch; margin-bottom: var(--space-6); }
+  .gallery-head h1 { margin-bottom: var(--space-2); }
+  .gallery-head p { color: var(--text-muted); margin: 0 0 var(--space-4); }
+  .screen-row { margin-bottom: var(--space-7); }
+  .screen-row h2 { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-3); }
+  .screen-row h2 a { font-size: var(--step--1); font-weight: 600; }
+  .frames { display: flex; gap: var(--space-5); align-items: flex-start; overflow-x: auto; padding-bottom: var(--space-3); }
+  .frame { flex: none; margin: 0; }
+  .frame figcaption { font-size: var(--step--1); color: var(--text-muted); margin-bottom: var(--space-2); }
+  .viewport { position: relative; overflow: hidden; border-radius: var(--radius-l); border: 1px solid var(--divider); background: var(--bg); }
+  .viewport iframe { border: 0; transform-origin: 0 0; position: absolute; inset: 0; }
+  .phone .viewport { width: calc(390px * 0.72); height: calc(844px * 0.72); border-radius: 28px; }
+  .phone iframe { width: 390px; height: 844px; transform: scale(0.72); }
+  .desktop .viewport { width: calc(1280px * 0.56); height: calc(800px * 0.56); }
+  .desktop iframe { width: 1280px; height: 800px; transform: scale(0.56); }
+</style>
+</head>
+<body class="gallery">
+<header class="gallery-head">
+  <h1>Mock-ups</h1>
+  <p>Six main screens at phone and desktop size. Click inside any frame to use it, or open a screen full size. Sample data, drawn maps.</p>
+  <div class="segmented" role="group" aria-label="Theme for all frames">
+    <button type="button" data-theme-choice="dark">Dark</button>
+    <button type="button" data-theme-choice="light">Light</button>
+    <button type="button" data-theme-choice="system">System</button>
+  </div>
+  <p class="meta" style="margin-top: var(--space-3)"><a href="looks.html">How the look was chosen</a></p>
+</header>
+
+<main id="gallery"></main>
+
+<template id="row">
+  <section class="screen-row">
+    <h2><span data-name></span> <a data-open>Open full size</a></h2>
+    <div class="frames">
+      <figure class="frame phone"><figcaption>Phone, 390 px</figcaption><div class="viewport"><iframe loading="lazy" title=""></iframe></div></figure>
+      <figure class="frame desktop"><figcaption>Desktop, 1280 px</figcaption><div class="viewport"><iframe loading="lazy" title=""></iframe></div></figure>
+    </div>
+  </section>
+</template>
+
+<script>
+  const screens = [["explore", "Explore"], ["trail", "Trail page"], ["record", "Record"], ["saved", "Saved"], ["activity", "Activity"], ["profile", "Profile"]];
+  const out = document.getElementById("gallery");
+  const tpl = document.getElementById("row");
+  for (const [file, name] of screens) {
+    const row = tpl.content.cloneNode(true);
+    row.querySelector("[data-name]").textContent = name;
+    row.querySelector("[data-open]").href = `${file}.html`;
+    row.querySelectorAll("iframe").forEach((f, i) => {
+      f.src = `${file}.html?theme=${MockUps.themeMode()}`;
+      f.addEventListener("load", () => MockUps.postTheme(f)); // lazy frames may load after a theme change
+      f.title = `${name}, ${i ? "desktop" : "phone"} size`;
+    });
+    out.append(row);
+  }
+</script>
+</body>
+</html>

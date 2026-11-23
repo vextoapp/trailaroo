@@ -15,6 +15,7 @@ function walk(dir) {
   });
 }
 const files = walk(root).filter((f) => /\.(html|css|js|svg)$/.test(f));
+const htmlFiles = files.filter((f) => f.endsWith(".html"));
 const read = (f) => readFileSync(f, "utf8");
 const rel = (f) => relative(root, f);
 
@@ -84,15 +85,16 @@ for (const f of files.filter((f) => /\.(html|css)$/.test(f))) {
 }
 
 // ---------- maps have a text version ----------
-for (const f of files.filter((f) => f.endsWith(".html"))) {
+for (const f of htmlFiles) {
   const s = read(f);
   const maps = [...s.matchAll(/<[a-z]+[^>]*class="(?:[^"]*\s)?map(?:\s[^"]*)?"[^>]*>/g)].map((m) => m[0]);
   for (const tag of maps) if (!/aria-label=/.test(tag)) fail("maps", `${rel(f)}: a .map has no aria-label`);
+  for (const tag of maps) if (/role="img"/.test(tag)) fail("maps", `${rel(f)}: a .map container has role="img", which hides its buttons from screen readers; use role="region"`);
   if (maps.length && !/data-text-version/.test(s)) fail("maps", `${rel(f)}: has a map but no [data-text-version]`);
 }
 
 // ---------- app name only from config ----------
-for (const f of files.filter((f) => f.endsWith(".html"))) {
+for (const f of htmlFiles) {
   const s = read(f).replace(/<title>[\s\S]*?<\/title>/g, "");
   if (s.includes("Open Trails")) fail("app-name", `${rel(f)} hard-codes the app name; use data-app-name`);
 }
