@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Explore · Open Trails mock-up</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="mockups.css">
+<script src="mockups.js"></script>
+<style>
+  .where { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-3); }
+  .where p { font-size: var(--step--1); color: var(--text-muted); }
+  .where strong { color: var(--text); }
+  .for-you .card { display: grid; grid-template-columns: 88px minmax(0, 1fr); align-items: stretch; }
+  .for-you .thumb { aspect-ratio: auto; height: 100%; min-height: 96px; }
+  .for-you .body { padding: var(--space-3); }
+  .for-you .title { font-size: var(--step-0); }
+  .filters-bar { margin-top: var(--space-5); }
+  .results-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; margin: var(--space-4) 0 var(--space-3); }
+  .results-head h2 { font-size: var(--step-1); }
+  .sort { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--step--1); color: var(--text-muted); }
+  .sort select { min-height: var(--tap); border-radius: var(--radius-s); border: 1.5px solid var(--border); background: var(--surface); padding: 0 var(--space-3); font-weight: 650; color: var(--text); }
+  .explore-map { height: calc(100dvh - 210px); min-height: 420px; }
+  .view-switch { position: fixed; z-index: 15; left: 50%; bottom: calc(76px + env(safe-area-inset-bottom)); transform: translateX(-50%); box-shadow: 0 2px 10px rgb(0 0 0 / 0.35); }
+  body:not([data-view="map"]) .explore-map { display: none; }
+  body[data-view="map"] .results { display: none; }
+  .family-group { display: grid; gap: var(--space-2); }
+  .family-group h3 { font-size: var(--step-0); }
+  .range { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+
+  @media (min-width: 1024px) {
+    .main { max-width: none; }
+    .explore-top { max-width: 760px; }
+    .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-5); align-items: start; }
+    .results .card-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    body:not([data-view="map"]) .explore-map, body[data-view="map"] .explore-map { display: block; position: sticky; top: var(--space-5); height: calc(100dvh - 2 * var(--space-5)); }
+    body:not([data-view="map"]) .results, body[data-view="map"] .results { display: block; }
+    .view-switch { display: none; }
+  }
+</style>
+</head>
+<body data-screen="explore" data-view="list">
+<a class="skip" href="#main">Skip to content</a>
+<nav class="nav" aria-label="Main"></nav>
+<main id="main" class="main">
+  <div class="explore-top">
+    <h1 class="visually-hidden">Explore trails</h1>
+    <div class="where">
+      <p>Trails near <strong>Canberra</strong>, your home area</p>
+      <button type="button" class="btn btn-quiet" data-open-sheet="where-sheet"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-pin"/></svg>Change</button>
+    </div>
+    <label class="search">
+      <svg class="icon" aria-hidden="true"><use href="icons.svg#i-search"/></svg>
+      <span class="visually-hidden">Search</span>
+      <input type="search" name="q" autocomplete="off" placeholder="Trails, places, peaks or parks…">
+    </label>
+
+    <section class="section for-you" aria-labelledby="fy">
+      <div class="section-head"><h2 id="fy">For you</h2><a href="#" class="meta">See all</a></div>
+      <div class="hscroll">
+        <article class="card trail-card">
+          <div class="thumb" aria-hidden="true"><svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" x="-300" y="-150"/><path class="route" d="M30 170 C70 150 80 110 120 90 S160 40 175 30"/></svg></div>
+          <div class="body">
+            <p class="title"><a href="trail.html">Booroomba Rocks</a></p>
+            <p class="facts"><span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg>Moderate</span><span>4.2 km</span></p>
+            <p class="why">Because you saved Gibraltar Peak</p>
+          </div>
+        </article>
+        <article class="card trail-card">
+          <div class="thumb" aria-hidden="true"><svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" x="-120" y="-60"/><path class="route" d="M40 160 C60 120 120 140 140 100 S110 50 150 40 S180 90 150 120 S70 190 40 160"/></svg></div>
+          <div class="body">
+            <p class="title"><a href="trail.html">Mt Majura loop</a></p>
+            <p class="facts"><span class="difficulty" data-level="easy"><svg aria-hidden="true"><use href="icons.svg#d-easy"/></svg>Easy</span><span>5.8 km</span></p>
+            <p class="why">Close to home, 12 min drive</p>
+          </div>
+        </article>
+        <article class="card trail-card">
+          <div class="thumb" aria-hidden="true"><svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" x="-480" y="-100"/><path class="route" d="M20 120 C60 130 90 90 120 100 S170 60 185 70"/></svg></div>
+          <div class="body">
+            <p class="title"><a href="trail.html">Square Rock</a></p>
+            <p class="facts"><span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg>Moderate</span><span>9.4 km</span></p>
+            <p class="why">You looked at this on Saturday</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="filters-bar">
+      <div class="chips" role="group" aria-label="Quick filters">
+        <button type="button" class="chip" data-open-sheet="filter-sheet"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-filter"/></svg>Filters <span class="count">2</span></button>
+        <button type="button" class="chip" aria-pressed="true"><span class="family" data-family="foot"><svg aria-hidden="true"><use href="icons.svg#f-foot"/></svg></span>Hiking</button>
+        <button type="button" class="chip" aria-pressed="false">Easy</button>
+        <button type="button" class="chip" aria-pressed="false">Under 10 km</button>
+        <button type="button" class="chip" aria-pressed="false">Loop</button>
+        <button type="button" class="chip" aria-pressed="false">Dogs allowed</button>
+        <button type="button" class="chip" aria-pressed="false">Shady</button>
+        <button type="button" class="chip" aria-pressed="false">Wheelchair friendly</button>
+        <button type="button" class="chip" aria-pressed="true">Open now</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="split">
+    <section class="results" aria-labelledby="count" data-text-version>
+      <div class="results-head">
+        <h2 id="count">48 trails</h2>
+        <label class="sort">Sort
+          <select>
+            <option>Most relevant</option><option>Closest</option><option>Highest rated</option><option>Most reviewed</option><option>Newest</option><option>Shortest</option><option>Longest</option>
+          </select>
+        </label>
+      </div>
+      <div class="card-grid">
+        <article class="card trail-card">
+          <div class="thumb" aria-hidden="true">
+            <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" y="-80"/><use href="icons.svg#terrain-water" class="creek" y="-80"/><path class="route-casing" d="M120 400 C220 370 300 380 380 300 S540 210 640 160"/><path class="route" d="M120 400 C220 370 300 380 380 300 S540 210 640 160"/><circle class="pin-start" cx="120" cy="400" r="13"/></svg>
+            <span class="photo-count">24 photos</span>
+          </div>
+          <div class="thumb-actions">
+            <button type="button" class="btn btn-icon" aria-pressed="true" aria-label="Saved: Gibraltar Peak"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved-fill"/></svg></button>
+            <button type="button" class="btn btn-icon" aria-label="Download Gibraltar Peak for offline use, 6.4 MB"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-download"/></svg></button>
+          </div>
+          <div class="body">
+            <p class="title"><a href="trail.html">Gibraltar Peak</a></p>
+            <p class="meta">Tidbinbilla Nature Reserve · 38 km away</p>
+            <p class="facts"><span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg>Moderate</span><span class="rating"><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg>4.6 <span class="meta">(212)</span></span><span>8.2 km</span><span>520 m up</span><span>About 3 h</span></p>
+          </div>
+        </article>
+
+        <article class="card trail-card">
+          <div class="thumb" aria-hidden="true">
+            <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" x="-200" y="-40"/><path class="route-casing" d="M180 380 C260 340 280 300 330 280 S430 230 470 160 S560 120 600 110"/><path class="route" d="M180 380 C260 340 280 300 330 280 S430 230 470 160 S560 120 600 110"/><circle class="pin-start" cx="180" cy="380" r="13"/></svg>
+            <span class="photo-count">61 photos</span>
+          </div>
+          <div class="thumb-actions">
+            <button type="button" class="btn btn-icon" aria-pressed="false" aria-label="Save Mt Ainslie Summit"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved"/></svg></button>
+            <button type="button" class="btn btn-icon" aria-label="Download Mt Ainslie Summit for offline use, 3.1 MB"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-download"/></svg></button>
+          </div>
+          <div class="body">
+            <p class="title"><a href="trail.html">Mt Ainslie Summit</a></p>
+            <p class="meta">Canberra Nature Park · 4 km away</p>
+            <p class="facts"><span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg>Moderate</span><span class="rating"><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg>4.5 <span class="meta">(486)</span></span><span>4.6 km</span><span>260 m up</span><span>About 1 h 45 min</span></p>
+          </div>
+        </article>
+
+        <article class="card trail-card">
+          <div class="thumb" aria-hidden="true">
+            <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" x="-120" y="-120"/><path class="route-casing" d="M200 350 C260 300 330 320 380 250 S470 140 560 130"/><path class="route" d="M200 350 C260 300 330 320 380 250 S470 140 560 130"/><circle class="pin-start" cx="200" cy="350" r="13"/></svg>
+            <span class="photo-count">43 photos</span>
+          </div>
+          <div class="thumb-actions">
+            <button type="button" class="btn btn-icon" aria-pressed="false" aria-label="Save Booroomba Rocks"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved"/></svg></button>
+            <button type="button" class="btn btn-icon" aria-label="Download Booroomba Rocks for offline use, 3.8 MB"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-download"/></svg></button>
+          </div>
+          <div class="body">
+            <p class="title"><a href="trail.html">Booroomba Rocks</a></p>
+            <p class="meta">Namadgi National Park · 52 km away</p>
+            <p class="facts"><span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg>Moderate</span><span class="rating"><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg>4.8 <span class="meta">(301)</span></span><span>4.2 km</span><span>260 m up</span><span>About 1 h 45 min</span></p>
+          </div>
+        </article>
+
+        <article class="card trail-card">
+          <div class="thumb" aria-hidden="true">
+            <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" x="-60" y="-140"/><use href="icons.svg#terrain-water" class="creek" x="-60" y="-140"/><path class="route-casing" d="M90 410 C180 380 230 330 300 320 S380 250 430 210 S520 120 590 90"/><path class="route" d="M90 410 C180 380 230 330 300 320 S380 250 430 210 S520 120 590 90"/><circle class="pin-start" cx="90" cy="410" r="13"/></svg>
+            <span class="photo-count">19 photos</span>
+          </div>
+          <div class="thumb-actions">
+            <button type="button" class="btn btn-icon" aria-pressed="false" aria-label="Save Mt Tennent"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved"/></svg></button>
+            <button type="button" class="btn btn-icon" aria-label="Download Mt Tennent for offline use, 9.2 MB"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-download"/></svg></button>
+          </div>
+          <div class="body">
+            <p class="title"><a href="trail.html">Mt Tennent</a></p>
+            <p class="meta">Namadgi National Park · 41 km away</p>
+            <p class="facts"><span class="difficulty" data-level="hard"><svg aria-hidden="true"><use href="icons.svg#d-hard"/></svg>Hard</span><span class="rating"><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg>4.6 <span class="meta">(174)</span></span><span>14 km</span><span>810 m up</span><span>About 5 h 30 min</span></p>
+          </div>
+        </article>
+
+        <article class="card trail-card">
+          <div class="thumb" aria-hidden="true">
+            <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" x="-260" y="-200"/><path class="route-casing" d="M250 330 C300 260 420 300 470 230 S600 200 580 300 S380 400 250 330"/><path class="route" d="M250 330 C300 260 420 300 470 230 S600 200 580 300 S380 400 250 330"/><circle class="pin-start" cx="250" cy="330" r="13"/></svg>
+            <span class="photo-count">12 photos</span>
+          </div>
+          <div class="thumb-actions">
+            <button type="button" class="btn btn-icon" aria-pressed="false" aria-label="Save Red Hill loop"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved"/></svg></button>
+            <button type="button" class="btn btn-icon" aria-label="Download Red Hill loop for offline use, 2.2 MB"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-download"/></svg></button>
+          </div>
+          <div class="body">
+            <p class="title"><a href="trail.html">Red Hill loop</a></p>
+            <p class="meta">Canberra Nature Park · 6 km away</p>
+            <p class="facts"><span class="difficulty" data-level="easy"><svg aria-hidden="true"><use href="icons.svg#d-easy"/></svg>Easy</span><span class="rating"><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg>4.3 <span class="meta">(122)</span></span><span>3.9 km</span><span>140 m up</span><span>About 1 h 15 min</span></p>
+          </div>
+        </article>
+
+        <article class="card trail-card">
+          <div class="thumb" aria-hidden="true">
+            <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" x="-380" y="-60"/><path class="route-casing" d="M160 340 C200 240 300 300 330 220 S460 150 520 230 S640 330 520 380 S260 420 160 340"/><path class="route" d="M160 340 C200 240 300 300 330 220 S460 150 520 230 S640 330 520 380 S260 420 160 340"/><circle class="pin-start" cx="160" cy="340" r="13"/></svg>
+            <span class="photo-count">30 photos</span>
+          </div>
+          <div class="thumb-actions">
+            <button type="button" class="btn btn-icon" aria-pressed="false" aria-label="Save Stromlo Forest Park loop"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved"/></svg></button>
+            <button type="button" class="btn btn-icon" aria-label="Download Stromlo Forest Park loop for offline use, 4.0 MB"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-download"/></svg></button>
+          </div>
+          <div class="body">
+            <p class="title"><a href="trail.html">Stromlo Forest Park loop</a></p>
+            <p class="meta">Stromlo Forest Park · 14 km away</p>
+            <p class="facts"><span class="family" data-family="bike"><svg aria-hidden="true"><use href="icons.svg#f-bike"/></svg>Bike</span><span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg>Moderate</span><span class="rating"><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg>4.7 <span class="meta">(88)</span></span><span>12.5 km</span><span>About 1 h 20 min</span></p>
+          </div>
+        </article>
+      </div>
+      <p class="sample-note">Sample data. Maps are drawings, not real maps.</p>
+    </section>
+
+    <div class="map explore-map" role="region" aria-label="Map of the 48 trails near Canberra. The list beside it shows the same trails." data-focus-on="view=map" tabindex="-1">
+      <svg viewBox="0 0 800 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <use href="icons.svg#terrain" class="terrain"/>
+        <use href="icons.svg#terrain" class="terrain" y="300" x="-140"/>
+        <use href="icons.svg#terrain-water" class="creek" y="250"/>
+        <circle class="cluster" cx="230" cy="250" r="30"/><text class="cluster-text" x="230" y="250">12</text>
+        <circle class="cluster" cx="560" cy="420" r="26"/><text class="cluster-text" x="560" y="420">8</text>
+        <circle class="cluster" cx="300" cy="680" r="34"/><text class="cluster-text" x="300" y="680">21</text>
+        <circle class="pin" cx="470" cy="190" r="16"/><text class="pin-text" x="470" y="190">4.5</text>
+        <circle class="pin" cx="610" cy="640" r="16"/><text class="pin-text" x="610" y="640">4.6</text>
+        <circle class="pin" cx="150" cy="470" r="16"/><text class="pin-text" x="150" y="470">4.3</text>
+        <circle class="me-accuracy" cx="420" cy="330" r="40"/><circle class="me" cx="420" cy="330" r="9"/>
+      </svg>
+      <div class="map-top"><button type="button" class="btn">Search this area</button></div>
+      <div class="map-controls">
+        <button type="button" class="btn btn-icon" aria-label="Map layers"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-layers"/></svg></button>
+        <button type="button" class="btn btn-icon" aria-label="Show my location"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-locate"/></svg></button>
+      </div>
+      <p class="attribution">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Protomaps, Mapterhorn</p>
+    </div>
+  </div>
+
+  <div class="segmented view-switch" role="group" aria-label="Show results as">
+    <button type="button" data-set="view=list" aria-pressed="true"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-list"/></svg>List</button>
+    <button type="button" data-set="view=map" aria-pressed="false"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-map"/></svg>Map</button>
+  </div>
+</main>
+
+<dialog class="sheet" id="where-sheet" aria-labelledby="where-title">
+  <div class="sheet-head"><h2 id="where-title">Show trails near</h2><button type="button" class="btn btn-icon btn-quiet" data-close aria-label="Close"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-close"/></svg></button></div>
+  <div class="sheet-body">
+    <ul class="rows">
+      <li><button type="button" class="row" data-close><svg class="icon" aria-hidden="true"><use href="icons.svg#i-locate"/></svg><span class="grow"><strong>My current location</strong><span class="meta">Asks for location once</span></span></button></li>
+      <li><button type="button" class="row" data-close><svg class="icon" aria-hidden="true"><use href="icons.svg#i-pin"/></svg><span class="grow"><strong>Home area: Canberra</strong><span class="meta">Within 25 km. Change it in You</span></span><svg class="icon" aria-hidden="true" style="color: var(--accent)"><use href="icons.svg#i-check"/></svg></button></li>
+    </ul>
+    <label class="search"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-search"/></svg><span class="visually-hidden">Another place</span><input type="search" name="place" autocomplete="off" placeholder="Another place, like Jindabyne…"></label>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="filter-sheet" aria-labelledby="filter-title">
+  <div class="sheet-head"><h2 id="filter-title">Filters</h2><button type="button" class="btn btn-icon btn-quiet" data-close aria-label="Close"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-close"/></svg></button></div>
+  <div class="sheet-body">
+    <section class="family-group" aria-labelledby="fg-foot"><h3 id="fg-foot" class="family" data-family="foot"><svg aria-hidden="true"><use href="icons.svg#f-foot"/></svg>On foot</h3>
+      <div class="chips wrap"><button type="button" class="chip" aria-pressed="true">Hiking</button><button type="button" class="chip" aria-pressed="false">Walking</button><button type="button" class="chip" aria-pressed="false">Running</button><button type="button" class="chip" aria-pressed="false">Trail running</button><button type="button" class="chip" aria-pressed="false">Backpacking</button><button type="button" class="chip" aria-pressed="false">Bird watching</button></div></section>
+    <section class="family-group" aria-labelledby="fg-bike"><h3 id="fg-bike" class="family" data-family="bike"><svg aria-hidden="true"><use href="icons.svg#f-bike"/></svg>Bike</h3>
+      <div class="chips wrap"><button type="button" class="chip" aria-pressed="false">Mountain biking</button><button type="button" class="chip" aria-pressed="false">Road biking</button><button type="button" class="chip" aria-pressed="false">Bike touring</button></div></section>
+    <section class="family-group" aria-labelledby="fg-tech"><h3 id="fg-tech" class="family" data-family="technical"><svg aria-hidden="true"><use href="icons.svg#f-technical"/></svg>Climbing</h3>
+      <div class="chips wrap"><button type="button" class="chip" aria-pressed="false">Rock climbing</button><button type="button" class="chip" aria-pressed="false">Via ferrata</button></div></section>
+    <section class="family-group" aria-labelledby="fg-veh"><h3 id="fg-veh" class="family" data-family="vehicle"><svg aria-hidden="true"><use href="icons.svg#f-vehicle"/></svg>Driving</h3>
+      <div class="chips wrap"><button type="button" class="chip" aria-pressed="false">Off-road driving</button><button type="button" class="chip" aria-pressed="false">Scenic driving</button></div></section>
+    <section class="family-group" aria-labelledby="fg-snow"><h3 id="fg-snow" class="family" data-family="snow"><svg aria-hidden="true"><use href="icons.svg#f-snow"/></svg>Snow</h3>
+      <div class="chips wrap"><button type="button" class="chip" aria-pressed="false">Skiing</button><button type="button" class="chip" aria-pressed="false">Cross-country skiing</button><button type="button" class="chip" aria-pressed="false">Snowshoeing</button></div></section>
+    <section class="family-group" aria-labelledby="fg-water"><h3 id="fg-water" class="family" data-family="water"><svg aria-hidden="true"><use href="icons.svg#f-water"/></svg>Water and camping</h3>
+      <div class="chips wrap"><button type="button" class="chip" aria-pressed="false">Paddle sports</button><button type="button" class="chip" aria-pressed="false">Fishing</button><button type="button" class="chip" aria-pressed="false">Camping</button></div></section>
+
+    <section class="family-group" aria-labelledby="fg-diff"><h3 id="fg-diff">Difficulty</h3>
+      <div class="chips wrap">
+        <button type="button" class="chip" aria-pressed="false"><span class="difficulty" data-level="easy"><svg aria-hidden="true"><use href="icons.svg#d-easy"/></svg></span>Easy</button>
+        <button type="button" class="chip" aria-pressed="false"><span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg></span>Moderate</button>
+        <button type="button" class="chip" aria-pressed="false"><span class="difficulty" data-level="hard"><svg aria-hidden="true"><use href="icons.svg#d-hard"/></svg></span>Hard</button>
+        <button type="button" class="chip" aria-pressed="false"><span class="difficulty" data-level="veryhard"><svg aria-hidden="true"><use href="icons.svg#d-veryhard"/></svg></span>Very hard</button>
+      </div></section>
+    <section class="family-group" aria-labelledby="fg-len"><h3 id="fg-len">Length</h3>
+      <div class="chips wrap" data-single><button type="button" class="chip" aria-pressed="false">Under 5 km</button><button type="button" class="chip" aria-pressed="true">5 to 10 km</button><button type="button" class="chip" aria-pressed="false">10 to 20 km</button><button type="button" class="chip" aria-pressed="false">Over 20 km</button></div></section>
+    <section class="family-group" aria-labelledby="fg-route"><h3 id="fg-route">Route type</h3>
+      <div class="chips wrap"><button type="button" class="chip" aria-pressed="false">Loop</button><button type="button" class="chip" aria-pressed="false">Out and back</button><button type="button" class="chip" aria-pressed="false">Point to point</button></div></section>
+    <section class="family-group" aria-labelledby="fg-feat"><h3 id="fg-feat">Features</h3>
+      <div class="chips wrap"><button type="button" class="chip" aria-pressed="false">Views</button><button type="button" class="chip" aria-pressed="false">Waterfall</button><button type="button" class="chip" aria-pressed="false">Lake</button><button type="button" class="chip" aria-pressed="false">River</button><button type="button" class="chip" aria-pressed="false">Forest</button><button type="button" class="chip" aria-pressed="false">Wildflowers</button><button type="button" class="chip" aria-pressed="false">Wildlife</button><button type="button" class="chip" aria-pressed="false">Historic</button><button type="button" class="chip" aria-pressed="false">Cave</button></div></section>
+    <section class="family-group" aria-labelledby="fg-acc"><h3 id="fg-acc">Access and suitability</h3>
+      <div class="chips wrap"><button type="button" class="chip" aria-pressed="false">Dogs allowed</button><button type="button" class="chip" aria-pressed="false">Kid friendly</button><button type="button" class="chip" aria-pressed="false">Wheelchair friendly</button><button type="button" class="chip" aria-pressed="false">Pram friendly</button><button type="button" class="chip" aria-pressed="false">Shady</button><button type="button" class="chip" aria-pressed="false">Paved</button><button type="button" class="chip" aria-pressed="true">Open now</button></div></section>
+  </div>
+  <div class="sheet-foot"><button type="button" class="btn">Clear all</button><button type="button" class="btn btn-primary" data-close>Show 48 trails</button></div>
+</dialog>
+</body>
+</html>
