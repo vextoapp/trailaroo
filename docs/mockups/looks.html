@@ -6,6 +6,65 @@
 <title>Open Trails mock-ups: pick a look</title>
 <link rel="stylesheet" href="tokens.css">
 <style>
+  /* Look B colours, kept here as the record of the comparison. Not used by the app. */
+[data-look="signal"] { --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+
+[data-look="signal"][data-theme="dark"] {
+  --bg: #1A1C1F;
+  --surface: #25282C;
+  --surface-2: #30343A;
+  --text: #EEF0F2;
+  --text-muted: #AEB4BB;
+  --border: #6C737B;
+  --accent: #FF8B3D;
+  --accent-contrast: #241000;
+  --focus: #7CC4FF;
+  --danger: #FF8E80;
+  --warn: #F2BA52;
+  --ok: #82D69C;
+  --diff-easy: #5FCB8C;
+  --diff-moderate: #F0B43C;
+  --diff-hard: #FF776D;
+  --diff-veryhard: #EEF0F2;
+  --fam-foot: #E8A317;
+  --fam-technical: #D98CB6;
+  --fam-bike: #63BBEB;
+  --fam-vehicle: #F0884A;
+  --fam-snow: #B4D7F0;
+  --fam-water: #35C79D;
+  --map-land: #202326;
+  --map-contour: #33383D;
+  --map-water: #1E3440;
+}
+
+[data-look="signal"][data-theme="light"] {
+  --bg: #F5F6F7;
+  --surface: #FFFFFF;
+  --surface-2: #E7EAED;
+  --text: #191B1D;
+  --text-muted: #4F555B;
+  --border: #737A81;
+  --accent: #C2410C;
+  --accent-contrast: #FFFFFF;
+  --focus: #0B5CAD;
+  --danger: #B3261E;
+  --warn: #8A5A00;
+  --ok: #1E7A3E;
+  --diff-easy: #1E7A3E;
+  --diff-moderate: #A35F00;
+  --diff-hard: #C0362C;
+  --diff-veryhard: #191B1D;
+  --fam-foot: #A86A00;
+  --fam-technical: #A8457F;
+  --fam-bike: #1F72AD;
+  --fam-vehicle: #B34800;
+  --fam-snow: #3B6B96;
+  --fam-water: #00775A;
+  --map-land: #EBEDEA;
+  --map-contour: #D3D7D3;
+  --map-water: #C2DAE4;
+}
+
   * { box-sizing: border-box; }
   body { margin: 0; font-family: system-ui, sans-serif; background: #DADFDC; color: #15211E; line-height: 1.5; }
   .intro { max-width: 68ch; padding: 32px 16px 8px; margin: 0 auto; }
@@ -80,7 +139,7 @@
 
 <header class="intro">
   <h1>Pick a look</h1>
-  <p>Two directions for the same parts: a trail card, filter chips, the Record stats, the difficulty legend and a fire-danger notice. Each is shown in dark and light mode. Fonts show as your system font until the font files are added.</p>
+  <p>Two directions for the same parts: a trail card, filter chips, the Record stats, the difficulty legend and a fire-danger notice. Each is shown in dark and light mode. Chosen 23 Nov 2026: A, Eucalyptus. B is kept for the record and shows in the system font.</p>
 </header>
 
 <main class="looks">

@@ -5,7 +5,7 @@
 
 :root {
   /* Type */
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-numeric: var(--font-sans);
   --step--1: 0.8125rem;  /* 13px  meta */
   --step-0: 1rem;        /* 16px  body */
@@ -31,10 +31,15 @@
   --tap-trail: 56px; /* record screen, gloves */
 }
 
-/* ---------- Look A: Eucalyptus ---------- */
-[data-look="eucalyptus"] { --font-sans: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+/* ---------- Look: Eucalyptus (chosen 23 Nov 2026; see looks.html) ---------- */
+@font-face {
+  font-family: "Public Sans";
+  src: url("fonts/PublicSans-Variable.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
 
-[data-look="eucalyptus"][data-theme="dark"] {
+[data-theme="dark"] {
   --bg: #16201E;
   --surface: #1F2B28;
   --surface-2: #283633;
@@ -62,7 +67,7 @@
   --map-water: #1F3A44;
 }
 
-[data-look="eucalyptus"][data-theme="light"] {
+[data-theme="light"] {
   --bg: #F1F4F1;
   --surface: #FFFFFF;
   --surface-2: #E3EAE6;
@@ -88,63 +93,4 @@
   --map-land: #E6ECE4;
   --map-contour: #CBD6CC;
   --map-water: #BBD8E2;
-}
-
-/* ---------- Look B: Signal ---------- */
-[data-look="signal"] { --font-sans: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-
-[data-look="signal"][data-theme="dark"] {
-  --bg: #1A1C1F;
-  --surface: #25282C;
-  --surface-2: #30343A;
-  --text: #EEF0F2;
-  --text-muted: #AEB4BB;
-  --border: #6C737B;
-  --accent: #FF8B3D;
-  --accent-contrast: #241000;
-  --focus: #7CC4FF;
-  --danger: #FF8E80;
-  --warn: #F2BA52;
-  --ok: #82D69C;
-  --diff-easy: #5FCB8C;
-  --diff-moderate: #F0B43C;
-  --diff-hard: #FF776D;
-  --diff-veryhard: #EEF0F2;
-  --fam-foot: #E8A317;
-  --fam-technical: #D98CB6;
-  --fam-bike: #63BBEB;
-  --fam-vehicle: #F0884A;
-  --fam-snow: #B4D7F0;
-  --fam-water: #35C79D;
-  --map-land: #202326;
-  --map-contour: #33383D;
-  --map-water: #1E3440;
-}
-
-[data-look="signal"][data-theme="light"] {
-  --bg: #F5F6F7;
-  --surface: #FFFFFF;
-  --surface-2: #E7EAED;
-  --text: #191B1D;
-  --text-muted: #4F555B;
-  --border: #737A81;
-  --accent: #C2410C;
-  --accent-contrast: #FFFFFF;
-  --focus: #0B5CAD;
-  --danger: #B3261E;
-  --warn: #8A5A00;
-  --ok: #1E7A3E;
-  --diff-easy: #1E7A3E;
-  --diff-moderate: #A35F00;
-  --diff-hard: #C0362C;
-  --diff-veryhard: #191B1D;
-  --fam-foot: #A86A00;
-  --fam-technical: #A8457F;
-  --fam-bike: #1F72AD;
-  --fam-vehicle: #B34800;
-  --fam-snow: #3B6B96;
-  --fam-water: #00775A;
-  --map-land: #EBEDEA;
-  --map-contour: #D3D7D3;
-  --map-water: #C2DAE4;
 }

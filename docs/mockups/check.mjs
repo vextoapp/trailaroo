@@ -32,12 +32,13 @@ export function contrast(a, b) {
 }
 
 const tokensPath = join(root, "tokens.css");
+const colourFiles = [tokensPath, join(root, "looks.html")];
 if (!existsSync(tokensPath)) {
   fail("contrast", "tokens.css is missing");
 } else {
-  const css = read(tokensPath);
-  const blocks = [...css.matchAll(/\[data-look="([\w-]+)"\]\[data-theme="(dark|light)"\]\s*\{([^}]*)\}/g)];
-  if (blocks.length === 0) fail("contrast", "no [data-look][data-theme] colour blocks found in tokens.css");
+  const css = colourFiles.filter(existsSync).map(read).join("\n");
+  const blocks = [...css.matchAll(/(?:\[data-look="([\w-]+)"\])?\[data-theme="(dark|light)"\]\s*\{([^}]*)\}/g)];
+  if (blocks.length === 0) fail("contrast", "no [data-theme] colour blocks found in tokens.css");
   const pairs = [
     ["text", "bg", 4.5], ["text", "surface", 4.5], ["text", "surface-2", 4.5],
     ["text-muted", "bg", 4.5], ["text-muted", "surface", 4.5],
@@ -45,7 +46,7 @@ if (!existsSync(tokensPath)) {
     ["border", "bg", 3], ["border", "surface", 3], ["focus", "bg", 3], ["focus", "surface", 3],
     ["danger", "surface", 4.5], ["warn", "surface", 4.5], ["ok", "surface", 4.5],
   ];
-  for (const [, look, theme, body] of blocks) {
+  for (const [, look = "app", theme, body] of blocks) {
     const v = Object.fromEntries([...body.matchAll(/--([\w-]+):\s*(#[0-9a-fA-F]{3,6})\s*;/g)].map((m) => [m[1], m[2]]));
     const extra = Object.keys(v).filter((k) => /^(diff|fam)-/.test(k)).flatMap((k) => [[k, "bg", 3], [k, "surface", 3]]);
     for (const [fg, bg, min] of [...pairs, ...extra]) {
