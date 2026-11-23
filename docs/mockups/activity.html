@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Activity · Open Trails mock-up</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="mockups.css">
+<script src="mockups.js"></script>
+<style>
+  .year-stats { --cols: 2; background: var(--surface); border-radius: var(--radius-m); padding: var(--space-4); row-gap: var(--space-4); }
+  @media (min-width: 640px) { .year-stats { --cols: 4; } }
+  .heat-wrap { overflow-x: auto; }
+  .heat { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 11px); grid-auto-columns: 11px; gap: 3px; padding: var(--space-1) 0; }
+  .heat i { border-radius: 2px; background: var(--surface-2); }
+  .heat i[data-l="1"] { background: color-mix(in srgb, var(--accent) 35%, var(--surface-2)); }
+  .heat i[data-l="2"] { background: color-mix(in srgb, var(--accent) 65%, var(--surface-2)); }
+  .heat i[data-l="3"] { background: var(--accent); }
+  .grid-2 { display: grid; gap: var(--space-5); }
+  @media (min-width: 1024px) { .grid-2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
+  .stamps { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--space-3); }
+  .stamp { display: grid; justify-items: center; gap: var(--space-1); text-align: center; font-size: var(--step--1); }
+  .stamp svg { width: 72px; height: 72px; }
+  .stamp .ring { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 4 3; }
+  .stamp .inner { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+  .stamp .glyph { color: var(--accent); }
+  .stamp.todo .ring, .stamp.todo .inner { stroke: var(--border); }
+  .stamp.todo .glyph { color: var(--text-muted); }
+  .goal { display: grid; gap: var(--space-1); }
+  .goal .bar { height: 10px; background: var(--surface-2); }
+  .feed-item { display: grid; gap: var(--space-2); padding: var(--space-4); background: var(--surface); border-radius: var(--radius-m); }
+  .feed-item header { display: flex; gap: var(--space-3); align-items: center; }
+</style>
+</head>
+<body data-screen="activity">
+<a class="skip" href="#main">Skip to content</a>
+<nav class="nav" aria-label="Main"></nav>
+<main id="main" class="main">
+  <h1 style="margin-bottom: var(--space-3)">Activity</h1>
+  <div class="tabs" role="tablist" aria-label="Activity views">
+    <button type="button" role="tab" id="t-you" aria-controls="p-you" aria-selected="true">You</button>
+    <button type="button" role="tab" id="t-comm" aria-controls="p-comm" aria-selected="false" tabindex="-1">Near you</button>
+    <button type="button" role="tab" id="t-fol" aria-controls="p-fol" aria-selected="false" tabindex="-1">Following</button>
+  </div>
+
+  <div id="p-you" role="tabpanel" aria-labelledby="t-you">
+    <div class="section-head"><h2>2026 so far</h2><div class="segmented" role="group" aria-label="Period"><button type="button" data-set="period=year" aria-pressed="true">This year</button><button type="button" data-set="period=all" aria-pressed="false">All time</button></div></div>
+    <div class="stats year-stats">
+      <div class="stat"><span class="value">412 km</span><span class="label">Distance</span></div>
+      <div class="stat"><span class="value">18,240 m</span><span class="label">Climbed</span></div>
+      <div class="stat"><span class="value">46</span><span class="label">Trails</span></div>
+      <div class="stat"><span class="value">128 h</span><span class="label">Moving time</span></div>
+    </div>
+
+    <section class="section" aria-labelledby="cal-h">
+      <div class="section-head"><h2 id="cal-h">Days out</h2><span class="meta">Out 11 months in a row</span></div>
+      <div class="card card-pad">
+        <div class="heat-wrap"><div class="heat" id="heat" role="img" aria-label="Calendar of days out in 2026: 61 days, most often on Saturdays, busiest in April and October."></div></div>
+        <p class="meta" style="margin-top: var(--space-2)">61 days out this year. Most often on Saturdays. Busiest months: April and October.</p>
+      </div>
+    </section>
+
+    <div class="grid-2">
+      <section class="section" aria-labelledby="pr-h">
+        <h2 id="pr-h">Personal bests</h2>
+        <ul class="rows">
+          <li class="row"><span class="grow"><strong>Longest hike</strong><span class="meta">Mt Gingera, 22 Mar</span></span><span class="end num">24.1 km</span></li>
+          <li class="row"><span class="grow"><strong>Most climbing in a day</strong><span class="meta">Mt Tennent, 9 Aug</span></span><span class="end num">1,140 m</span></li>
+          <li class="row"><span class="grow"><strong>Fastest 5 km trail run</strong><span class="meta">Mt Ainslie, 2 Nov</span></span><span class="end num">31:12</span></li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="goal-h">
+        <div class="section-head"><h2 id="goal-h">Goals</h2><button type="button" class="btn btn-quiet">Edit</button></div>
+        <div class="card card-pad" style="display: grid; gap: var(--space-4)">
+          <div class="goal"><p><strong>500 km this year</strong> <span class="meta">412 km, on track</span></p><div class="bar" aria-hidden="true"><span style="width: 82%; background: var(--accent)"></span></div></div>
+          <div class="goal"><p><strong>4 new trails in November</strong> <span class="meta">3 so far</span></p><div class="bar" aria-hidden="true"><span style="width: 75%; background: var(--accent)"></span></div></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid-2">
+      <section class="section" aria-labelledby="stamp-h">
+        <div class="section-head"><h2 id="stamp-h">Park stamps</h2><span class="meta">3 of 12 ACT and NSW parks</span></div>
+        <div class="stamps">
+          <div class="stamp"><svg viewBox="0 0 72 72" aria-hidden="true"><circle class="ring" cx="36" cy="36" r="33"/><circle class="inner" cx="36" cy="36" r="25"/><use class="glyph" href="icons.svg#i-up" x="24" y="24" width="24" height="24"/></svg><strong>Namadgi</strong><span class="meta">14 visits</span></div>
+          <div class="stamp"><svg viewBox="0 0 72 72" aria-hidden="true"><circle class="ring" cx="36" cy="36" r="33"/><circle class="inner" cx="36" cy="36" r="25"/><use class="glyph" href="icons.svg#i-view" x="24" y="24" width="24" height="24"/></svg><strong>Tidbinbilla</strong><span class="meta">6 visits</span></div>
+          <div class="stamp"><svg viewBox="0 0 72 72" aria-hidden="true"><circle class="ring" cx="36" cy="36" r="33"/><circle class="inner" cx="36" cy="36" r="25"/><use class="glyph" href="icons.svg#f-snow" x="24" y="24" width="24" height="24"/></svg><strong>Kosciuszko</strong><span class="meta">1 visit</span></div>
+          <div class="stamp todo"><svg viewBox="0 0 72 72" aria-hidden="true"><circle class="ring" cx="36" cy="36" r="33"/><circle class="inner" cx="36" cy="36" r="25"/><use class="glyph" href="icons.svg#i-water" x="24" y="24" width="24" height="24"/></svg><strong>Booderee</strong><span class="meta">Not yet</span></div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="peak-h">
+        <div class="section-head"><h2 id="peak-h">Peak register</h2><span class="meta">8 of 24 ACT peaks</span></div>
+        <ul class="rows">
+          <li class="row"><svg class="icon" aria-hidden="true" style="color: var(--accent)"><use href="icons.svg#i-check"/></svg><span class="grow"><strong>Mt Tennent</strong><span class="meta">1,384 m, 9 Aug</span></span></li>
+          <li class="row"><svg class="icon" aria-hidden="true" style="color: var(--accent)"><use href="icons.svg#i-check"/></svg><span class="grow"><strong>Gibraltar Peak</strong><span class="meta">1,038 m, 21 Nov</span></span></li>
+          <li class="row"><svg class="icon" aria-hidden="true" style="color: var(--text-muted)"><use href="icons.svg#i-up"/></svg><span class="grow"><strong>Bimberi Peak</strong><span class="meta">1,912 m, highest in the ACT</span></span></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="section" aria-labelledby="log-h">
+      <div class="section-head"><h2 id="log-h">Logbook</h2><button type="button" class="btn"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-export"/></svg>Export</button></div>
+      <div class="chips" style="margin-bottom: var(--space-3)"><button type="button" class="chip" aria-pressed="true">All</button><button type="button" class="chip" aria-pressed="false">Hikes</button><button type="button" class="chip" aria-pressed="false">Runs</button><button type="button" class="chip" aria-pressed="false">Rides</button></div>
+      <ul class="rows">
+        <li><a class="row" href="trail.html"><span class="family" data-family="foot"><svg aria-hidden="true"><use href="icons.svg#f-foot"/></svg></span><span class="grow"><strong>Gibraltar Peak</strong><span class="meta">Hike, Fri 21 Nov, private</span></span><span class="end num">8.2 km<br>2 h 46 min</span></a></li>
+        <li><a class="row" href="trail.html"><span class="family" data-family="foot"><svg aria-hidden="true"><use href="icons.svg#f-foot"/></svg></span><span class="grow"><strong>Mt Ainslie</strong><span class="meta">Trail run, Sun 16 Nov, public</span></span><span class="end num">6.1 km<br>41 min</span></a></li>
+        <li><a class="row" href="trail.html"><span class="family" data-family="bike"><svg aria-hidden="true"><use href="icons.svg#f-bike"/></svg></span><span class="grow"><strong>Stromlo Forest Park</strong><span class="meta">Mountain bike, Sat 8 Nov, followers</span></span><span class="end num">12.5 km<br>1 h 18 min</span></a></li>
+      </ul>
+    </section>
+  </div>
+
+  <div id="p-comm" role="tabpanel" aria-labelledby="t-comm" hidden>
+    <p class="meta" style="margin-bottom: var(--space-3)">Recent reviews and condition reports within 50 km of Canberra.</p>
+    <div style="display: grid; gap: var(--space-3)">
+      <article class="feed-item"><header><span class="avatar" aria-hidden="true">PK</span><div><strong>Priya K.</strong> reported conditions on <a href="trail.html">Gibraltar Peak</a><p class="meta">2 days ago</p></div></header><p><span class="condition">Muddy</span> near the summit steps after Thursday's rain.</p></article>
+      <article class="feed-item"><header><span class="avatar" aria-hidden="true">AP</span><div><strong>ACT Parks</strong> posted an official alert for <a href="trail.html">Booroomba Rocks</a><p class="meta">Yesterday, 4:10 pm</p></div></header><p>Booroomba Rocks Rd closed for grading until 28 Nov. Use the Honeysuckle Creek access.</p></article>
+      <article class="feed-item"><header><span class="avatar" aria-hidden="true">TW</span><div><strong>Tom W.</strong> reviewed <a href="trail.html">Mt Tennent</a><p class="meta">3 days ago</p></div></header><p>Long, steady climb with great views from the fire tower. Bring lots of water.</p></article>
+    </div>
+  </div>
+
+  <div id="p-fol" role="tabpanel" aria-labelledby="t-fol" hidden>
+    <div style="display: grid; gap: var(--space-3)">
+      <article class="feed-item"><header><span class="avatar" aria-hidden="true">SR</span><div><strong>Sam R.</strong> hiked <a href="trail.html">Square Rock</a><p class="meta">Sunday, 9.4 km, 3 h 02 min</p></div></header><p>First time up here. The rock scramble at the end is fun.</p><p class="actions"><button type="button" class="btn btn-quiet">Like</button><button type="button" class="btn btn-quiet">Comment</button></p></article>
+    </div>
+  </div>
+  <p class="sample-note">Sample data.</p>
+</main>
+<script>
+  // Calendar: one square per day of 2026 up to today, shaded by how far you went.
+  const heat = document.getElementById("heat");
+  let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  heat.innerHTML = Array.from({ length: 52 * 7 }, (_, i) => { const r = rnd(); const sat = i % 7 === 5; const l = r > (sat ? 0.35 : 0.88) ? (r > 0.95 ? 3 : r > 0.75 ? 2 : 1) : 0; return `<i data-l="${i > 327 ? 0 : l}"></i>`; }).join("");
+  heat.parentElement.scrollLeft = heat.scrollWidth; // open on the most recent weeks
+</script>
+</body>
+</html>

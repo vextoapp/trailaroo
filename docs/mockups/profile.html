@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>You · Open Trails mock-up</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="mockups.css">
+<script src="mockups.js"></script>
+<style>
+  .profile-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-4); align-items: center; }
+  .profile-head .who { display: grid; gap: 2px; }
+  .counts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-5); font-size: var(--step--1); }
+  .counts strong { font-size: var(--step-0); }
+  .settings { display: grid; gap: var(--space-5); }
+  @media (min-width: 1024px) { .settings { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
+  .settings h2 { font-size: var(--step-0); color: var(--text-muted); font-weight: 650; margin-bottom: var(--space-2); }
+  .settings .row > label { flex: 1; display: grid; gap: 2px; cursor: pointer; }
+  fieldset { border: 0; padding: 0; margin: 0; }
+  .radio-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .radio-row label { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--tap); padding: 0 var(--space-4); border: 1.5px solid var(--border); border-radius: 999px; cursor: pointer; font-weight: 650; font-size: var(--step--1); }
+  .radio-row label:has(input:checked) { border-color: var(--accent); background: var(--accent); color: var(--accent-contrast); }
+  .radio-row input { accent-color: var(--accent-contrast); margin: 0; }
+  .radio-row label:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .danger-text { color: var(--danger); }
+</style>
+</head>
+<body data-screen="profile">
+<a class="skip" href="#main">Skip to content</a>
+<nav class="nav" aria-label="Main"></nav>
+<main id="main" class="main">
+  <div class="profile-head">
+    <span class="avatar l" aria-hidden="true">AC</span>
+    <div class="who">
+      <h1>Alex Chen</h1>
+      <p class="meta">@alexwalks · Home area: Canberra, 25 km <a href="#">Edit</a></p>
+      <p>Weekend hiker, slow on the climbs, fast to the summit snacks.</p>
+      <p class="counts"><span><strong>46</strong> trails</span><span><strong>18</strong> following</span><span><strong>23</strong> followers</span><span><strong>2</strong> public lists</span></p>
+    </div>
+  </div>
+  <div class="actions" style="margin-top: var(--space-4)"><button type="button" class="btn">Edit profile</button><button type="button" class="btn">Share profile</button></div>
+
+  <div class="settings section">
+    <div style="display: grid; gap: var(--space-5)">
+      <section aria-labelledby="priv-h">
+        <h2 id="priv-h">Privacy</h2>
+        <ul class="rows">
+          <li class="row"><label for="p1"><strong>New activities are private</strong><span class="meta">You choose who sees each one when you save it.</span></label><input id="p1" class="switch" type="checkbox" role="switch" checked></li>
+          <li class="row"><label for="p2"><strong>Hide start and finish</strong><span class="meta">Trims 500 m from both ends for anyone else.</span></label><input id="p2" class="switch" type="checkbox" role="switch" checked></li>
+          <li><a class="row" href="#"><span class="grow"><strong>Privacy zones</strong><span class="meta">Home, 500 m. Tracks inside are hidden from others, heatmaps and popular times.</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+          <li class="row"><label for="p3"><strong>Count my hikes in popular times</strong><span class="meta">Anonymous. Only shown once 20 people have contributed.</span></label><input id="p3" class="switch" type="checkbox" role="switch"></li>
+          <li><a class="row" href="#"><span class="grow"><strong>Profile visibility</strong><span class="meta">Public</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="disp-h">
+        <h2 id="disp-h">Display</h2>
+        <ul class="rows">
+          <li class="row"><fieldset class="grow"><legend><strong>Theme</strong></legend>
+            <div class="radio-row" style="margin-top: var(--space-2)">
+              <label><input type="radio" name="theme" value="dark">Dark</label>
+              <label><input type="radio" name="theme" value="light">Light</label>
+              <label><input type="radio" name="theme" value="system">Match my phone</label>
+            </div></fieldset></li>
+          <li class="row"><fieldset class="grow"><legend><strong>Units</strong></legend>
+            <div class="radio-row" style="margin-top: var(--space-2)">
+              <label><input type="radio" name="units" value="metric" checked>Kilometres and metres</label>
+              <label><input type="radio" name="units" value="imperial">Miles and feet</label>
+            </div></fieldset></li>
+          <li><a class="row" href="#"><span class="grow"><strong>Map style</strong><span class="meta">Outdoor, with hillshade</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+          <li><a class="row" href="#"><span class="grow"><strong>Language</strong><span class="meta">English (Australia)</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+        </ul>
+      </section>
+    </div>
+
+    <div style="display: grid; gap: var(--space-5)">
+      <section aria-labelledby="acct-h">
+        <h2 id="acct-h">Account and devices</h2>
+        <ul class="rows">
+          <li><a class="row" href="#"><span class="grow"><strong>Sign-in</strong><span class="meta">Passkey on this phone, email link</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+          <li><a class="row" href="#"><span class="grow"><strong>Notifications</strong><span class="meta">Condition alerts and replies by push, weekly summary by email</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+          <li><a class="row" href="saved.html#downloads"><span class="grow"><strong>Offline storage</strong><span class="meta">142 MB in 4 downloads</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+          <li><a class="row" href="#"><span class="grow"><strong>Connected apps and devices</strong><span class="meta">Garmin, Strava, Apple Health or Health Connect. Import files from any watch.</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+          <li><a class="row" href="#"><span class="grow"><strong>OpenStreetMap account</strong><span class="meta">Connect to send trail fixes to OpenStreetMap as you</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="data-h">
+        <h2 id="data-h">Your data</h2>
+        <ul class="rows">
+          <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-export"/></svg><span class="grow"><strong>Download everything</strong><span class="meta">Activities as GPX, photos as originals, the rest as JSON</span></span></button></li>
+          <li><button type="button" class="row"><svg class="icon danger-text" aria-hidden="true"><use href="icons.svg#i-close"/></svg><span class="grow"><strong class="danger-text">Delete account</strong><span class="meta">Removes everything within 30 days. Asks you to confirm first.</span></span></button></li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="help-h">
+        <h2 id="help-h">Help</h2>
+        <ul class="rows">
+          <li><a class="row" href="#"><span class="grow"><strong>Help and feedback</strong></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+          <li><a class="row" href="#"><span class="grow"><strong>Service status</strong><span class="meta">All data feeds up to date, checked 2 min ago</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+          <li><a class="row" href="#"><span class="grow"><strong>Data sources and licences</strong><span class="meta">OpenStreetMap, Mapterhorn, Open-Meteo, CAPAD and more</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+        </ul>
+        <p class="meta" style="margin-top: var(--space-3)"><span data-app-name></span> is free and open source, with no ads and no paid tier. Code under AGPL-3.0.</p>
+      </section>
+    </div>
+  </div>
+  <p class="sample-note">Sample data.</p>
+</main>
+</body>
+</html>

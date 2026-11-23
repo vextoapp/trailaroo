@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Saved · Open Trails mock-up</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="mockups.css">
+<script src="mockups.js"></script>
+<style>
+  .quick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+  @media (min-width: 760px) { .quick { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .quick a { display: grid; gap: var(--space-1); padding: var(--space-4); border-radius: var(--radius-m); background: var(--surface); color: inherit; text-decoration: none; min-height: 104px; }
+  .quick a:hover { background: var(--surface-2); }
+  .quick .icon { color: var(--accent); }
+  .list-card { display: grid; grid-template-columns: 96px minmax(0, 1fr); color: inherit; text-decoration: none; }
+  .list-card .cover { background: var(--map-land); min-height: 96px; }
+  .list-card .cover svg { width: 100%; height: 100%; }
+  .list-card .body { padding: var(--space-3) var(--space-4); display: grid; gap: 2px; align-content: center; }
+  .vis { display: inline-flex; align-items: center; gap: 4px; font-size: var(--step--1); color: var(--text-muted); }
+  .vis svg { width: 14px; height: 14px; }
+  .storage { display: grid; gap: var(--space-2); }
+  .storage .bar { height: 12px; background: var(--surface-2); }
+  .two-col { display: grid; gap: var(--space-5); }
+  @media (min-width: 1024px) { .two-col { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
+</style>
+</head>
+<body data-screen="saved">
+<a class="skip" href="#main">Skip to content</a>
+<nav class="nav" aria-label="Main"></nav>
+<main id="main" class="main">
+  <div class="page-head"><h1>Saved</h1><button type="button" class="btn"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-plus"/></svg>New list</button></div>
+
+  <nav class="quick" aria-label="Saved collections">
+    <a href="#"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-saved-fill"/></svg><strong>Favourites</strong><span class="meta">12 trails</span></a>
+    <a href="#"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-clock"/></svg><strong>Last viewed</strong><span class="meta">8 trails</span></a>
+    <a href="#"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-route"/></svg><strong>Your routes</strong><span class="meta">3 routes</span></a>
+    <a href="#downloads"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-download"/></svg><strong>Downloads</strong><span class="meta">4 maps, 142 MB</span></a>
+  </nav>
+
+  <div class="two-col">
+    <div>
+      <section class="section" aria-labelledby="lists-h">
+        <h2 id="lists-h">Your lists</h2>
+        <div style="display: grid; gap: var(--space-3)">
+          <a class="card list-card" href="#">
+            <span class="cover" aria-hidden="true"><svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" x="-480" y="-100"/><path class="route" d="M20 150 C60 130 90 90 130 80 S170 40 185 30" style="stroke-width: 7"/></svg></span>
+            <span class="body"><strong>Summits before 40</strong><span class="meta">9 trails, 3 done</span><span class="vis"><svg aria-hidden="true"><use href="icons.svg#i-lock"/></svg>Private</span></span>
+          </a>
+          <a class="card list-card" href="#">
+            <span class="cover" aria-hidden="true"><svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" x="-120" y="-60"/><path class="route" d="M40 160 C60 120 120 140 140 100 S110 50 150 40" style="stroke-width: 7"/></svg></span>
+            <span class="body"><strong>Easy walks with Mum</strong><span class="meta">6 trails, flat and shady</span><span class="vis"><svg aria-hidden="true"><use href="icons.svg#i-users"/></svg>Shared with 2 people, both can add</span></span>
+          </a>
+          <a class="card list-card" href="#">
+            <span class="cover" aria-hidden="true"><svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice"><use href="icons.svg#terrain" class="terrain" x="-300" y="-150"/><path class="route" d="M30 170 C70 150 80 110 120 90 S160 40 175 30" style="stroke-width: 7"/></svg></span>
+            <span class="body"><strong>Winter in the Brindabellas</strong><span class="meta">11 trails</span><span class="vis"><svg aria-hidden="true"><use href="icons.svg#i-share"/></svg>Anyone with the link</span></span>
+          </a>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="follow-h">
+        <h2 id="follow-h">Lists you follow</h2>
+        <ul class="rows">
+          <li><a class="row" href="#"><span class="avatar" aria-hidden="true">CB</span><span class="grow"><strong>Summits of the ACT</strong><span class="meta">Canberra Bushwalking Club, 24 trails, updated 2 days ago</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+          <li><a class="row" href="#"><span class="avatar" aria-hidden="true">AP</span><span class="grow"><strong>Accessible walks in Namadgi</strong><span class="meta">ACT Parks, 7 trails, official</span></span><svg class="icon" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></a></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="section" id="downloads" aria-labelledby="dl-h">
+      <div class="section-head"><h2 id="dl-h">Downloads</h2><span class="offline-badge"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-check"/></svg>Work in flight mode</span></div>
+      <div class="card card-pad storage">
+        <p><strong>142 MB</strong> of 2 GB this browser lets us use</p>
+        <div class="bar" aria-hidden="true"><span style="width: 7%; background: var(--accent)"></span></div>
+        <p class="meta">Storage is protected, so your phone won't clear it to free space.</p>
+      </div>
+      <ul class="rows" style="margin-top: var(--space-3)">
+        <li class="row"><span class="grow"><strong>Gibraltar Peak</strong><span class="meta">6.4 MB, map, terrain, photos and weather from 10:00 am</span></span><button type="button" class="btn btn-icon btn-quiet" aria-label="Delete Gibraltar Peak download"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-close"/></svg></button></li>
+        <li class="row"><span class="grow"><strong>Mt Tennent</strong><span class="meta">9.2 MB, map updated since you downloaded it</span></span><button type="button" class="btn">Update</button></li>
+        <li class="row"><span class="grow"><strong>Namadgi north area</strong><span class="meta">118 MB, a map area you drew</span></span><button type="button" class="btn btn-icon btn-quiet" aria-label="Delete Namadgi north area download"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-close"/></svg></button></li>
+        <li class="row"><span class="grow"><strong>Booroomba Rocks</strong><span class="meta">8.4 MB</span></span><button type="button" class="btn btn-icon btn-quiet" aria-label="Delete Booroomba Rocks download"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-close"/></svg></button></li>
+      </ul>
+      <button type="button" class="btn" style="margin-top: var(--space-3)"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-map"/></svg>Download a map area</button>
+      <div class="notice" role="note" style="margin-top: var(--space-4)">
+        <svg class="icon" aria-hidden="true"><use href="icons.svg#i-info"/></svg>
+        <div><strong>On iPhone, add this app to your Home Screen.</strong> Otherwise Safari can clear downloads after 7 days without a visit. In Safari tap Share, then Add to Home Screen.</div>
+      </div>
+    </section>
+  </div>
+  <p class="sample-note">Sample data.</p>
+</main>
+</body>
+</html>
