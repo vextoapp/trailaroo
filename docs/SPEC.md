@@ -1,12 +1,12 @@
-# Open Trails PWA — Product & Build Spec
+# Trailaroo PWA — Product & Build Spec
 
-Last updated: 20 Nov 2026 · Owner: Mohammad Syed
+Last updated: 25 Nov 2026 · Owner: Mohammad Syed
 
 ## Summary
 
 We're building a free, open, installable web app for finding, planning, recording and sharing trails. It does everything AllTrails does, with nothing behind a paywall, and it runs on open data that the community can improve. It ships as a PWA, so it works in any phone or desktop browser, installs to the home screen and works offline on the trail.
 
-**Working name:** Open Trails (a placeholder; see Risks and open questions > Still open).
+**Name:** Trailaroo (trailaroo.com). Chosen 25 Nov 2026; see Risks and open questions > Decisions made.
 
 **Who it's for**
 
@@ -272,7 +272,7 @@ Sources: [progressivewebapps.com iOS guide (Sept 2026)](https://progressivewebap
 2. **Gap detection and repair.** If the app is backgrounded, the recording pauses and marks a gap. When the user returns, we show the gap and offer to snap it to the trail or join it with a straight line. Distance from repaired gaps is flagged.
 3. **Honest messaging.** Before the first recording, a one-screen explainer says to keep the app open, with tips for battery.
 4. **Import from other recorders.** GPX, FIT and TCX import, plus the share target, means a recording from a watch or a native tracker app can be added in two taps.
-5. **Native wrapper (recommended, same codebase).** A thin Capacitor shell around the same web app adds true background GPS, vibration and reliable uploads. It ships to app stores as "Open Trails" alongside the web version. See Open questions: this is the one place where web-only can't match AllTrails.
+5. **Native wrapper (recommended, same codebase).** A thin Capacitor shell around the same web app adds true background GPS, vibration and reliable uploads. It ships to app stores as "Trailaroo" alongside the web version. See Open questions: this is the one place where web-only can't match AllTrails.
 
 ### Offline maps
 
@@ -639,12 +639,12 @@ Your Raspberry Pi 3 B+ (1 GB RAM) runs one job: the conditions worker. The rest 
 | Code licence | AGPL-3.0, public repo |
 | Activities | All 20 AllTrails activities at launch (see Activities) |
 | Sign-in | Passkeys, email magic link, Google and Apple |
+| Name and domain (25 Nov 2026) | Trailaroo, trailaroo.com. "Open Trails" was taken. Short, one word, says "trail" and nods to the Australian launch; the .com was free when checked on 24 Nov 2026. Still one config value (APP_NAME). Before launch: register the domain and check IP Australia for trademarks. |
 
 **Still open (sensible defaults so building isn't blocked)**
 
-1. **Name and domain.** Default: "Open Trails" as a working name in code only (one config value), so renaming later is a one-line change.
-2. **Who runs it.** Default: you personally for now; revisit a nonprofit before applying for grants or launching publicly. This decides whether Open-Meteo's free tier or a paid plan applies.
-3. **Partners.** Default: approach ACT Parks, NSW NPWS and local walking and MTB clubs during M7 for the closed beta.
+1. **Who runs it.** Default: you personally for now; revisit a nonprofit before applying for grants or launching publicly. This decides whether Open-Meteo's free tier or a paid plan applies.
+2. **Partners.** Default: approach ACT Parks, NSW NPWS and local walking and MTB clubs during M7 for the closed beta.
 
 ## Claude Code handoff
 
@@ -653,7 +653,7 @@ To start: create an empty GitHub repo, export this doc as Markdown into `docs/SP
 ### Starter CLAUDE.md
 
 ```markdown
-# Open Trails (working name)
+# Trailaroo
 
 Free, open, community-driven trail app (AllTrails alternative). Installable PWA, with a Capacitor app-store wrapper added in M8.
 The full product spec is docs/SPEC.md. Read the relevant section before starting any task. Decisions are in SPEC > Risks and open questions > Decisions made.

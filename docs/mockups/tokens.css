@@ -1,4 +1,4 @@
-/* Open Trails design tokens.
+/* Trailaroo design tokens.
    Source of truth for M0: these names map 1:1 to the Tailwind theme.
    Colours are hex only so check.mjs can verify contrast.
    mockups.js always sets data-theme (dark | light), resolving "system" from the OS. */

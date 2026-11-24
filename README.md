@@ -1,4 +1,4 @@
-# Open Trails (working name)
+# Trailaroo
 
 A free, open, community-driven trail app: find, plan, record and share hikes, rides and more. It's an installable web app (PWA) built on open data, with every feature free. Think AllTrails, but open.
 

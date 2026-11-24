@@ -1,4 +1,4 @@
-# Kickoff: getting Open Trails into Claude Code
+# Kickoff: getting Trailaroo into Claude Code
 
 ## 1. Set up (about 30 minutes)
 

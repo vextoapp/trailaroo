@@ -96,9 +96,11 @@ for (const f of htmlFiles) {
 }
 
 // ---------- app name only from config ----------
+const APP_NAME = read(join(root, "mockups.js")).match(/APP_NAME = "([^"]+)"/)?.[1];
+if (!APP_NAME) fail("app-name", "mockups.js has no APP_NAME");
 for (const f of htmlFiles) {
   const s = read(f);
-  if (s.includes("Open Trails")) fail("app-name", `${rel(f)} hard-codes the app name; use data-app-name`);
+  if (s.includes(APP_NAME)) fail("app-name", `${rel(f)} hard-codes the app name; use data-app-name`);
 }
 
 // ---------- screens exist and share the base files ----------

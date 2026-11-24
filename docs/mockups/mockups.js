@@ -1,7 +1,7 @@
 // Shared behaviour for the mock-ups. Loaded as a classic script in <head>
 // so the theme is set before first paint. No dependencies.
 (function () {
-  const APP_NAME = "Open Trails"; // the one place the app name lives
+  const APP_NAME = "Trailaroo"; // the one place the app name lives
   const KEY = "ot-mockup-theme";
   const root = document.documentElement;
   const media = window.matchMedia("(prefers-color-scheme: light)");
