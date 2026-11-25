@@ -49,7 +49,7 @@ type Props =
 
 /** MapLibre map of all trails (Explore) or one trail (trail page). Client-only, loaded lazily. */
 export default function TrailMap(props: Props) {
-  const el = useRef<HTMLDivElement>(null);
+  const el = useRef<HTMLElement>(null);
   const router = useRouter();
   const [ready, setReady] = useState(false);
 
@@ -74,6 +74,7 @@ export default function TrailMap(props: Props) {
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     map.on("load", () => setReady(true));
+    map.on("error", (e) => console.error("map", e.error));
 
     if (props.mode === "all") {
       map.on("click", "trail-line", (e) => {
@@ -94,7 +95,7 @@ export default function TrailMap(props: Props) {
 
   return (
     <>
-      <div ref={el} className="map-canvas" role="img" aria-label={props.label} />
+      <section ref={el} className="map-canvas" aria-label={props.label} />
       {!ready && <p className="map-status" aria-hidden="true">{t("map.loading")}</p>}
     </>
   );

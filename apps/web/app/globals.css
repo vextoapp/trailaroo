@@ -1,4 +1,7 @@
-@import "tailwindcss";
+/* Tailwind theme and utilities, but not its reset: the mock-ups' base styles are the reset. */
+@layer theme, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
 /* Design tokens and components come straight from the approved mock-ups, so the two can't drift. */
 @import "../../../docs/mockups/tokens.css";
 @import "../../../docs/mockups/mockups.css";
@@ -28,9 +31,9 @@ body:not(.gallery) { display: block; }
 .view-switch { position: fixed; z-index: 15; left: 50%; bottom: calc(var(--space-5) + env(safe-area-inset-bottom)); transform: translateX(-50%); box-shadow: 0 2px 10px rgb(0 0 0 / 0.35); }
 [data-view="list"] .explore-map { display: none; }
 [data-view="map"] .results { display: none; }
-.map-canvas { position: absolute; inset: 0; }
+.map > .map-canvas { position: absolute; inset: 0; } /* beats .maplibregl-map { position: relative } */
 .map-status { position: absolute; inset: 0; display: grid; place-items: center; color: var(--text-muted); }
-.trail-map { height: 340px; }
+.trail-map { height: 340px; order: -1; } /* map first on phones, beside the details on desktop */
 .trail-head { display: grid; gap: var(--space-2); margin: var(--space-4) 0; }
 .trail-layout { display: grid; gap: var(--space-5); }
 .maplibregl-ctrl-attrib { font-family: var(--font-sans); }
@@ -43,5 +46,6 @@ body:not(.gallery) { display: block; }
   [data-view] .results { display: block; }
   .view-switch { display: none; }
   .trail-layout { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; }
+  .trail-map { order: 0; }
   .trail-map { height: calc(100dvh - 160px); position: sticky; top: calc(var(--space-5) + 60px); }
 }

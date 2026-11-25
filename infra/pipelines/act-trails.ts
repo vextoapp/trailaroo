@@ -20,6 +20,7 @@ const ACT_BBOX = "148.76,-35.93,149.40,-35.12";
 const MIN_M = 300;
 const MAX_M = 250_000;
 const DISPLAY_TOLERANCE_M = 4;
+const MAX_PIECES = 8;
 
 if (!existsSync(PBF)) {
   console.error(`Missing ${PBF}. Download it from https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf`);
@@ -70,11 +71,17 @@ for (const r of relations) {
   if (tags.state === "proposed" || tags["disused:route"]) { skip("proposed or disused"); continue; }
   const name = tags.name?.trim();
   if (!name) { skip("no name"); continue; }
+  // A route that leaves the extract or is missing ways would show a wrong length: leave it out.
+  const wayMembers = r.members.filter((m) => m.type === "w");
+  if (wayMembers.some((m) => !ways.get(m.ref)?.every((n) => nodes.has(n)))) { skip("incomplete in the ACT extract"); continue; }
+  if (r.members.some((m) => m.type === "r")) { skip("route of routes"); continue; }
   const segments = r.members
     .filter((m) => m.type === "w")
     .map((m) => (ways.get(m.ref) ?? []).map((n) => nodes.get(n)).filter((p): p is Position => !!p));
   const lines = stitch(segments);
   if (!lines.length) { skip("no ways"); continue; }
+  // Many disconnected pieces means the mapped route has gaps, so its length can't be trusted yet.
+  if (lines.length > MAX_PIECES) { skip("too many gaps to measure"); continue; }
   const lengthM = Math.round(multiLineLengthM(lines));
   if (lengthM < MIN_M || lengthM > MAX_M) { skip("too short or too long"); continue; }
   const longest = lines.reduce((a, b) => (b.length > a.length ? b : a));

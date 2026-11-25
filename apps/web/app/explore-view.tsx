@@ -41,7 +41,7 @@ export function ExploreView({ cards }: { cards: TrailCard[] }) {
       <div className="split">
         <section className="results" aria-labelledby="count">
           <div className="results-head"><h2 id="count" aria-live="polite">{count}</h2></div>
-          {shown.length === 0 ? (
+          {shown.length === 0 && query ? (
             <p>{t("explore.none", { q })}</p>
           ) : (
             <div className="card-grid">

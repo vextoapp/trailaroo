@@ -8,7 +8,7 @@ const seriousViolations = async (page: import("@playwright/test").Page) =>
 
 test("Explore lists real trails, filters by name and opens a trail page", async ({ page }) => {
   await page.goto("/");
-  const heading = page.getByRole("heading", { level: 2, name: /\d+ trails/ });
+  const heading = page.locator("#count");
   await expect(heading).toBeVisible();
   const total = Number((await heading.textContent())?.match(/\d+/)?.[0]);
   expect(total).toBeGreaterThan(20);
@@ -23,19 +23,20 @@ test("Explore lists real trails, filters by name and opens a trail page", async 
   await page.locator(".trail-card .title a").first().click();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByRole("link", { name: "View or fix on OpenStreetMap" })).toHaveAttribute("href", /openstreetmap\.org\/relation\/\d+/);
-  await expect(page.getByText("Length")).toBeVisible();
+  await expect(page.getByText("Length", { exact: true })).toBeVisible();
   expect(await seriousViolations(page)).toEqual([]);
 });
 
 test("The map loads the trail overlay from our own server only", async ({ page, isMobile }) => {
   const external: string[] = [];
   page.on("request", (r) => {
-    const host = new URL(r.url()).hostname;
-    if (host !== "localhost") external.push(r.url());
+    const url = new URL(r.url());
+    if (url.protocol.startsWith("http") && url.hostname !== "localhost") external.push(r.url());
   });
   await page.goto("/");
+  const overlay = page.waitForResponse((r) => r.url().endsWith("/trails.geojson"));
   if (isMobile) await page.getByRole("button", { name: "Map" }).click();
   await expect(page.locator(".maplibregl-canvas")).toBeVisible();
-  await page.waitForResponse((r) => r.url().endsWith("/trails.geojson"));
+  await overlay;
   expect(external).toEqual([]);
 });
