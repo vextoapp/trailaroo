@@ -1,0 +1,14 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.9/schema.json",
+  "files": { "includes": ["**", "!**/.next", "!**/node_modules", "!**/.turbo", "!docs/mockups", "!packages/core/data", "!**/playwright-report", "!**/test-results", "!**/next-env.d.ts", "!apps/web/public"] },
+  "formatter": { "enabled": false },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": { "noExplicitAny": "error" },
+      "style": { "noNonNullAssertion": "error" }
+    }
+  },
+  "assist": { "enabled": true }
+}
