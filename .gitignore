@@ -9,3 +9,11 @@ coverage/
 *.pmtiles
 .DS_Store
 .superpowers/
+.data/
+apps/web/public/icons.svg
+apps/web/public/fonts/
+playwright-report/
+test-results/
+next-env.d.ts
+*.tsbuildinfo
+!apps/web/public/tiles/act.pmtiles

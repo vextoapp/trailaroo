@@ -1,0 +1,38 @@
+{
+  "name": "@trailaroo/web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "node scripts/sync-assets.mjs",
+    "dev": "next dev",
+    "prebuild": "node scripts/sync-assets.mjs",
+    "build": "next build",
+    "start": "node .next/standalone/apps/web/server.js",
+    "typecheck": "tsc --noEmit",
+    "e2e": "playwright test",
+    "postbuild": "node scripts/prepare-standalone.mjs"
+  },
+  "dependencies": {
+    "@protomaps/basemaps": "5.7.2",
+    "@trailaroo/core": "workspace:*",
+    "maplibre-gl": "5.24.1",
+    "next": "16.4.6",
+    "pmtiles": "4.5.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.1",
+    "@playwright/test": "1.65.1",
+    "@serwist/turbopack": "9.6.0",
+    "@tailwindcss/postcss": "4.3.5",
+    "@types/geojson": "7946.0.16",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.1",
+    "@types/react-dom": "19.3.0",
+    "esbuild": "0.28.2",
+    "serwist": "9.6.0",
+    "tailwindcss": "4.3.5",
+    "typescript": "5.9.3"
+  }
+}
