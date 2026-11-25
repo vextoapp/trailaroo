@@ -2,15 +2,15 @@ import { ImageResponse } from "next/og";
 
 // App icons drawn from the brand mark in docs/mockups/icons.svg (#i-mark), Eucalyptus accent.
 const SIZES = { "icon-192.png": [192, 0.62], "icon-512.png": [512, 0.62], "icon-maskable-512.png": [512, 0.46], "apple-touch-icon.png": [180, 0.62] } as const;
-type File = keyof typeof SIZES;
+type IconFile = keyof typeof SIZES;
 
 export const dynamic = "force-static";
 export const generateStaticParams = () => Object.keys(SIZES).map((file) => ({ file }));
 
 export async function GET(_req: Request, { params }: { params: Promise<{ file: string }> }) {
   const { file } = await params;
-  const spec = SIZES[file as File];
-  if (!spec) return new Response("Not found", { status: 404 });
+  if (!Object.hasOwn(SIZES, file)) return new Response("Not found", { status: 404 });
+  const spec = SIZES[file as IconFile];
   const [size, scale] = spec;
   const mark = Math.round(size * scale);
   return new ImageResponse(

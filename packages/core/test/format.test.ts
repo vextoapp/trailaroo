@@ -7,6 +7,7 @@ describe("formatDistance", () => {
   it("shows one decimal under 10 km", () => expect(formatDistance(8240)).toBe("8.2 km"));
   it("shows whole km from 10 km", () => expect(formatDistance(14_020)).toBe("14 km"));
   it("shows metres under 1 km, rounded to 10 m", () => expect(formatDistance(654)).toBe("650 m"));
+  it("switches to km when metres round up to 1,000", () => expect(formatDistance(996)).toBe("1 km"));
   it("supports miles", () => expect(formatDistance(8046.72, { units: "imperial" })).toBe("5 mi"));
 });
 

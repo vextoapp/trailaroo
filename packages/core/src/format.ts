@@ -8,8 +8,9 @@ export function formatDistance(metres: number, { locale = DEFAULT_LOCALE, units 
     const miles = metres / 1609.344;
     return new Intl.NumberFormat(locale, { style: "unit", unit: "mile", maximumFractionDigits: miles < 10 ? 1 : 0 }).format(miles);
   }
-  if (metres < 1000) {
-    return new Intl.NumberFormat(locale, { style: "unit", unit: "meter", maximumFractionDigits: 0 }).format(Math.round(metres / 10) * 10);
+  const roundedM = Math.round(metres / 10) * 10;
+  if (roundedM < 1000) {
+    return new Intl.NumberFormat(locale, { style: "unit", unit: "meter", maximumFractionDigits: 0 }).format(roundedM);
   }
   const km = metres / 1000;
   return new Intl.NumberFormat(locale, { style: "unit", unit: "kilometer", maximumFractionDigits: km < 10 ? 1 : 0 }).format(km);

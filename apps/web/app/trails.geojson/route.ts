@@ -6,10 +6,10 @@ export const dynamic = "force-static";
 export function GET() {
   return Response.json({
     type: "FeatureCollection",
-    features: trails.map((t) => ({
+    features: trails.map((trail) => ({
       type: "Feature",
-      properties: { slug: t.slug, name: t.name },
-      geometry: { type: "MultiLineString", coordinates: t.lines },
+      properties: { slug: trail.slug, name: trail.name },
+      geometry: { type: "MultiLineString", coordinates: trail.lines },
     })),
   });
 }

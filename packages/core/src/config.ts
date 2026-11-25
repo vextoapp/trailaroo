@@ -5,3 +5,6 @@ export const APP_NAME = "Trailaroo";
 export const HOME_AREA = { name: "Canberra", lon: 149.13, lat: -35.2809 } as const;
 
 export const DEFAULT_LOCALE = "en-AU";
+
+/** localStorage key for the chosen theme. */
+export const THEME_KEY = "theme";

@@ -1,19 +1,29 @@
 "use client";
-import { t } from "@trailaroo/core";
+import { THEME_KEY, t } from "@trailaroo/core";
 import { useEffect, useState } from "react";
 import { Icon } from "./icon";
 
 type Theme = "dark" | "light";
 
+/** Browser chrome matches the page background (--bg) for the theme actually shown. */
+function syncThemeColor() {
+  const bg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+  for (const meta of document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')) meta.content = bg;
+}
+
 export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme | null>(null);
-  useEffect(() => setTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark"), []);
+  useEffect(() => {
+    setTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark");
+    syncThemeColor();
+  }, []);
 
   const next: Theme = theme === "light" ? "dark" : "light";
   const flip = () => {
     document.documentElement.dataset.theme = next;
-    try { localStorage.setItem("trailaroo-theme", next); } catch { /* private mode: not remembered */ }
+    try { localStorage.setItem(THEME_KEY, next); } catch { /* private mode: not remembered */ }
     setTheme(next);
+    syncThemeColor();
     window.dispatchEvent(new CustomEvent("themechange", { detail: next }));
   };
 

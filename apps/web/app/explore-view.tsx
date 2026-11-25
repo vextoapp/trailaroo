@@ -22,8 +22,26 @@ export function ExploreView({ cards }: { cards: TrailCard[] }) {
     return () => mq.removeEventListener("change", update);
   }, []);
   const query = useDeferredValue(q.trim().toLowerCase());
+
+  // Search and view live in the URL (?q=…&view=map) so a filtered list can be shared or bookmarked.
+  const [urlRead, setUrlRead] = useState(false);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setQ(params.get("q") ?? "");
+    if (params.get("view") === "map") setView("map");
+    setUrlRead(true);
+  }, []);
+  useEffect(() => {
+    if (!urlRead) return; // don't overwrite a shared link before it has been read
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (view === "map") params.set("view", "map");
+    const search = params.toString();
+    history.replaceState(null, "", search ? `?${search}` : location.pathname);
+  }, [q, view, urlRead]);
   const shown = query ? cards.filter((c) => c.name.toLowerCase().includes(query)) : cards;
   const count = shown.length === 1 ? t("explore.countOne") : t("explore.count", { count: shown.length });
+  const [creditBefore, creditAfter] = t("credit.osm").split("{osm}");
 
   return (
     <main id="main" className="app-main" data-view={view}>
@@ -58,7 +76,7 @@ export function ExploreView({ cards }: { cards: TrailCard[] }) {
             </div>
           )}
           <p className="meta" style={{ marginTop: "var(--space-3)" }}>
-            Trail data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors
+            {creditBefore}<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>{creditAfter}
           </p>
         </section>
 

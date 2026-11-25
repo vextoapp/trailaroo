@@ -60,7 +60,8 @@ for (const line of readFileSync(`${DATA}/act-routes.opl`, "utf8").split("\n")) {
 // ---- Build trails ----
 const previous = existsSync(OUT) ? trailFileSchema.parse(JSON.parse(readFileSync(OUT, "utf8"))) : null;
 const idByOsm = new Map(previous?.trails.map((t) => [t.osmId, t.id]));
-const round = ([x, y]: Position): Position => [Math.round(x * 1e6) / 1e6, Math.round(y * 1e6) / 1e6];
+const round6 = (v: number) => Math.round(v * 1e6) / 1e6;
+const round = ([x, y]: Position): Position => [round6(x), round6(y)];
 const skipped: Record<string, number> = {};
 const skip = (why: string) => { skipped[why] = (skipped[why] ?? 0) + 1; };
 
@@ -75,9 +76,7 @@ for (const r of relations) {
   const wayMembers = r.members.filter((m) => m.type === "w");
   if (wayMembers.some((m) => !ways.get(m.ref)?.every((n) => nodes.has(n)))) { skip("incomplete in the ACT extract"); continue; }
   if (r.members.some((m) => m.type === "r")) { skip("route of routes"); continue; }
-  const segments = r.members
-    .filter((m) => m.type === "w")
-    .map((m) => (ways.get(m.ref) ?? []).map((n) => nodes.get(n)).filter((p): p is Position => !!p));
+  const segments = wayMembers.map((m) => (ways.get(m.ref) ?? []).map((n) => nodes.get(n)).filter((p): p is Position => !!p));
   const lines = stitch(segments);
   if (!lines.length) { skip("no ways"); continue; }
   // Many disconnected pieces means the mapped route has gaps, so its length can't be trusted yet.
@@ -94,7 +93,7 @@ for (const r of relations) {
     name,
     lengthM,
     start: round(longest[0] as Position),
-    bbox: bbox(lines).map((v) => Math.round(v * 1e6) / 1e6) as Trail["bbox"],
+    bbox: bbox(lines).map(round6) as Trail["bbox"],
     ...optional("from"),
     ...optional("to"),
     ...(tags.network && !/^[ilrn]wn$/.test(tags.network) ? { network: tags.network } : {}),

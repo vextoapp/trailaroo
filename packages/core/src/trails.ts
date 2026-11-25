@@ -10,5 +10,5 @@ const home: Position = [HOME_AREA.lon, HOME_AREA.lat];
 export const trails: readonly Trail[] = [...file.trails].sort((a, b) => distanceM(home, a.start) - distanceM(home, b.start));
 export const importedAt = file.importedAt;
 
-const bySlug = new Map(trails.map((t) => [t.slug, t]));
+const bySlug = new Map(trails.map((trail) => [trail.slug, trail]));
 export const getTrail = (slug: string): Trail | undefined => bySlug.get(slug);
