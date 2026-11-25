@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
-const seriousViolations = async (page: import("@playwright/test").Page) =>
+const seriousViolations = async (page: Page) =>
   (await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze()).violations.filter(
     (v) => v.impact === "serious" || v.impact === "critical",
   );

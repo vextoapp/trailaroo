@@ -1,4 +1,4 @@
-import { APP_NAME, t } from "@trailaroo/core";
+import { APP_NAME, DEFAULT_LOCALE, t } from "@trailaroo/core";
 import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: APP_NAME,
     short_name: APP_NAME,
     description: t("meta.description"),
-    lang: "en-AU",
+    lang: DEFAULT_LOCALE,
     start_url: "/",
     scope: "/",
     display: "standalone",

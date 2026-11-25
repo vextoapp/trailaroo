@@ -1,4 +1,4 @@
-import { formatDistance, t } from "@trailaroo/core";
+import { DEFAULT_LOCALE, formatDistance, HOME_AREA, t } from "@trailaroo/core";
 import { getTrail, importedAt, trails } from "@trailaroo/core/trails";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -16,7 +16,7 @@ export const generateStaticParams = () => trails.map((trail) => ({ slug: trail.s
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const trail = getTrail((await params).slug);
   if (!trail) return {};
-  const description = `${trail.name}: ${formatDistance(trail.lengthM)} walking route near Canberra, from OpenStreetMap.`;
+  const description = t("trail.metaDescription", { name: trail.name, length: formatDistance(trail.lengthM), area: HOME_AREA.name });
   return {
     title: trail.name,
     description,
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-const dateFmt = new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "long", year: "numeric" });
+const dateFmt = new Intl.DateTimeFormat(DEFAULT_LOCALE, { day: "numeric", month: "long", year: "numeric" });
 
 export default async function TrailPage({ params }: Params) {
   const trail = getTrail((await params).slug);
@@ -34,6 +34,8 @@ export default async function TrailPage({ params }: Params) {
   const directions = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
   const osmUrl = `https://www.openstreetmap.org/relation/${trail.osmId}`;
   const place = trail.operator ?? trail.network;
+  const [dataCreditBefore, dataCreditAfter] = t("credit.osmLicence").split("{osm}");
+  const [mapCreditBefore, mapCreditAfter] = t("credit.map", { osm: "OpenStreetMap" }).split("{protomaps}");
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "TouristAttraction",
@@ -69,7 +71,8 @@ export default async function TrailPage({ params }: Params) {
             <p>{t("trail.aboutDataBody", { id: trail.osmId, date: dateFmt.format(new Date(importedAt)) })}</p>
             <p style={{ marginTop: "var(--space-2)" }}><a href={osmUrl}>{t("trail.viewOsm")}</a></p>
             <p className="meta" style={{ marginTop: "var(--space-2)" }}>
-              Trail data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ODbL. Map © <a href="https://protomaps.com">Protomaps</a>, OpenStreetMap contributors.
+              {dataCreditBefore}<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>{dataCreditAfter}{" "}
+              {mapCreditBefore}<a href="https://protomaps.com">Protomaps</a>{mapCreditAfter}
             </p>
           </section>
         </div>

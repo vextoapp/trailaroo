@@ -24,6 +24,7 @@ export function ExploreView({ cards }: { cards: TrailCard[] }) {
   const query = useDeferredValue(q.trim().toLowerCase());
   const shown = query ? cards.filter((c) => c.name.toLowerCase().includes(query)) : cards;
   const count = shown.length === 1 ? t("explore.countOne") : t("explore.count", { count: shown.length });
+  const [creditBefore, creditAfter] = t("credit.osm").split("{osm}");
 
   return (
     <main id="main" className="app-main" data-view={view}>
@@ -58,7 +59,7 @@ export function ExploreView({ cards }: { cards: TrailCard[] }) {
             </div>
           )}
           <p className="meta" style={{ marginTop: "var(--space-3)" }}>
-            Trail data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors
+            {creditBefore}<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>{creditAfter}
           </p>
         </section>
 
