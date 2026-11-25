@@ -88,6 +88,12 @@ We support every activity AllTrails offers, from launch. AllTrails' filter lists
 
 Every feature below ships in v1 and is free. The build order (later section) sequences the work but cuts nothing. Each item is written so Claude Code can turn it into a ticket.
 
+### 0. First visit (added 25 Nov 2026)
+
+- [ ] A home screen for new visitors that says in one look what the app is (free for good, works with no signal, made in the open), how it works in three steps, and offers one clear first step ("Find a trail near you")
+- [ ] Never blocks a shared trail link: someone opening a trail page sees the trail first, with a light "new here?" strip
+- [ ] Returning visitors land on Explore; the home screen stays one tap away under About
+
 ### 1. Explore
 
 - [ ] Unified search: trails, places, parks, peaks and points of interest, with typo tolerance and results ranked by distance and rating
@@ -537,6 +543,7 @@ Each gate is a hands-on test on a real phone. The next phase starts only once th
 - [ ] Every element in the Feature inventory for Explore and Trail page is present
 - [ ] Trail pages are server-rendered with correct titles, previews and structured data
 - [ ] Lighthouse 95+ on a mid-range Android over throttled 4G
+- [ ] First visit: in a hallway test with 5 people who have never seen the app, each can say what it is and open a trail near them within 30 seconds
 
 **M3 Community**
 

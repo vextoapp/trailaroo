@@ -33,7 +33,7 @@ export function contrast(a, b) {
 }
 
 const tokensPath = join(root, "tokens.css");
-const colourFiles = [tokensPath, join(root, "looks.html")];
+const colourFiles = [tokensPath, join(root, "looks.html"), join(root, "directions", "looks.css")];
 if (!existsSync(tokensPath)) {
   fail("contrast", "tokens.css is missing");
 } else {

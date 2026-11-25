@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design sprint</title>
+<link rel="stylesheet" href="sprint.css">
+<script src="../mockups.js"></script>
+<style>
+  body { margin: 0; background: #F4F5F7; color: #14171A; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1000px; margin: 0 auto; padding: 40px 20px 64px; }
+  h1 { font-size: 32px; margin: 0 0 8px; letter-spacing: -0.02em; }
+  p { margin: 0 0 12px; color: #44505C; max-width: 44em; }
+  .cards { display: grid; gap: 16px; margin-top: 28px; }
+  @media (min-width: 800px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+  .card { display: grid; gap: 8px; padding: 20px; border-radius: 12px; background: #FFFFFF; border: 1px solid #DDE1E6; text-decoration: none; color: inherit; }
+  .card:hover { border-color: #6A7480; }
+  .card h2 { margin: 0; font-size: 20px; }
+  .card .links { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; }
+  :focus-visible { outline: 2px solid #0B57D0; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Design sprint: three directions</h1>
+  <p>The same real trails, photos and map, designed three ways. Open each on your phone and on a laptop. Try the trail page: drag along the elevation profile and watch the dot move along the route.</p>
+  <p>Pick one, or mix: "A's layout with B's photos and C's first visit" is a perfectly good answer.</p>
+  <div class="cards">
+    <a class="card" href="a-field-guide.html"><h2>A · Field guide</h2><span>Calm and precise, like Linear and Notion. Map first; the route's magenta, borrowed from printed topo maps, is the brand.</span></a>
+    <a class="card" href="b-golden-hour.html"><h2>B · Golden hour</h2><span>Warm and photo-led, like Airbnb and Luma. Every trail is an invitation.</span></a>
+    <a class="card" href="c-plain-bold.html"><h2>C · Plain and bold</h2><span>Friendly and direct, like Wise. Big words, three simple questions, chunky controls.</span></a>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en-AU" data-look="field">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A: Field guide</title>
+<link rel="stylesheet" href="looks.css">
+<link rel="stylesheet" href="sprint.css">
+<script src="../mockups.js"></script>
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<style>
+  @font-face { font-family: "Instrument Sans"; src: url("../fonts/InstrumentSans-Variable.ttf") format("truetype"); font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; }
+  :root { --font: "Instrument Sans", system-ui, sans-serif; --route: var(--accent); --r: 10px; color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 400 16px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+  h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; text-wrap: balance; }
+  p { margin: 0; }
+  .num { font-variant-numeric: tabular-nums; }
+  .muted { color: var(--text-muted); }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+  .icon { width: 18px; height: 18px; flex: none; }
+
+  /* App bar */
+  .bar { display: flex; align-items: center; gap: 20px; height: 60px; border-bottom: 1px solid var(--divider); background: var(--surface); }
+  .bar .wrap { display: flex; align-items: center; gap: 24px; width: 100%; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 650; text-decoration: none; letter-spacing: -0.01em; }
+  .brand svg { width: 26px; height: 26px; padding: 4px; border-radius: 7px; background: var(--text); color: var(--bg); }
+  .bar nav { display: flex; gap: 4px; margin-left: auto; }
+  .bar nav a { padding: 8px 12px; border-radius: 8px; text-decoration: none; color: var(--text-muted); font-weight: 500; }
+  .bar nav a:hover { color: var(--text); background: var(--surface-2); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: 600 15px var(--font); text-decoration: none; cursor: pointer; transition: background-color .15s, border-color .15s; }
+  .btn:hover { background: var(--surface-2); }
+  .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn-primary:hover { background: var(--text); opacity: .9; }
+
+  /* ---------- First visit ---------- */
+  .hero { display: grid; gap: 32px; padding: 56px 0 40px; }
+  .hero h1 { font-size: clamp(40px, 7vw, 76px); font-weight: 600; letter-spacing: -0.035em; font-stretch: 92%; }
+  .hero .lede { font-size: 19px; max-width: 34em; color: var(--text-muted); margin-top: 20px; }
+  .hero .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+  .hero-map { position: relative; border-radius: var(--r); overflow: hidden; border: 1px solid var(--divider); aspect-ratio: 16 / 11; background: var(--surface-2); }
+  .hero-map img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; display: block; }
+  .readout { position: absolute; left: 14px; bottom: 14px; display: flex; gap: 1px; border-radius: 8px; overflow: hidden; border: 1px solid var(--divider); background: var(--divider); }
+  .readout div { padding: 8px 12px; background: var(--surface); }
+  .readout b { display: block; font-size: 20px; font-weight: 600; }
+  .readout span { font-size: 12px; color: var(--text-muted); }
+  .credit { font-size: 12px; color: var(--text-muted); }
+  .promises { display: grid; border-top: 1px solid var(--divider); }
+  .promises div { display: grid; gap: 4px; padding: 20px 0; border-bottom: 1px solid var(--divider); }
+  .promises h3 { font-size: 17px; }
+  .steps { display: grid; gap: 16px; padding: 48px 0 64px; counter-reset: step; }
+  .steps h2 { font-size: 28px; margin-bottom: 8px; }
+  .steps ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .steps li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 18px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--divider); counter-increment: step; }
+  .steps li::before { content: counter(step); display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--route); color: var(--route); font-weight: 650; }
+  .steps h3 { font-size: 17px; margin-bottom: 4px; }
+  @media (min-width: 900px) {
+    .hero { grid-template-columns: 1.05fr 1fr; align-items: center; padding: 88px 0 56px; }
+    .promises { grid-template-columns: repeat(3, 1fr); border-top: 0; gap: 0 32px; }
+    .promises div { border-top: 1px solid var(--divider); border-bottom: 0; }
+    .steps ol { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* ---------- Explore ---------- */
+  .explore { display: grid; }
+  .panel { display: grid; align-content: start; gap: 14px; padding: 16px 20px 32px; }
+  .search { display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); }
+  .search input { flex: 1; min-width: 0; border: 0; background: none; font: 400 16px var(--font); color: var(--text); outline: none; }
+  .search input::placeholder { color: var(--text-muted); }
+  .search:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+  kbd { font: 500 12px var(--font); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--divider); color: var(--text-muted); }
+  .seg { display: flex; gap: 2px; padding: 3px; border-radius: 8px; background: var(--surface-2); }
+  .seg button { flex: 1; min-height: 36px; border: 0; border-radius: 6px; background: none; color: var(--text-muted); font: 500 14px var(--font); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: 0 0 0 1px var(--divider); }
+  .list-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--text-muted); }
+  .rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--divider); }
+  .rows li { border-bottom: 1px solid var(--divider); }
+  .row { display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center; padding: 12px 6px; text-decoration: none; border-radius: 8px; transition: background-color .15s; }
+  .row:hover { background: var(--surface); }
+  .glyph { width: 56px; height: 56px; border-radius: 8px; background: var(--surface); border: 1px solid var(--divider); padding: 6px; }
+  .glyph svg, .trail-map svg.route-svg { width: 100%; height: 100%; overflow: visible; }
+  .route-casing { fill: none; stroke: var(--surface); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .route { fill: none; stroke: var(--route); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .row h3 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+  .row .stats { display: flex; gap: 12px; font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+  .diff { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; }
+  .diff::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: currentColor; }
+  .diff[data-d="easy"] { color: var(--ok); } .diff[data-d="moderate"] { color: var(--warn); } .diff[data-d="hard"] { color: var(--danger); }
+  .diff[data-d="moderate"]::before { transform: rotate(45deg); } .diff[data-d="hard"]::before { border-radius: 50%; }
+  .map-pane { position: relative; height: 42vh; min-height: 280px; background: var(--surface-2); border-bottom: 1px solid var(--divider); overflow: hidden; }
+  .map-pane img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 25%; }
+  .map-attrib { position: absolute; right: 8px; bottom: 8px; padding: 2px 8px; border-radius: 4px; background: var(--surface); font-size: 11px; color: var(--text-muted); }
+  [data-theme="light"] .only-dark, [data-theme="dark"] .only-light { display: none !important; }
+  @media (min-width: 1000px) {
+    .explore { grid-template-columns: 460px 1fr; height: calc(100dvh - 60px - 37px); }
+    .panel { overflow: auto; border-right: 1px solid var(--divider); }
+    .map-pane { order: 2; height: auto; border-bottom: 0; }
+  }
+
+  /* ---------- Trail ---------- */
+  .crumbs { display: flex; gap: 8px; padding: 20px 0 8px; font-size: 14px; color: var(--text-muted); }
+  .crumbs a { text-decoration: none; } .crumbs a:hover { text-decoration: underline; }
+  .trail-title { font-size: clamp(34px, 5vw, 56px); letter-spacing: -0.03em; font-stretch: 92%; }
+  .panel-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin: 24px 0; border: 1px solid var(--divider); border-radius: var(--r); overflow: hidden; background: var(--divider); }
+  .panel-stats div { padding: 14px 16px; background: var(--surface); }
+  .panel-stats b { display: block; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+  .panel-stats span { font-size: 13px; color: var(--text-muted); }
+  .trail-grid { display: grid; gap: 28px; padding-bottom: 64px; }
+  .instrument { border: 1px solid var(--divider); border-radius: var(--r); overflow: hidden; background: var(--surface); }
+  .trail-map { position: relative; aspect-ratio: 4 / 3; background: var(--surface); }
+  .map-img, .map-overlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .trail-map .route { stroke-width: 4; } .trail-map .route-casing { stroke-width: 9; }
+  .scrub-dot { fill: var(--surface); stroke: var(--route); stroke-width: 3; vector-effect: non-scaling-stroke; }
+  .start-pin { fill: var(--text); stroke: var(--surface); stroke-width: 3; }
+  .profile { position: relative; padding: 16px 16px 12px; border-top: 1px solid var(--divider); }
+  .profile svg { display: block; width: 100%; height: 96px; }
+  .profile .area { fill: var(--route); opacity: .12; } .profile .line { fill: none; stroke: var(--route); stroke-width: 2; vector-effect: non-scaling-stroke; }
+  .scrub-cursor { position: absolute; top: 16px; height: 96px; left: calc(16px + var(--f, 0) * (100% - 32px)); width: 1px; background: var(--text); pointer-events: none; }
+  .profile input[type=range] { position: absolute; left: 16px; right: 16px; top: 16px; width: calc(100% - 32px); height: 96px; margin: 0; opacity: 0; cursor: ew-resize; }
+  .profile input[type=range]:focus-visible + .scrub-readout { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .scrub-readout { display: inline-block; margin-top: 8px; font-size: 13px; font-weight: 600; border-radius: 4px; }
+  .profile-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .side { display: grid; gap: 16px; align-content: start; }
+  .side .btn { justify-content: center; }
+  .notice { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; padding: 14px; border-radius: var(--r); border: 1px solid var(--divider); background: var(--surface); font-size: 14px; }
+  .notice .icon { color: var(--ok); margin-top: 2px; }
+  .notice .src { grid-column: 2; font-size: 12px; color: var(--text-muted); }
+  .photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; display: block; }
+  .facts { display: grid; gap: 0; border-top: 1px solid var(--divider); font-size: 14px; }
+  .facts div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--divider); }
+  @media (min-width: 900px) {
+    .panel-stats { grid-template-columns: repeat(4, 1fr); }
+    .trail-grid { grid-template-columns: 1fr 340px; }
+    .trail-map { aspect-ratio: 7 / 5; }
+  }
+  footer { padding: 24px 0 48px; border-top: 1px solid var(--divider); font-size: 12px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<header class="sprint">
+  <a href="index.html">Design sprint</a><span class="sprint-title">A · Field guide</span>
+  <nav aria-label="Screens"><a data-screen-link href="#first-visit">First visit</a><a data-screen-link href="#explore">Explore</a><a data-screen-link href="#trail">Trail page</a></nav>
+  <button type="button" data-theme-cycle>Light / dark</button>
+</header>
+
+<div class="bar"><div class="wrap">
+  <a class="brand" href="#first-visit"><svg aria-hidden="true"><use href="../icons.svg#i-mark"/></svg><span data-app-name translate="no"></span></a>
+  <nav aria-label="Main"><a href="#explore">Explore</a><a href="#first-visit">About</a></nav>
+</div></div>
+
+<!-- ============ First visit ============ -->
+<main data-screen-panel="first-visit">
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <h1>Every trail near Canberra. Mapped, measured, free.</h1>
+        <p class="lede"><span data-app-name translate="no"></span> is a free, open trail app made by hikers. Find a walk, see exactly what you're in for, and take the map with you when the signal drops.</p>
+        <div class="actions"><a class="btn btn-primary" href="#explore"><svg class="icon" aria-hidden="true"><use href="../icons.svg#i-search"/></svg>Find a trail near you</a><a class="btn" href="#how">How it works</a></div>
+      </div>
+      <figure style="margin:0">
+        <div class="hero-map">
+          <img class="only-light" src="maps/act-field-light.jpg" alt="Map of Canberra with walking trails drawn in magenta">
+          <img class="only-dark" src="maps/act-field-dark.jpg" alt="Map of Canberra with walking trails drawn in magenta">
+          <div class="readout num"><div><b>37</b><span>trails mapped</span></div><div><b>$0</b><span>forever</span></div><div><b>0</b><span>ads</span></div></div>
+        </div>
+        <figcaption class="credit" style="margin-top:6px">Map © Protomaps, OpenStreetMap contributors</figcaption>
+      </figure>
+    </section>
+    <section class="promises" aria-label="What you get">
+      <div><h3>Free, for good</h3><p class="muted">No paid tier and no ads. Offline maps, conditions and safety alerts are free for everyone.</p></div>
+      <div><h3>Works in flight mode</h3><p class="muted">Download a trail at home. The map, the route and your recording keep working with no signal.</p></div>
+      <div><h3>Made in the open</h3><p class="muted">Open data from OpenStreetMap, open code, and fixes from hikers who've just walked it.</p></div>
+    </section>
+    <section class="steps" id="how" aria-labelledby="how-h">
+      <h2 id="how-h">How it works</h2>
+      <ol>
+        <li><div><h3>Find</h3><p class="muted">Search by name or browse the map. Filter by length, climb and difficulty.</p></div></li>
+        <li><div><h3>Check</h3><p class="muted">See the route, the climb, how long it takes and what other hikers report.</p></div></li>
+        <li><div><h3>Go</h3><p class="muted">Download it, get directions to the start and follow the line on the trail.</p></div></li>
+      </ol>
+    </section>
+  </div>
+</main>
+
+<!-- ============ Explore ============ -->
+<main data-screen-panel="explore" hidden>
+  <div class="explore">
+    <div class="map-pane map" aria-label="Map of trails near Canberra. The list shows the same trails as text.">
+      <img class="only-light" src="maps/act-field-light.jpg" alt="">
+      <img class="only-dark" src="maps/act-field-dark.jpg" alt="">
+      <span class="map-attrib">© Protomaps, OpenStreetMap</span>
+    </div>
+    <section class="panel" aria-labelledby="ex-h" data-text-version>
+      <h1 id="ex-h" class="visually-hidden">Explore trails</h1>
+      <label class="search"><svg class="icon" aria-hidden="true"><use href="../icons.svg#i-search"/></svg><span class="visually-hidden">Search</span><input type="search" placeholder="Trails, parks, places…" autocomplete="off"><kbd>/</kbd></label>
+      <div class="seg" role="group" aria-label="Length"><button type="button" aria-pressed="true">Any length</button><button type="button" aria-pressed="false">Under 5 km</button><button type="button" aria-pressed="false">5 to 15 km</button><button type="button" aria-pressed="false">Longer</button></div>
+      <div class="list-head"><span id="ex-count" class="num"></span><span>Closest first</span></div>
+      <ul class="rows" id="ex-rows"></ul>
+      <p class="credit">Trail data © OpenStreetMap contributors. Elevation, time and difficulty are sample values.</p>
+    </section>
+  </div>
+</main>
+
+<!-- ============ Trail ============ -->
+<main data-screen-panel="trail" hidden>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="#explore">Explore</a><span aria-hidden="true">/</span><span>Namadgi National Park</span></nav>
+    <h1 class="trail-title">Square Rock Lookout</h1>
+    <div class="panel-stats num" id="tr-stats"></div>
+    <div class="trail-grid">
+      <div class="instrument scrub" data-trail="Square Rock Lookout">
+        <div class="trail-map map" id="tr-map" aria-label="Map of the Square Rock Lookout route. The details beside it describe the route as text."></div>
+        <div class="profile">
+          <svg viewBox="0 0 600 96" preserveAspectRatio="none" aria-hidden="true"><path class="area" id="tr-area"/><path class="line" id="tr-line"/></svg>
+          <span class="scrub-cursor"></span>
+          <input type="range" min="0" max="1000" value="380" aria-label="Move along the route">
+          <span class="scrub-readout num" aria-hidden="true"></span>
+          <div class="profile-labels num"><span>0 km</span><span>Drag along the climb</span><span id="tr-end"></span></div>
+        </div>
+      </div>
+      <aside class="side" data-text-version>
+        <a class="btn btn-primary" href="#trail"><svg class="icon" aria-hidden="true"><use href="../icons.svg#i-download"/></svg>Download for offline</a>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><a class="btn" href="#trail"><svg class="icon" aria-hidden="true"><use href="../icons.svg#i-car"/></svg>Directions</a><button type="button" class="btn" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="../icons.svg#i-saved"/></svg>Save</button></div>
+        <div class="notice" role="note"><svg class="icon" aria-hidden="true"><use href="../icons.svg#i-check"/></svg><strong>No alerts for this trail</strong><span class="src">ACT Parks and ESA, checked 10 min ago (sample)</span></div>
+        <div class="photos" id="tr-photos"></div>
+        <p class="credit" id="tr-credits"></p>
+        <div class="facts">
+          <div><span class="muted">Route</span><span>Out and back</span></div>
+          <div><span class="muted">Start</span><span class="num">Square Rock car park, Corin Road</span></div>
+          <div><span class="muted">Surface</span><span>Dirt track, granite steps</span></div>
+          <div><span class="muted">Data</span><span>OpenStreetMap, sample stats</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer><div class="wrap">Sample data for the design sprint: real trails from OpenStreetMap; elevation, time, difficulty and alerts are illustrative. Photos from Wikimedia Commons, credited where shown.</div></footer>
+
+<script>
+  const { T, byName, km, route, profile, profilePath, photo, credit, wireScrub, wireScreens } = window.Dir;
+  const label = { easy: "Easy", moderate: "Moderate", hard: "Hard" };
+  // Explore list
+  document.getElementById("ex-count").textContent = `${T.length} trails`;
+  document.getElementById("ex-rows").innerHTML = T.map((t) => `<li><a class="row" href="#trail">
+      <span class="glyph">${route(t)}</span>
+      <span><h3>${t.name}</h3><span class="stats num"><span>${km(t)}</span><span>↑ ${t.up} m</span><span>${t.time}</span></span></span>
+      <span class="diff" data-d="${t.diff}">${label[t.diff]}</span></a></li>`).join("");
+  // Trail page
+  const t = byName("Square Rock Lookout");
+  document.getElementById("tr-stats").innerHTML = `<div><b>${km(t)}</b><span>Length</span></div><div><b>${t.up} m</b><span>Elevation gain</span></div><div><b>${t.time}</b><span>Estimated time</span></div><div><b class="diff" data-d="${t.diff}" style="font-size:28px">${label[t.diff]}</b><span>Difficulty</span></div>`;
+  document.getElementById("tr-map").innerHTML = window.Dir.trailMap(t.name, "square-rock");
+  const pp = profilePath(profile(t), 600, 96);
+  document.getElementById("tr-area").setAttribute("d", pp.area); document.getElementById("tr-line").setAttribute("d", pp.line);
+  document.getElementById("tr-end").textContent = km(t);
+  document.getElementById("tr-photos").innerHTML = t.photos.map((id) => `<img data-photo="${id}" alt="On the Square Rock walking track" loading="lazy">`).join("");
+  document.getElementById("tr-credits").innerHTML = t.photos.map(credit).join("; ");
+  window.Dir.fillPhotos();
+  document.querySelectorAll(".scrub").forEach(wireScrub);
+  wireScreens();
+</script>
+</body>
+</html>
