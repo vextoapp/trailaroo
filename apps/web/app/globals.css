@@ -6,47 +6,49 @@
 @import "../../../docs/mockups/tokens.css";
 @import "../../../docs/mockups/mockups.css";
 
-/* The mock-ups load the font relative to their folder; the app serves it from /fonts. */
-@font-face {
-  font-family: "Public Sans";
-  src: url("/fonts/PublicSans-Variable.ttf") format("truetype");
-  font-weight: 100 900;
-  font-display: swap;
-}
+/* Fonts come from next/font (app/fonts.ts): small self-hosted WOFF2 files, preloaded. */
+:root:root { --font-sans: var(--font-public-sans), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif; }
 
 /* ---------- App-only layout (Explore, mirrors explore.html) ---------- */
 /* M0 has a top header instead of the mock-ups' sidebar nav, which arrives with Saved and Record. */
 body:not(.gallery) { display: block; }
-.app-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: calc(var(--space-2) + env(safe-area-inset-top)) calc(var(--space-4) + env(safe-area-inset-right)) var(--space-2) calc(var(--space-4) + env(safe-area-inset-left)); background: var(--surface); border-bottom: 1px solid var(--divider); position: sticky; top: 0; z-index: 20; }
+.app-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: calc(var(--space-2) + env(safe-area-inset-top)) calc(var(--space-4) + env(safe-area-inset-right)) var(--space-2) calc(var(--space-4) + env(safe-area-inset-left)); background: var(--bg); border-bottom: 1px solid var(--divider); position: sticky; top: 0; z-index: 20; }
 html { scroll-padding-top: calc(72px + env(safe-area-inset-top)); }
-.app-header .brand { display: flex; align-items: center; gap: var(--space-2); color: var(--text); text-decoration: none; font-weight: 750; font-size: var(--step-1); min-height: var(--tap); }
-.brand-mark { width: 32px; height: 32px; padding: 5px; border-radius: var(--radius-s); background: var(--accent); color: var(--accent-contrast); }
+.app-header .brand { display: flex; align-items: center; gap: var(--space-2); color: var(--text); text-decoration: none; font: 600 var(--step-1) var(--font-display); font-variation-settings: "SOFT" 100; min-height: var(--tap); }
+.brand-mark { width: 36px; height: 36px; padding: 7px; border-radius: 50%; background: var(--wattle); color: var(--on-wattle); }
+.app-header nav { display: flex; align-items: center; gap: var(--space-1); margin-left: auto; }
+.app-header nav a { padding: 10px 16px; border-radius: var(--radius-pill); color: var(--text-muted); text-decoration: none; font-weight: 600; }
+.app-header nav a:hover, .app-header nav a[aria-current="page"] { background: var(--surface); color: var(--text); }
 .app-main { padding: var(--space-4) calc(var(--space-4) + env(safe-area-inset-right)) var(--space-8) calc(var(--space-4) + env(safe-area-inset-left)); max-width: 1440px; margin: 0 auto; }
 .preview-banner { margin-bottom: var(--space-4); }
-.where { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin: var(--space-4) 0 var(--space-3); }
-.where p { font-size: var(--step--1); color: var(--text-muted); }
-.where strong { color: var(--text); }
-.results-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; margin: var(--space-4) 0 var(--space-3); }
-.results-head h2 { font-size: var(--step-1); }
-.explore-map { height: calc(100dvh - 220px); min-height: 420px; }
-.view-switch { position: fixed; z-index: 15; left: 50%; bottom: calc(var(--space-5) + env(safe-area-inset-bottom)); transform: translateX(-50%); box-shadow: 0 2px 10px rgb(0 0 0 / 0.35); }
-[data-view="list"] .explore-map { display: none; }
-[data-view="map"] .results { display: none; }
 .map > .map-canvas { position: absolute; inset: 0; } /* beats .maplibregl-map { position: relative } */
 .map-status { position: absolute; inset: 0; display: grid; place-items: center; color: var(--text-muted); }
-.trail-map { height: 340px; order: -1; } /* map first on phones, beside the details on desktop */
-.trail-head { display: grid; gap: var(--space-2); margin: var(--space-4) 0; }
-.trail-layout { display: grid; gap: var(--space-5); }
 .maplibregl-ctrl-attrib { font-family: var(--font-sans); }
-@media (min-width: 1024px) {
-  .app-main { padding: var(--space-5) var(--space-6) var(--space-8); }
-  .explore-top { max-width: 760px; }
-  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-5); align-items: start; }
-  .split .card-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-  [data-view] .explore-map { display: block; position: sticky; top: calc(var(--space-5) + 60px); height: calc(100dvh - 2 * var(--space-5) - 60px); }
-  [data-view] .results { display: block; }
-  .view-switch { display: none; }
-  .trail-layout { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; }
-  .trail-map { order: 0; }
-  .trail-map { height: calc(100dvh - 160px); position: sticky; top: calc(var(--space-5) + 60px); }
+
+/* ---------- Golden hour, app layout (mirrors docs/mockups home, explore, trail) ---------- */
+.page { padding-left: calc(var(--space-5) + env(safe-area-inset-left)); padding-right: calc(var(--space-5) + env(safe-area-inset-right)); }
+.glass-toggle .btn { color: #FFFFFF; background: rgb(255 255 255 / 0.18); backdrop-filter: blur(8px); }
+.ex-top { position: sticky; top: calc(61px + env(safe-area-inset-top)); z-index: 12; background: var(--bg); padding-top: var(--space-4); }
+.ex-split { display: grid; gap: var(--space-6); padding: var(--space-5) 0 140px; }
+.ex-count { font: 500 var(--step-0) var(--font-sans); color: var(--text-muted); margin: var(--space-4) 0; }
+.ex-map { position: relative; height: 70vh; border-radius: var(--radius-m); overflow: hidden; }
+.explore[data-view="list"] .ex-map { display: none; }
+.explore[data-view="map"] .results { display: none; }
+@media (min-width: 760px) { .finder { grid-template-columns: 1fr auto; } }
+@media (min-width: 1100px) {
+  .ex-split { grid-template-columns: minmax(0, 1fr) 40%; align-items: start; }
+  .explore[data-view] .ex-map { display: block; position: sticky; top: 200px; height: calc(100dvh - 230px); }
+  .explore[data-view] .results { display: block; }
+  .explore .float-switch { display: none; }
 }
+.explore .float-switch { bottom: calc(var(--space-5) + env(safe-area-inset-bottom)); }
+.trail-top { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); padding: var(--space-4) 0; }
+.trail-top .newhere { flex: 1; min-width: 240px; }
+.trail-cover { aspect-ratio: 21 / 8; border-radius: var(--radius-m); overflow: hidden; }
+.trail-cover svg { width: 70%; height: 82%; }
+@media (max-width: 899px) { .trail-cover { aspect-ratio: 16 / 10; } }
+.trail-cover .route-casing, .trail-cover .route { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.trail-cover .route-casing { stroke-width: 10; } .trail-cover .route { stroke-width: 4.5; }
+.trail .trail-map { aspect-ratio: 7 / 5; height: auto; order: 0; position: relative; }
+.book-phone { display: none; }
+@media (max-width: 899px) { .book { bottom: env(safe-area-inset-bottom); } .book-phone { display: block; white-space: nowrap; } }

@@ -90,9 +90,9 @@ Every feature below ships in v1 and is free. The build order (later section) seq
 
 ### 0. First visit (added 25 Nov 2026)
 
-- [ ] A home screen for new visitors that says in one look what the app is (free for good, works with no signal, made in the open), how it works in three steps, and offers one clear first step ("Find a trail near you")
-- [ ] Never blocks a shared trail link: someone opening a trail page sees the trail first, with a light "new here?" strip
-- [ ] Returning visitors land on Explore; the home screen stays one tap away under About
+- [x] A home screen for new visitors that says in one look what the app is (free for good, works with no signal, made in the open), how it works in three steps, and offers one clear first step ("Find a trail near you")
+- [x] Never blocks a shared trail link: someone opening a trail page sees the trail first, with a light "new here?" strip
+- [ ] Returning visitors land on Explore; the home screen stays one tap away under About (done for the installed app via start_url; the website still opens on the home page)
 
 ### 1. Explore
 

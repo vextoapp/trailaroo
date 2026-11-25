@@ -2,7 +2,7 @@ import { SerwistProvider } from "@serwist/turbopack/react";
 import { APP_NAME, DEFAULT_LOCALE, THEME_KEY, t } from "@trailaroo/core";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Header } from "@/components/header";
+import { appBodyFont, appDisplayFont } from "./fonts";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -10,7 +10,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: APP_NAME,
-  title: { default: `${t("explore.title")} · ${APP_NAME}`, template: `%s · ${APP_NAME}` },
+  title: { default: `${APP_NAME}: ${t("home.titleTag")}`, template: `%s · ${APP_NAME}` },
   description: t("meta.description"),
   appleWebApp: { capable: true, title: APP_NAME, statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },
@@ -24,8 +24,8 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   // Same values as --bg in docs/mockups/tokens.css.
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#16201E" },
-    { media: "(prefers-color-scheme: light)", color: "#F1F4F1" },
+    { media: "(prefers-color-scheme: dark)", color: "#14110E" },
+    { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
   ],
 };
 
@@ -34,16 +34,14 @@ const themeScript = `(function(){var m;try{m=localStorage.getItem(${JSON.stringi
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang={DEFAULT_LOCALE} suppressHydrationWarning>
+    <html lang={DEFAULT_LOCALE} className={`${appBodyFont.variable} ${appDisplayFont.variable}`} suppressHydrationWarning>
       <head>
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: static theme bootstrap, no user input */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <link rel="preload" href="/fonts/PublicSans-Variable.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
       </head>
       <body>
         <SerwistProvider swUrl="/serwist/sw.js" disable={process.env.NODE_ENV === "development"}>
           <a className="skip" href="#main">{t("skip")}</a>
-          <Header />
           {children}
         </SerwistProvider>
       </body>
