@@ -14,7 +14,7 @@ export function Header() {
       </Link>
       <nav aria-label={t("nav.main")}>
         <Link href="/explore" aria-current={path.startsWith("/explore") ? "page" : undefined}>{t("nav.explore")}</Link>
-        <Link href="/" aria-current={path === "/" ? "page" : undefined}>{t("nav.about")}</Link>
+        <Link href="/">{t("nav.about")}</Link>
       </nav>
       <ThemeToggle />
     </header>

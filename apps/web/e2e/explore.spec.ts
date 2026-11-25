@@ -53,7 +53,7 @@ test("Home explains the app and leads to Explore", async ({ page }) => {
   await expect(page.locator(".pcard").first()).toContainText("Black");
 });
 
-test("Length chips filter trails and a shared trail link offers the intro", async ({ page }) => {
+test("Length chips filter trails; someone browsing Explore isn't shown the intro strip", async ({ page }) => {
   await page.goto("/explore?len=long");
   const heading = page.locator("#count");
   await expect(heading).toHaveText(/^\d+ trails?$/);
@@ -61,5 +61,13 @@ test("Length chips filter trails and a shared trail link offers the intro", asyn
   await page.getByRole("button", { name: "All trails" }).click();
   await expect(heading).not.toHaveText(`${long} trails`);
   await page.locator(".pcard .title-link").first().click();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("link", { name: "See what it does" })).toHaveCount(0);
+});
+
+test("Someone opening a shared trail link directly gets the intro strip, and the trail first", async ({ page }) => {
+  const geo = await (await page.request.get("/trails.geojson")).json();
+  await page.goto(`/trails/${geo.features[0].properties.slug}`);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByRole("link", { name: "See what it does" })).toBeVisible();
 });

@@ -24,7 +24,6 @@ export default function Home() {
   const [osmCreditBefore, osmCreditAfter] = t("credit.osm").split("{osm}");
   return (
     <>
-      <a className="skip" href="#main">{t("skip")}</a>
       <SeenHome />
       <main id="main">
         <div className="home-hero">

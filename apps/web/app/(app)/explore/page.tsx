@@ -2,6 +2,7 @@ import { distanceM, formatDistance, HOME_AREA, t } from "@trailaroo/core";
 import { trails } from "@trailaroo/core/trails";
 import type { Metadata } from "next";
 import { RouteSvg } from "@/components/route-svg";
+import { SeenHome } from "@/components/seen-home";
 import { type ExploreCard, ExploreView } from "../explore-view";
 
 export const metadata: Metadata = { title: t("explore.title") };
@@ -15,5 +16,10 @@ export default function ExplorePage() {
     meta: [trail.operator ?? trail.network, t("explore.away", { distance: formatDistance(distanceM(home, trail.start)) }), formatDistance(trail.lengthM)].filter(Boolean).join(" · "),
     cover: <RouteSvg trail={trail} />,
   }));
-  return <ExploreView cards={cards} />;
+  return (
+    <>
+      <SeenHome />
+      <ExploreView cards={cards} />
+    </>
+  );
 }
