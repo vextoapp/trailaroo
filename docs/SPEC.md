@@ -489,11 +489,11 @@ Everything ships before the public launch, but it's built in nine milestones, ea
 ```mermaid
 flowchart TB
   subgraph P1["Foundations"]
-    M0["M0 First trails live: real ACT trails as list, map and trail pages on trailaroo.com; installable; CI"] --> M1["M1 Data pipeline: Postgres + PostGIS, API service, OSM import, trail stats, parks, map and terrain tiles, search (ACT and NSW)"]
+    M0["M0 First trails live: real ACT trails as list, map and trail pages on trailaroo.com; installable; CI"] --> M1["M1 Real trail data: 300+ ACT and NSW trails, elevation, difficulty and time, parks, map labels, filters, tiles on R2, nightly refresh"]
   end
   M1 --> G1{{"Gate: real ACT trails load with correct length, elevation and time"}}
   subgraph P2["Core app"]
-    M2["M2 Explore and trail pages"] --> M3["M3 Community: reviews, photos, lists, conditions, alerts, moderation"]
+    M2["M2 Explore and trail pages, place search, fire danger and park alerts"] --> M3["M3 Community: accounts, Postgres + API, reviews, photos, lists, conditions, moderation"]
   end
   G1 --> M2
   M3 --> G2{{"Gate: browse, save and review work end to end on a phone"}}
@@ -516,20 +516,24 @@ Each gate is a hands-on test on a real phone. The next phase starts only once th
 
 **M0 First trails live** (reshaped 25 Nov 2026 so the first milestone ends with something people can use; plumbing arrives in the milestone that needs it)
 
-- [ ] Real ACT trails from OpenStreetMap are live on trailaroo.com as a list, a map and trail pages that match the mock-ups
-- [ ] The app installs to the Home Screen and reopens visited pages in flight mode on iPhone and Android
-- [ ] A fresh clone runs with one command; CI blocks merges on lint, types, tests and accessibility checks
+- [x] Real ACT trails from OpenStreetMap are live on trailaroo.com as a list, a map and trail pages that match the mock-ups (37 trails, 25 Nov 2026)
+- [x] The app installs to the Home Screen and reopens visited pages in flight mode on iPhone and Android (checked on a phone, 25 Nov 2026)
+- [x] A fresh clone runs with one command; CI blocks merges on lint, types, tests and accessibility checks (ruleset "main: CI must pass")
 - [ ] Running cost is under US$10 a month
 
-**M1 Data pipeline**
+**M1 Real trail data** (reshaped 25 Nov 2026, like M0: everything a hiker sees stays, plumbing moves to the milestone that needs it)
 
-- [ ] At least 300 ACT and NSW trails imported (sources beyond OSM route relations: named OSM paths assembled into walks, official park walks where the licence allows, and routes contributed by walking and MTB clubs), with length within 2% and elevation gain within 10% of a reference GPS track for 20 sample trails
-- [ ] Map, terrain and trail tiles served from R2 through the CDN; the app never calls public OSM servers
-- [ ] Daily OSM updates and 30-minute alert polling run on their own; a stalled feed raises an alert
-- [ ] Trails live in Postgres + PostGIS and are served by the Hono API, which the web app now reads from
+- [ ] At least 300 ACT and NSW trails across activity families, mostly from OSM walking and MTB route relations (about 280 walking and 1,264 bike relations existed in Nov 2026), with length within 2% and elevation gain within 10% of a reference GPS track for 20 sample trails. Later sources: named OSM paths assembled into walks, official park walks where the licence allows, and routes contributed by clubs
+- [ ] Every trail shows elevation gain, an elevation profile, difficulty and estimated time from Mapterhorn terrain, and its park name from CAPAD; the preview banner no longer says "length only"
+- [ ] Map shows place and feature names from fonts we host; Explore has difficulty, length, elevation and activity filters and sorting
+- [ ] Map, terrain and trail tiles served from R2 through the Cloudflare CDN; the app never calls public OSM servers
+- [ ] A free nightly GitHub Action rebuilds the trail data from OSM and opens a PR when it changes; a failed rebuild raises an alert
+- [ ] Running cost still under US$10 a month (trail data stays a built file; no database yet)
 
 **M2 Explore and trail pages**
 
+- [ ] Place search ("Find cities, parks and peaks") through our own Photon index
+- [ ] Fire danger and park alerts polled every 30 minutes, matched to trails, always shown with source and time and never past expiry; a stalled feed shows as stale and raises an alert
 - [ ] Every element in the Feature inventory for Explore and Trail page is present
 - [ ] Trail pages are server-rendered with correct titles, previews and structured data
 - [ ] Lighthouse 95+ on a mid-range Android over throttled 4G
@@ -537,6 +541,7 @@ Each gate is a hands-on test on a real phone. The next phase starts only once th
 **M3 Community**
 
 - [ ] Sign-in with passkey, magic link and Google works in the browser and the installed app on iPhone and Android
+- [ ] Trails move into Postgres + PostGIS behind the Hono API (needed once users write reviews, lists and reports); the web app reads from the API
 - [ ] A new user posts a review with photos in under 30 seconds
 - [ ] Moderation queue, reports, trust levels and appeals work; location data is removed from public photos
 - [ ] Official alerts appear on the matching trails within 30 minutes
@@ -716,7 +721,7 @@ The full product spec is docs/SPEC.md. Read the relevant section before starting
 
 1. **Design first (plan mode):** "Read CLAUDE.md and docs/SPEC.md, especially Design system, Activities and Feature inventory. Create clickable HTML mock-ups in docs/mockups/ for Explore, Trail page, Record, Saved, Activity and Profile, mobile and desktop, dark and light. Don't write app code yet." Review and adjust until you like the look.
 2. **M0:** "Plan M0 from docs/SPEC.md > Build order, then build it: the smallest monorepo that puts real ACT trails live on the domain as a list, map and trail pages matching the mock-ups, installable with an offline shell, with CI (lint, typecheck, tests, axe). Stop when the M0 acceptance checks pass and tick them in SPEC."
-3. **M1:** "Plan and build M1 for the ACT and NSW: OSM import into PostGIS, trails from route relations for every activity family, stats from Mapterhorn terrain, CAPAD parks, the Protomaps extract and our trail overlay as PMTiles on R2, BRouter with one profile per family, and a Photon index. Include pnpm db:seed with 50 real ACT trails across several activities."
+3. **M1:** "Plan and build M1 for the ACT and NSW from SPEC > Acceptance checks: more trails from OSM walking and MTB route relations, stats from Mapterhorn terrain, CAPAD parks, self-hosted map fonts, Explore filters, PMTiles on R2, and a nightly GitHub Action that rebuilds the trail file. Keep trail data as a built file; Postgres arrives in M3."
 4. **M2 to M8:** one milestone per session, same pattern: "Plan M\<n> from SPEC, build it, run its acceptance checks, tick them in SPEC." Test each gate yourself on a real phone before moving on.
 
 ### Before writing code
