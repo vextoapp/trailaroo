@@ -29,13 +29,13 @@
 <body class="gallery">
 <header class="gallery-head">
   <h1>Mock-ups</h1>
-  <p>Six main screens at phone and desktop size. Click inside any frame to use it, or open a screen full size. Sample data, drawn maps.</p>
+  <p>The main screens at phone and desktop size. Click inside any frame to use it, or open a screen full size. Sample data; real trails, maps and photos where shown.</p>
   <div class="segmented" role="group" aria-label="Theme for all frames">
     <button type="button" data-theme-choice="dark">Dark</button>
     <button type="button" data-theme-choice="light">Light</button>
     <button type="button" data-theme-choice="system">System</button>
   </div>
-  <p class="meta" style="margin-top: var(--space-3)"><a href="looks.html">How the look was chosen</a> · <a href="directions/index.html">Design sprint: three new directions (25 Nov 2026)</a></p>
+  <p class="meta" style="margin-top: var(--space-3)"><a href="looks.html">How the look was chosen</a> · Look: Golden hour, chosen in the 25 Nov 2026 design sprint</p>
 </header>
 
 <main id="gallery"></main>
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-  const screens = [["explore", "Explore"], ["trail", "Trail page"], ["record", "Record"], ["saved", "Saved"], ["activity", "Activity"], ["profile", "Profile"]];
+  const screens = [["home", "Home (first visit)"], ["explore", "Explore"], ["trail", "Trail page"], ["record", "Record"], ["saved", "Saved"], ["activity", "Activity"], ["profile", "Profile"]];
   const out = document.getElementById("gallery");
   const tpl = document.getElementById("row");
   for (const [file, name] of screens) {

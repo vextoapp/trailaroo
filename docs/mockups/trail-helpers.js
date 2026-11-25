@@ -1,9 +1,9 @@
-// Shared behaviour for the three design directions. Data: data.js. No dependencies.
+// Helpers for the Golden hour mock-ups (home, explore, trail): real trails from data.js, photos, the elevation scrub. No dependencies.
 (function () {
   const T = window.TRAILS;
   const credits = window.PHOTO_CREDITS;
   const byName = (n) => T.find((t) => t.name === n);
-  const photo = (id) => `../photos/${id}.jpg`;
+  const photo = (id) => `photos/${id}.jpg`;
   const hash = (s) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
 
   // SAMPLE elevation profile until M1 computes real ones: smooth, deterministic, totals about t.up metres of climb.
@@ -74,6 +74,10 @@
   const fillPhotos = (root = document) => {
     root.querySelectorAll("img[data-photo]").forEach((img) => { img.src = photo(img.dataset.photo); });
     root.querySelectorAll("img[data-mapimg]").forEach((img) => { img.src = `maps/${img.dataset.mapimg}.jpg`; });
+    // A map image that follows the theme: data-themed-map="act" -> maps/act-light.jpg or act-dark.jpg.
+    const themed = () => root.querySelectorAll("img[data-themed-map]").forEach((img) => { img.src = `maps/${img.dataset.themedMap}-${document.documentElement.dataset.theme === "dark" ? "dark" : "light"}.jpg`; });
+    themed();
+    new MutationObserver(themed).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   };
 
   // A real rendered map (light and dark) with the route drawn on top in the direction's own colour.
@@ -85,6 +89,13 @@
         <path class="route-casing" d="${r.path}"/><path class="route scrub-route" d="${r.path}"/>
         <circle class="start-pin" cx="${m[1]}" cy="${m[2]}" r="9"/><circle class="scrub-dot" r="11"/></svg>`;
   }
+
+  // A Golden hour trail card: photo with a mini route map, or a drawn cover when there's no photo.
+  const label = { easy: "Easy", moderate: "Moderate", hard: "Hard" };
+  window.cardHtml = (t) => `<article class="pcard">
+      <div class="cover${t.photos.length ? "" : " drawn"}">${t.photos.length ? `<img data-photo="${t.photos[0]}" alt="" loading="lazy"><span class="chip-map">${route(t)}</span>` : route(t)}</div>
+      <button type="button" class="heart" data-save aria-pressed="false" aria-label="Save ${t.name}"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved"/></svg></button>
+      <div><h3><a class="title-link" href="trail.html">${t.name}</a></h3><p class="meta num">${t.away} km away · ${km(t)} · ${t.time} · ${label[t.diff]}</p></div></article>`;
 
   window.Dir = { fillPhotos, trailMap, T, byName, photo, profile, profilePath, route, credit, km, wireScrub, wireScreens };
 })();

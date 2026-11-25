@@ -33,7 +33,7 @@ export function contrast(a, b) {
 }
 
 const tokensPath = join(root, "tokens.css");
-const colourFiles = [tokensPath, join(root, "looks.html"), join(root, "directions", "looks.css")];
+const colourFiles = [tokensPath, join(root, "looks.html")];
 if (!existsSync(tokensPath)) {
   fail("contrast", "tokens.css is missing");
 } else {
@@ -104,7 +104,7 @@ for (const f of htmlFiles) {
 }
 
 // ---------- screens exist and share the base files ----------
-const screens = ["explore", "trail", "record", "saved", "activity", "profile"];
+const screens = ["home", "explore", "trail", "record", "saved", "activity", "profile"];
 if (existsSync(join(root, "index.html"))) {
   for (const name of screens) {
     const p = join(root, `${name}.html`);
