@@ -45,7 +45,11 @@ export default async function TrailPage({ params }: Params) {
 
   return (
     <main id="main" className="app-main">
-      <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD from our own data, with < escaped
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
       <Link href="/" className="btn btn-quiet"><Icon id="i-back" small />{t("trail.back")}</Link>
       <div className="trail-layout">
         <div>

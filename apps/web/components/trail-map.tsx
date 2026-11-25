@@ -52,10 +52,12 @@ export default function TrailMap(props: Props) {
   const el = useRef<HTMLElement>(null);
   const router = useRouter();
   const [ready, setReady] = useState(false);
+  const [offline, setOffline] = useState(false);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: create the map once per mount
   useEffect(() => {
     if (!el.current) return;
+    if (!navigator.onLine) { setOffline(true); return; }
     ensureProtocol();
     const data: string | FeatureCollection =
       props.mode === "all"
@@ -96,7 +98,7 @@ export default function TrailMap(props: Props) {
   return (
     <>
       <section ref={el} className="map-canvas" aria-label={props.label} />
-      {!ready && <p className="map-status" aria-hidden="true">{t("map.loading")}</p>}
+      {!ready && <p className="map-status" aria-hidden={!offline}>{t(offline ? "map.offline" : "map.loading")}</p>}
     </>
   );
 }

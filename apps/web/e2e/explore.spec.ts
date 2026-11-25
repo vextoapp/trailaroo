@@ -19,6 +19,7 @@ test("Explore lists real trails, filters by name and opens a trail page", async 
   const name = (await firstLink.textContent()) ?? "";
   await page.getByRole("searchbox", { name: "Search" }).fill(name.slice(0, 6));
   await expect(heading).not.toHaveText(`${total} trails`);
+  await expect(page).toHaveURL(/\?q=/);
 
   await page.locator(".trail-card .title a").first().click();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

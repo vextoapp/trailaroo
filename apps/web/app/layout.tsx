@@ -38,6 +38,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: static theme bootstrap, no user input */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <link rel="preload" href="/fonts/PublicSans-Variable.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
       </head>
       <body>
         <SerwistProvider swUrl="/serwist/sw.js" disable={process.env.NODE_ENV === "development"}>
