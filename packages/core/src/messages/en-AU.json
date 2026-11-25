@@ -20,7 +20,6 @@
   "credit.osm": "Trail data © {osm} contributors",
   "credit.osmLicence": "Trail data © {osm} contributors, ODbL.",
   "credit.map": "Map © {protomaps}, {osm} contributors.",
-  "trail.length": "Length",
   "trail.start": "Start",
   "trail.directions": "Directions to the start",
   "trail.from": "From {from} to {to}",

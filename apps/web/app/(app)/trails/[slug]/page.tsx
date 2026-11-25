@@ -35,6 +35,7 @@ export default async function TrailPage({ params }: Params) {
   const directions = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
   const osmUrl = `https://www.openstreetmap.org/relation/${trail.osmId}`;
   const place = trail.operator ?? trail.network;
+  const length = formatDistance(trail.lengthM);
   const [dataCreditBefore, dataCreditAfter] = t("credit.osmLicence").split("{osm}");
   const [mapCreditBefore, mapCreditAfter] = t("credit.map", { osm: "OpenStreetMap" }).split("{protomaps}");
   const jsonLd = {
@@ -60,7 +61,7 @@ export default async function TrailPage({ params }: Params) {
         <h1>{trail.name}</h1>
         <div className="sub">
           {place && <span>{place}</span>}
-          <span className="pill-tag num">{formatDistance(trail.lengthM)}</span>
+          <span className="pill-tag num">{length}</span>
           <span>{t("trail.walkingRoute")}</span>
         </div>
       </div>
@@ -95,10 +96,10 @@ export default async function TrailPage({ params }: Params) {
         </div>
         <aside className="book" aria-label={t("trail.actions")}>
           <div className="book-detail">
-            <p className="num" style={{ fontWeight: 650, fontSize: "var(--step-1)" }}>{formatDistance(trail.lengthM)}</p>
+            <p className="num" style={{ fontWeight: 650, fontSize: "var(--step-1)" }}>{length}</p>
             <p className="meta num">{t("trail.start")}: {lat.toFixed(4)}, {lon.toFixed(4)}</p>
           </div>
-          <b className="book-phone num">{formatDistance(trail.lengthM)}</b>
+          <b className="book-phone num">{length}</b>
           <a className="btn btn-primary" href={directions} rel="noopener" target="_blank"><Icon id="i-car" small />{t("trail.directions")}</a>
         </aside>
       </div>

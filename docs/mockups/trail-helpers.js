@@ -58,18 +58,6 @@
     update();
   }
 
-  // Screens inside one direction: #first-visit, #explore, #trail.
-  function wireScreens() {
-    const show = () => {
-      const id = location.hash.slice(1) || "first-visit";
-      document.querySelectorAll("[data-screen-panel]").forEach((s) => { s.hidden = s.dataset.screenPanel !== id; });
-      document.querySelectorAll("[data-screen-link]").forEach((a) => a.setAttribute("aria-current", a.getAttribute("href") === `#${id}` ? "page" : "false"));
-      window.scrollTo(0, 0);
-    };
-    window.addEventListener("hashchange", show);
-    show();
-  }
-
   // Images are written as data-photo="id" and filled here, so every page shares one photo folder.
   const fillPhotos = (root = document) => {
     root.querySelectorAll("img[data-photo]").forEach((img) => { img.src = photo(img.dataset.photo); });
@@ -97,5 +85,5 @@
       <button type="button" class="heart" data-save aria-pressed="false" aria-label="Save ${t.name}"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved"/></svg></button>
       <div><h3><a class="title-link" href="trail.html">${t.name}</a></h3><p class="meta num">${t.away} km away · ${km(t)} · ${t.time} · ${label[t.diff]}</p></div></article>`;
 
-  window.Dir = { fillPhotos, trailMap, T, byName, photo, profile, profilePath, route, credit, km, wireScrub, wireScreens };
+  window.Dir = { fillPhotos, trailMap, T, byName, photo, profile, profilePath, route, credit, km, wireScrub };
 })();

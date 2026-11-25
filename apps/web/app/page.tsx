@@ -21,6 +21,7 @@ const MOODS = [
 export default function Home() {
   const home: [number, number] = [HOME_AREA.lon, HOME_AREA.lat];
   const near = trails.slice(0, 8);
+  const [osmCreditBefore, osmCreditAfter] = t("credit.osm").split("{osm}");
   return (
     <>
       <a className="skip" href="#main">{t("skip")}</a>
@@ -78,9 +79,9 @@ export default function Home() {
           <footer className="credit" style={{ paddingBottom: "var(--space-7)" }}>
             <p>{t("home.previewNote")}</p>
             <p style={{ marginTop: "var(--space-2)" }}>
-              Trail data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors. {t("home.photosFrom")}{" "}
-              {[HOME_PHOTOS.short, HOME_PHOTOS.morning, HOME_PHOTOS.long, HOME_PHOTOS.all].map((p, i) => (
-                <span key={p.src}>{i ? "; " : ""}<PhotoCredit photo={p} className="" /></span>
+              {osmCreditBefore}<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>{osmCreditAfter}. {t("home.photosFrom")}{" "}
+              {MOODS.map(({ photo }, i) => (
+                <span key={photo.src}>{i ? "; " : ""}<PhotoCredit photo={photo} className="" /></span>
               ))}
             </p>
           </footer>

@@ -262,7 +262,7 @@ dialog.sheet::backdrop { background: rgb(0 0 0 / 0.55); }
 .cover.drawn .route-casing { stroke: rgb(0 0 0 / 0.25); }
 .cover.drawn .route { stroke: var(--wattle); }
 .chip-map { position: absolute; right: 10px; bottom: 10px; width: 64px; height: 64px; padding: 6px; border-radius: 14px; background: rgb(255 255 255 / 0.92); box-shadow: 0 4px 16px rgb(0 0 0 / 0.2); }
-.chip-map svg, .cover.drawn svg { overflow: visible; }
+.chip-map svg { overflow: visible; }
 .chip-map .route-casing { stroke: #FFFFFF; }
 .chip-map .route { stroke: #C2410C; }
 .pcard .route-casing, .pcard .route { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }

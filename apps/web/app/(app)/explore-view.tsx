@@ -56,6 +56,7 @@ export function ExploreView({ cards }: { cards: ExploreCard[] }) {
   const band = BANDS.find((b) => b.key === len) ?? BANDS[0];
   const shown = cards.filter((c) => band?.test(c.lengthM) && (!query || c.name.toLowerCase().includes(query)));
   const count = shown.length === 1 ? t("explore.countOne") : t("explore.count", { count: shown.length });
+  const [osmCreditBefore, osmCreditAfter] = t("credit.osm").split("{osm}");
 
   return (
     <main id="main" className="page explore" data-view={view}>
@@ -98,7 +99,7 @@ export function ExploreView({ cards }: { cards: ExploreCard[] }) {
             </div>
           )}
           <p className="credit" style={{ marginTop: "var(--space-5)" }}>
-            Trail data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors
+            {osmCreditBefore}<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>{osmCreditAfter}
           </p>
         </section>
         <div className="map ex-map">
