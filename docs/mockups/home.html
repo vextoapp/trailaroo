@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Home mock-up</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="mockups.css">
+<script src="mockups.js"></script>
+<script src="data.js"></script>
+<script src="trail-helpers.js"></script>
+</head>
+<body data-screen="home">
+<a class="skip" href="#main">Skip to content</a>
+<main id="main">
+  <div class="home-hero">
+    <img data-photo="gudgenby" alt="Clear water running over granite boulders on the Gudgenby River in Namadgi National Park">
+    <div class="hero-bar"><a class="brand" href="home.html"><svg class="brand-mark" aria-hidden="true"><use href="icons.svg#i-mark"/></svg><span data-app-name translate="no"></span></a><a class="glass" href="explore.html">Explore trails</a></div>
+    <div class="hero-body">
+      <h1>Go somewhere beautiful this weekend.</h1>
+      <p class="lede">Walks, rides and lookouts around Canberra, with honest maps and the climb shown before you go. Free for everyone, always.</p>
+      <form class="searchpill" action="explore.html" role="search"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-search"/></svg><label class="visually-hidden" for="hq">Where do you want to walk?</label><input id="hq" name="q" type="search" placeholder="Where do you want to walk?" autocomplete="off"><button class="btn btn-primary" type="submit">Search</button></form>
+    </div>
+    <p class="hero-credit" id="hero-credit"></p>
+  </div>
+  <div class="page">
+    <section class="block" aria-labelledby="near-h">
+      <div class="block-head"><h2 id="near-h">Near Canberra this weekend</h2><a href="explore.html">See all 37</a></div>
+      <div class="rail" id="near"></div>
+    </section>
+    <section class="block" aria-labelledby="mood-h">
+      <div class="block-head"><h2 id="mood-h">What are you in the mood for?</h2></div>
+      <div class="moods">
+        <a class="mood" href="explore.html"><img data-photo="wetlands-view" alt=""><span>Water and wetlands</span></a>
+        <a class="mood" href="explore.html"><img data-photo="mulligans-echidna" alt=""><span>Wildlife spotting</span></a>
+        <a class="mood" href="explore.html"><img data-photo="ainslie-lookout" alt=""><span>Lookouts over the city</span></a>
+        <a class="mood" href="explore.html"><img data-photo="pine-island" alt=""><span>A big day out</span></a>
+      </div>
+    </section>
+    <section class="promise" aria-label="Why it's different">
+      <article><span class="badge"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-check"/></svg></span><h3>Free for everyone</h3><p class="meta">No subscription, no ads, nothing locked. Offline maps and safety alerts included.</p></article>
+      <article><span class="badge"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-download"/></svg></span><h3>Your map, even offline</h3><p class="meta">Save a trail at home and it keeps working when the signal drops.</p></article>
+      <article><span class="badge"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-users"/></svg></span><h3>Made by people who walk here</h3><p class="meta">Open maps and fresh reports from local hikers, clubs and rangers.</p></article>
+    </section>
+    <p class="sample-note">Sample data: real trails from OpenStreetMap; time and difficulty are illustrative. Trail data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors. Photos from Wikimedia Commons, credited on each page.</p>
+  </div>
+</main>
+<script>
+  const { T, credit, fillPhotos } = window.Dir;
+  document.getElementById("near").innerHTML = T.filter((t) => t.photos.length).map(window.cardHtml).join("");
+  document.getElementById("hero-credit").innerHTML = credit("gudgenby");
+  fillPhotos();
+</script>
+</body>
+</html>

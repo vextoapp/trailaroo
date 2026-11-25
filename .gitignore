@@ -11,7 +11,7 @@ coverage/
 .superpowers/
 .data/
 apps/web/public/icons.svg
-apps/web/public/fonts/
+apps/web/public/photos/home/
 playwright-report/
 test-results/
 next-env.d.ts

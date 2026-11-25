@@ -14,7 +14,7 @@ export default function Offline() {
           <h1 style={{ fontSize: "var(--step-1)" }}>{t("offline.title")}</h1>
           <p>{t("offline.body")}</p>
         </div>
-        <div className="actions"><Link className="btn" href="/">{t("offline.back")}</Link></div>
+        <div className="actions"><Link className="btn" href="/explore">{t("offline.back")}</Link></div>
       </div>
     </main>
   );

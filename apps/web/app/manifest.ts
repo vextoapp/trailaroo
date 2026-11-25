@@ -7,12 +7,12 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: APP_NAME,
     description: t("meta.description"),
     lang: DEFAULT_LOCALE,
-    start_url: "/",
+    start_url: "/explore", // installed app opens on Explore; the home page is for first visits
     scope: "/",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#16201E",
-    theme_color: "#16201E",
+    background_color: "#14110E",
+    theme_color: "#14110E",
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
       { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },

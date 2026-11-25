@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="mockups.css">
 <script src="mockups.js"></script>
+<script src="data.js"></script>
+<script src="trail-helpers.js"></script>
 <style>
   .trail-layout { display: grid; gap: var(--space-5); grid-template-areas: "head" "side" "body"; }
   .t-head { grid-area: head; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
@@ -18,13 +20,9 @@
     .t-side { align-self: start; }
   }
 
-  .hero { position: relative; border-radius: var(--radius-l); overflow: hidden; aspect-ratio: 16 / 9; background: var(--surface-2); }
-  .hero > svg { width: 100%; height: 100%; }
-  .hero .sky { fill: var(--surface-2); }
-  .hero .far { fill: var(--map-contour); }
-  .hero .mid { fill: var(--border); }
-  .hero .near { fill: var(--surface); }
-  .hero .rock { fill: var(--text-muted); }
+  .hero { position: relative; border-radius: var(--radius-m); overflow: hidden; aspect-ratio: 4 / 3; background: var(--surface-2); }
+  @media (min-width: 640px) { .hero { aspect-ratio: 16 / 10; } }
+  .hero > img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .hero .photo-count { left: auto; right: var(--space-3); bottom: var(--space-3); }
   .hero .credit { position: absolute; left: var(--space-3); bottom: var(--space-3); background: var(--surface); color: var(--text-muted); font-size: 0.6875rem; padding: 2px 8px; border-radius: 999px; }
   .hero-actions { position: absolute; top: var(--space-3); left: var(--space-3); right: var(--space-3); display: flex; justify-content: space-between; align-items: flex-start; }
@@ -99,13 +97,7 @@
 
   <div class="t-head">
     <div class="hero">
-      <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <rect class="sky" width="800" height="450"/>
-        <path class="far" d="M0 250 L120 200 L230 230 L360 160 L470 205 L600 150 L800 210 V450 H0z"/>
-        <path class="mid" d="M0 320 L140 270 L260 300 L420 230 L520 260 L640 215 L800 280 V450 H0z"/>
-        <path class="rock" d="M420 232 c10 -24 40 -30 58 -12 c12 -14 36 -10 40 8 l4 22 h-104z"/>
-        <path class="near" d="M0 390 C140 350 260 380 400 340 S640 320 800 360 V450 H0z"/>
-      </svg>
+      <img data-photo="gibraltar-roo" alt="An eastern grey kangaroo grazing beside the Gibraltar Peak track">
       <div class="hero-actions">
         <a class="btn btn-icon" href="explore.html" aria-label="Back to Explore"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-back"/></svg></a>
         <span class="actions">
@@ -113,11 +105,12 @@
           <button type="button" class="btn btn-icon" data-save aria-pressed="true" aria-label="Save Gibraltar Peak"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved-fill"/></svg></button>
         </span>
       </div>
-      <span class="credit">Photo: J. Nguyen, CC BY</span>
+      <span class="credit" id="hero-credit"></span>
       <span class="photo-count">1 of 24</span>
     </div>
 
-    <div class="title-block">
+    <div class="newhere" role="note"><span>New here? <span data-app-name translate="no"></span> is a free, open trail app for Canberra.</span><a href="home.html">See what it does</a></div>
+    <div class="title-block gh-head">
       <h1>Gibraltar Peak</h1>
       <p class="line"><a href="#">Tidbinbilla Nature Reserve</a><span class="rating"><svg aria-hidden="true"><use href="icons.svg#i-star"/></svg>4.6 <span class="meta">(212 reviews)</span></span></p>
       <p class="line">
@@ -376,7 +369,7 @@
       </ul>
     </section>
 
-    <p class="sample-note">Sample data. Maps and photos are drawings, not real.</p>
+    <p class="sample-note">Sample data. The map is a drawing; the photo is real (credited above).</p>
   </div>
 </div>
 </main>
@@ -406,6 +399,7 @@
 </dialog>
 
 <script>
+  window.Dir.fillPhotos(); document.getElementById("hero-credit").innerHTML = window.Dir.credit("gibraltar-roo");
   // Elevation profile: sample heights every 100 m along the out and back route.
   const N = 82, KM = 8.2, W = 400, H = 140;
   const out = (d) => { const t = Math.min(d / 4.1, 1); return 690 + 348 * (t * t * (3 - 2 * t)) + 22 * Math.sin(t * 9) * (1 - t); };

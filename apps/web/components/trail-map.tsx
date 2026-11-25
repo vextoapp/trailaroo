@@ -38,7 +38,7 @@ function buildStyle(data: string | FeatureCollection): StyleSpecification {
       // Labels need self-hosted fonts; they arrive with the M1 tile pipeline.
       ...layers("basemap", namedFlavor(theme)).filter((l) => l.type !== "symbol"),
       { id: "trail-casing", type: "line", source: "trails", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": cssVar("--map-route-casing"), "line-width": ["interpolate", ["linear"], ["zoom"], 9, 4, 15, 9] } },
-      { id: "trail-line", type: "line", source: "trails", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": cssVar("--accent"), "line-width": ["interpolate", ["linear"], ["zoom"], 9, 2, 15, 5] } },
+      { id: "trail-line", type: "line", source: "trails", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": cssVar("--route"), "line-width": ["interpolate", ["linear"], ["zoom"], 9, 2, 15, 5] } },
     ],
   };
 }
@@ -82,6 +82,9 @@ export default function TrailMap(props: Props) {
       cooperativeGestures: props.mode === "one",
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    // The box can still be settling when the map starts (fonts, lazy load); keep the canvas matched to it.
+    const resize = new ResizeObserver(() => map.resize());
+    resize.observe(el.current);
     map.on("load", () => setReady(true));
     map.on("error", (e) => {
       if (!navigator.onLine && !map.loaded()) setOffline(true);
@@ -101,6 +104,7 @@ export default function TrailMap(props: Props) {
     window.addEventListener("themechange", onTheme);
     return () => {
       window.removeEventListener("themechange", onTheme);
+      resize.disconnect();
       map.remove();
     };
   }, [offline]);

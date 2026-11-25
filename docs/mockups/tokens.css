@@ -6,6 +6,7 @@
 :root {
   /* Type */
   --font-sans: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif; /* headlines only */
   --font-numeric: var(--font-sans);
   --step--1: 0.8125rem;  /* 13px  meta */
   --step-0: 1rem;        /* 16px  body */
@@ -22,62 +23,40 @@
   --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
 
   /* Radius: small for chips and inputs, medium for cards, large for sheets */
-  --radius-s: 6px;
-  --radius-m: 12px;
-  --radius-l: 20px;
+  --radius-s: 10px;
+  --radius-m: 18px;
+  --radius-l: 24px;
+  --radius-pill: 999px;
 
   /* Targets */
   --tap: 44px;
   --tap-trail: 56px; /* record screen, gloves */
 }
 
-/* ---------- Look: Eucalyptus (chosen 23 Nov 2026; see looks.html) ---------- */
+/* ---------- Look: Golden hour (chosen 25 Nov 2026 in the design sprint; the other directions are in git history) ----------
+   Photo-led and warm. Eucalypt green actions in light, wattle gold in dark; routes in burnt orange. */
 @font-face {
   font-family: "Public Sans";
   src: url("fonts/PublicSans-Variable.ttf") format("truetype");
   font-weight: 100 900;
   font-display: swap;
 }
-
-[data-theme="dark"] {
-  --bg: #16201E;
-  --surface: #1F2B28;
-  --surface-2: #283633;
-  --text: #E9F0ED;
-  --text-muted: #A8B8B2;
-  --border: #6A7F78;
-  --divider: #2E3E3A;
-  --accent: #8FD6BE;
-  --accent-contrast: #0D2720;
-  --focus: #F2C94C;
-  --danger: #FF8E80;
-  --warn: #F2BA52;
-  --ok: #82D69C;
-  --diff-easy: #5FCB8C;
-  --diff-moderate: #F0B43C;
-  --diff-hard: #FF776D;
-  --diff-veryhard: #E9F0ED;
-  --fam-foot: #E8A317;
-  --fam-technical: #D98CB6;
-  --fam-bike: #63BBEB;
-  --fam-vehicle: #F0884A;
-  --fam-snow: #B4D7F0;
-  --fam-water: #35C79D;
-  --map-land: #1C2826;
-  --map-contour: #2C3C38;
-  --map-water: #2B5566;
-  --map-route-casing: #0E1614;
+@font-face {
+  font-family: "Fraunces";
+  src: url("fonts/Fraunces-Variable.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
 }
 
 [data-theme="light"] {
-  --bg: #F1F4F1;
-  --surface: #FFFFFF;
-  --surface-2: #E3EAE6;
-  --text: #15211E;
-  --text-muted: #485A55;
-  --border: #6E817B;
-  --divider: #D3DCD7;
-  --accent: #1C6956;
+  --bg: #FFFFFF;
+  --surface: #F7F6F3;
+  --surface-2: #ECEAE4;
+  --text: #1D1B18;
+  --text-muted: #5E5A53;
+  --border: #8A857C;
+  --divider: #E4E1DA;
+  --accent: #1F5C45;
   --accent-contrast: #FFFFFF;
   --focus: #0B5CAD;
   --danger: #B3261E;
@@ -86,15 +65,51 @@
   --diff-easy: #1E7A3E;
   --diff-moderate: #A35F00;
   --diff-hard: #C0362C;
-  --diff-veryhard: #15211E;
+  --diff-veryhard: #1D1B18;
   --fam-foot: #A86A00;
   --fam-technical: #A8457F;
   --fam-bike: #1F72AD;
   --fam-vehicle: #B34800;
   --fam-snow: #3B6B96;
   --fam-water: #00775A;
+  --route: #C2410C;
+  --wattle: #F2B705;
+  --on-wattle: #1D1B18;
   --map-land: #E6ECE4;
   --map-contour: #CBD6CC;
   --map-water: #8FBBCB;
   --map-route-casing: #FFFFFF;
+}
+
+[data-theme="dark"] {
+  --bg: #14110E;
+  --surface: #1E1A16;
+  --surface-2: #2A2520;
+  --text: #F3EEE7;
+  --text-muted: #B6AC9F;
+  --border: #7E7468;
+  --divider: #332D27;
+  --accent: #E9B949;
+  --accent-contrast: #1E1608;
+  --focus: #8AB4F8;
+  --danger: #FF8E80;
+  --warn: #F2BA52;
+  --ok: #82D69C;
+  --diff-easy: #5FCB8C;
+  --diff-moderate: #F0B43C;
+  --diff-hard: #FF776D;
+  --diff-veryhard: #F3EEE7;
+  --fam-foot: #E8A317;
+  --fam-technical: #D98CB6;
+  --fam-bike: #63BBEB;
+  --fam-vehicle: #F0884A;
+  --fam-snow: #B4D7F0;
+  --fam-water: #35C79D;
+  --route: #FB923C;
+  --wattle: #F2B705;
+  --on-wattle: #1D1B18;
+  --map-land: #1E241F;
+  --map-contour: #2E3830;
+  --map-water: #2B5566;
+  --map-route-casing: #14110E;
 }

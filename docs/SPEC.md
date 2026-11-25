@@ -88,6 +88,12 @@ We support every activity AllTrails offers, from launch. AllTrails' filter lists
 
 Every feature below ships in v1 and is free. The build order (later section) sequences the work but cuts nothing. Each item is written so Claude Code can turn it into a ticket.
 
+### 0. First visit (added 25 Nov 2026)
+
+- [x] A home screen for new visitors that says in one look what the app is (free for good, works with no signal, made in the open), how it works in three steps, and offers one clear first step ("Find a trail near you")
+- [x] Never blocks a shared trail link: someone opening a trail page sees the trail first, with a light "new here?" strip
+- [ ] Returning visitors land on Explore; the home screen stays one tap away under About (done for the installed app via start_url; the website still opens on the home page)
+
 ### 1. Explore
 
 - [ ] Unified search: trails, places, parks, peaks and points of interest, with typo tolerance and results ranked by distance and rating
@@ -462,9 +468,10 @@ The AllTrails look in your screenshots (near-black background, a bright lime gre
 
 **Direction**
 
-- **Dark-first with a true light mode.** Dark saves battery on OLED phones and suits early starts; light mode is better in bright sun, so the app offers a quick switch and an automatic option.
-- **Our own colours.** A bright, high-contrast primary (for example a eucalyptus or signal-orange accent) that passes contrast checks in sunlight. Difficulty colours stay universal: green for easy, amber for moderate, red for hard, black for very hard, each paired with a shape.
-- **Type:** one variable sans-serif with clear figures for stats (for example Inter or an open-licence alternative), sized for reading while walking.
+- **Golden hour (chosen 25 Nov 2026, see Decisions).** Photo-led and warm, like a good travel magazine that also happens to be a precise tool. Follows the phone's light or dark setting, with a quick switch; light is better in bright sun, dark saves battery and suits early starts.
+- **Colours.** Deep eucalypt green for actions in light mode, wattle gold in dark mode and for highlights; routes in burnt orange so they stand out on green maps. Every pair passes contrast checks in both modes. Difficulty colours stay universal: green for easy, amber for moderate, red for hard, black for very hard, each paired with a shape.
+- **Type:** Fraunces (open licence) for headlines and Public Sans for everything else, with clear tabular figures for stats, sized for reading while walking.
+- **Photos first, honest fallback.** Real, credited photos lead every trail card and page; a trail without one gets a drawn cover of its route, never a stock image.
 - **Components:** cards, chips, bottom sheets, a stats row, a map with its controls, an elevation chart, a rating summary, a condition badge and an install guide. All are built once in a shared library and documented in Storybook.
 
 **UX principles**
@@ -537,6 +544,7 @@ Each gate is a hands-on test on a real phone. The next phase starts only once th
 - [ ] Every element in the Feature inventory for Explore and Trail page is present
 - [ ] Trail pages are server-rendered with correct titles, previews and structured data
 - [ ] Lighthouse 95+ on a mid-range Android over throttled 4G
+- [ ] First visit: in a hallway test with 5 people who have never seen the app, each can say what it is and open a trail near them within 30 seconds
 
 **M3 Community**
 
@@ -654,6 +662,7 @@ Your Raspberry Pi 3 B+ (1 GB RAM) runs one job: the conditions worker. The rest 
 | Activities | All 20 AllTrails activities at launch (see Activities) |
 | Sign-in (changed 25 Nov 2026) | Passkeys, email magic link and Google. Sign in with Apple waits for M8: it needs the US$99-a-year Apple Developer Program even on the web, and M8 needs that account anyway for the iPhone app. Until M8, "works on iPhone and Android" means in the phone's browser and as an installed PWA, not an app-store app. |
 | Name and domain (25 Nov 2026) | Trailaroo, trailaroo.com. "Open Trails" was taken. Short, one word, says "trail" and nods to the Australian launch; the .com was free when checked on 24 Nov 2026. Still one config value (APP_NAME). Domain registered 25 Nov 2026. Before launch: check IP Australia for trademarks. |
+| Look (25 Nov 2026) | "Golden hour", chosen from three directions in the design sprint (docs/mockups/directions/). Photo-led and warm: Fraunces for headlines, Public Sans for text, deep eucalypt green actions and wattle gold highlights, big rounded photo cards, cover-style trail pages, a first-visit home that explains the app. Trails without a photo get a drawn cover (the route on a eucalypt gradient). Replaces the Eucalyptus look of 23 Nov 2026. Follows the system light or dark setting. |
 | Running costs (25 Nov 2026) | Keep them as close to zero as possible until launch: this is a community project with no budget. Run the fewest services that the current milestone needs; add heavy ones (Photon, BRouter, Redis, a separate worker) only in the milestone that uses them. Preview deploys sleep when idle or are turned off. Free tiers first. Anyone adding a paid service or an always-on process states its monthly cost in the PR. Railway stays in the VextoApps workspace, whose Pro plan is already paid, so Trailaroo adds usage, not a new subscription. |
 
 **Still open (sensible defaults so building isn't blocked)**

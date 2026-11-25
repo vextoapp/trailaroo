@@ -81,9 +81,9 @@
       if (t.matches("[data-theme-cycle]")) setTheme(root.dataset.theme === "dark" ? "light" : "dark");
 
       // Chip: toggles on and off. In a [data-single] group, only one stays on.
-      if (t.matches(".chip[aria-pressed]")) {
+      if (t.matches(".chip[aria-pressed], .chip-cat[aria-pressed]")) {
         const group = t.closest("[data-single]");
-        if (group) group.querySelectorAll(".chip[aria-pressed]").forEach((c) => c.setAttribute("aria-pressed", "false"));
+        if (group) group.querySelectorAll(".chip[aria-pressed], .chip-cat[aria-pressed]").forEach((c) => c.setAttribute("aria-pressed", "false"));
         t.setAttribute("aria-pressed", group ? "true" : String(t.getAttribute("aria-pressed") !== "true"));
       }
 

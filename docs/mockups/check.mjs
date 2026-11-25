@@ -104,7 +104,7 @@ for (const f of htmlFiles) {
 }
 
 // ---------- screens exist and share the base files ----------
-const screens = ["explore", "trail", "record", "saved", "activity", "profile"];
+const screens = ["home", "explore", "trail", "record", "saved", "activity", "profile"];
 if (existsSync(join(root, "index.html"))) {
   for (const name of screens) {
     const p = join(root, `${name}.html`);
