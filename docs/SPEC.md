@@ -160,6 +160,7 @@ Every feature below ships in v1 and is free. The build order (later section) seq
 - [ ] Community feed: recent activity and reviews near you
 - [ ] Following feed
 - [ ] Logbook: every activity, filterable, plus export
+- [ ] Nature sightings (added 25 Nov 2026): log a plant, animal or fungus with a photo during a hike and, if you connect your iNaturalist account, send it there for identification by the iNaturalist community. No paid AI; the sighting's exact location follows your privacy zones
 - [ ] Goals: distance, elevation or number of trails per month or year
 
 ### 8. For you
@@ -179,6 +180,7 @@ Every feature below ships in v1 and is free. The build order (later section) seq
 - [ ] Reviews with stars, tags, conditions, parking, difficulty felt, photos
 - [ ] Photo uploads with location, licence choice (CC BY or CC BY-SA) and automatic removal of location metadata except on trail photos
 - [ ] Condition reports: quick taps (muddy, flooded, snow, fallen tree, closed, overgrown, washed out, wildlife hazard, track markings missing) with photo and expiry
+- [ ] Water reports (added 25 Nov 2026): tank empty, creek dry, water flowing, tank full, pinned to the water source and expiring after 7 days; shown on the trail page and on water points on the map
 - [ ] Suggest an edit: name, difficulty, description, route geometry, closures, facilities
 - [ ] Contribute new trails from your recordings: guided flow to publish to OpenStreetMap, or as a community route in our database
 - [ ] Follow users, like and comment, and report content
@@ -191,9 +193,12 @@ Every feature below ships in v1 and is free. The build order (later section) seq
 - [ ] Privacy: profile visibility, default activity visibility, privacy zones around home, hide start and finish
 - [ ] Notifications: push and email, per type
 - [ ] Units (metric or imperial), language, map style, theme (light, dark, system)
+- [ ] Coordinate format (decimal degrees, degrees-minutes-seconds, UTM/MGA, MGRS), used everywhere coordinates appear, including the emergency screen (added 25 Nov 2026)
+- [ ] Energy estimate per activity (kilojoules by default in en-AU, calories optional), from distance, climb, time and an optional body weight kept on the device
 - [ ] Connected devices and apps: import from Garmin, Strava, Apple Health and Google Health Connect by file or official API where allowed
 - [ ] Data export (everything, in open formats) and account deletion
 - [ ] Help, feedback and status page
+- [ ] Send a log file: a support bundle (app version, sync queue, recent errors, no location history unless you tick it) attached to a feedback message
 
 ### 11. Platform
 
@@ -411,7 +416,7 @@ A community-run trail app lives or dies on data quality. Wrong closures or fake 
 
 **AI features, used carefully**
 
-- Review summaries cite the reviews they draw from and are labelled as AI. Hidden when there are fewer than 10 reviews.
+- Review summaries cite the reviews they draw from and are labelled as AI. Hidden when there are fewer than 10 reviews. To keep costs to a few dollars a month they use the smallest capable model, run in a weekly batch, and only regenerate when a trail has new reviews; if funding runs out they switch off and reviews still show.
 - Descriptions generated from data are labelled "Generated from map data" until a person writes or edits one.
 - No AI-made photos, ever.
 
@@ -438,6 +443,7 @@ A community-run trail app lives or dies on data quality. Wrong closures or fake 
 - **Trip plan and overdue alert:** share your route and expected finish time with chosen contacts by link, SMS or email. If you haven't finished by then plus a grace period, they get an alert with your last known position. The alert is sent by our server, so it works even if your phone dies.
 - **Live location sharing:** while recording, contacts can follow a live link. Because a PWA can't send location while backgrounded, the link shows the last update time clearly.
 - **On trail:** off-route alerts, route back to start, a compass bearing, and an emergency screen showing your coordinates in several formats, the nearest road access and local emergency numbers (000 and 112 in Australia).
+- **Signal map (added 25 Nov 2026):** during recording, consenting users anonymously log where their phone gains or loses mobile data. Aggregated into a coarse "last known signal" layer on trail maps and the emergency screen ("signal was last seen 1.2 km back towards the car park"). Shown only once 5 or more people have contributed to a spot, never per person, and labelled as data signal, not a guarantee you can call 000.
 - **Honest limits:** a visible note that the app isn't a substitute for a map, compass, a personal locator beacon and telling someone your plans. The PLB recommendation is shown for remote trails.
 - **Liability:** terms of use say information is community-supplied, with clear warnings; official alerts are shown as official.
 
@@ -517,7 +523,7 @@ Each gate is a hands-on test on a real phone. The next phase starts only once th
 
 **M1 Data pipeline**
 
-- [ ] At least 300 ACT and NSW trails imported, with length within 2% and elevation gain within 10% of a reference GPS track for 20 sample trails
+- [ ] At least 300 ACT and NSW trails imported (sources beyond OSM route relations: named OSM paths assembled into walks, official park walks where the licence allows, and routes contributed by walking and MTB clubs), with length within 2% and elevation gain within 10% of a reference GPS track for 20 sample trails
 - [ ] Map, terrain and trail tiles served from R2 through the CDN; the app never calls public OSM servers
 - [ ] Daily OSM updates and 30-minute alert polling run on their own; a stalled feed raises an alert
 - [ ] Trails live in Postgres + PostGIS and are served by the Hono API, which the web app now reads from
