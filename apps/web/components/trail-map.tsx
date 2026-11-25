@@ -30,7 +30,7 @@ function buildStyle(data: string | FeatureCollection): StyleSpecification {
       basemap: {
         type: "vector",
         url: `pmtiles://${new URL(TILES, location.origin).href}`,
-        attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a> contributors, <a href="https://protomaps.com">Protomaps</a>',
+        attribution: t("credit.map", { protomaps: '<a href="https://protomaps.com">Protomaps</a>', osm: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }),
       },
       trails: { type: "geojson", data },
     },
@@ -54,7 +54,14 @@ export default function TrailMap(props: Props) {
   const [ready, setReady] = useState(false);
   const [offline, setOffline] = useState(false);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: create the map once per mount
+  // Re-create the map when the connection comes back.
+  useEffect(() => {
+    const back = () => setOffline(false);
+    window.addEventListener("online", back);
+    return () => window.removeEventListener("online", back);
+  }, []);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: create the map once per mount (and again after reconnecting)
   useEffect(() => {
     if (!el.current) return;
     if (!navigator.onLine) { setOffline(true); return; }
@@ -76,7 +83,10 @@ export default function TrailMap(props: Props) {
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     map.on("load", () => setReady(true));
-    map.on("error", (e) => console.error("map", e.error));
+    map.on("error", (e) => {
+      if (!navigator.onLine && !map.loaded()) setOffline(true);
+      console.error("map", e.error);
+    });
 
     if (props.mode === "all") {
       map.on("click", "trail-line", (e) => {
@@ -93,7 +103,7 @@ export default function TrailMap(props: Props) {
       window.removeEventListener("themechange", onTheme);
       map.remove();
     };
-  }, []);
+  }, [offline]);
 
   return (
     <>

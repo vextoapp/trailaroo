@@ -11,7 +11,7 @@ RUN pnpm --filter @trailaroo/web build
 FROM node:24-slim
 WORKDIR /app
 ENV NODE_ENV=production HOSTNAME=0.0.0.0 PORT=3000 NEXT_TELEMETRY_DISABLED=1
-COPY --from=build /repo/apps/web/.next/standalone ./
+COPY --from=build --chown=node:node /repo/apps/web/.next/standalone ./
 USER node
 EXPOSE 3000
 CMD ["node", "apps/web/server.js"]

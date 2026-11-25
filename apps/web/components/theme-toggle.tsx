@@ -1,5 +1,5 @@
 "use client";
-import { t } from "@trailaroo/core";
+import { THEME_KEY, t } from "@trailaroo/core";
 import { useEffect, useState } from "react";
 import { Icon } from "./icon";
 
@@ -21,7 +21,7 @@ export function ThemeToggle() {
   const next: Theme = theme === "light" ? "dark" : "light";
   const flip = () => {
     document.documentElement.dataset.theme = next;
-    try { localStorage.setItem("trailaroo-theme", next); } catch { /* private mode: not remembered */ }
+    try { localStorage.setItem(THEME_KEY, next); } catch { /* private mode: not remembered */ }
     setTheme(next);
     syncThemeColor();
     window.dispatchEvent(new CustomEvent("themechange", { detail: next }));

@@ -1,5 +1,5 @@
 import { SerwistProvider } from "@serwist/turbopack/react";
-import { APP_NAME, DEFAULT_LOCALE, t } from "@trailaroo/core";
+import { APP_NAME, DEFAULT_LOCALE, THEME_KEY, t } from "@trailaroo/core";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Header } from "@/components/header";
@@ -30,7 +30,7 @@ export const viewport: Viewport = {
 };
 
 // Runs before first paint so the page never flashes the wrong theme.
-const themeScript = `(function(){var m;try{m=localStorage.getItem("trailaroo-theme")}catch(e){}var d=m==="light"||m==="dark"?m:(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.dataset.theme=d})()`;
+const themeScript = `(function(){var m;try{m=localStorage.getItem(${JSON.stringify(THEME_KEY)})}catch(e){}var d=m==="light"||m==="dark"?m:(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.dataset.theme=d})()`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
