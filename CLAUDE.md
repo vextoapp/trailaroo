@@ -11,6 +11,7 @@ The full product spec is docs/SPEC.md. Read the relevant section before starting
 ## Decisions (do not change without asking)
 - Work is tracked in GitHub Issues and a GitHub Project board (milestones M0–M8, one label per activity family). Not Linear.
 - Railway workspace: VextoApps (Pro). Maintainers deploy; contributors use PR preview deploys. Confirm the workspace before creating anything on Railway.
+- Running costs stay near zero until launch (SPEC > Decisions > Running costs): only the services the current milestone needs, free tiers first, and any PR adding a paid service or always-on process states its monthly cost.
 - Licence: AGPL-3.0, public repo. Data: ODbL dump of the trail database; community text CC BY-SA.
 - Launch region: ACT + NSW first, then Australia, then global. Region list is config, not code.
 - Activities: all 20 AllTrails activities, grouped into 6 families (SPEC > Activities). Difficulty, routing and recording presets are per family.
@@ -33,10 +34,10 @@ The full product spec is docs/SPEC.md. Read the relevant section before starting
 - API: Hono on Node, Zod schemas, OpenAPI generated; public read API.
 - DB: Postgres 16 + PostGIS; Drizzle ORM and migrations; UUIDv7 ids.
 - Jobs: BullMQ on Redis (imports, stats, tiles, feeds, notifications, overdue alerts).
-- Auth: Better Auth (passkeys, email magic link, Google, Apple).
+- Auth: Better Auth (passkeys, email magic link, Google; Apple in M8).
 - Storage: Cloudflare R2 (PMTiles, terrain, photos) behind CDN.
 - Self-hosted services: Photon (place search), BRouter (routing, one profile per activity family).
-- Hosting: Railway (web, api, worker, Postgres, Redis, Photon, BRouter).
+- Hosting: Railway (web, api, worker, Postgres, Redis, Photon, BRouter). Each service arrives in the milestone that first needs it; M0 is the web app alone.
 - Errors: Sentry. Email: Resend. Analytics: cookieless, first-party (Umami or Plausible).
 
 ## Conventions

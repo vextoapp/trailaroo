@@ -187,7 +187,7 @@ Every feature below ships in v1 and is free. The build order (later section) seq
 ### 10. Profile and settings
 
 - [ ] Profile: photo, name, home area, bio, stats, public lists, public activities
-- [ ] Sign-in: email magic link, passkeys, Google, Apple; no phone number required
+- [ ] Sign-in: email magic link, passkeys, Google (Apple added in M8, see Decisions); no phone number required
 - [ ] Privacy: profile visibility, default activity visibility, privacy zones around home, hide start and finish
 - [ ] Notifications: push and email, per type
 - [ ] Units (metric or imperial), language, map style, theme (light, dark, system)
@@ -336,7 +336,7 @@ The phone reads map tiles straight from the CDN and keeps a copy for offline use
 | API | Hono on Node with Zod and OpenAPI | Small, fast, typed; the same API is public for others to build on |
 | Database | Postgres 16 + PostGIS, Drizzle ORM | Spatial queries (near me, inside a park, overlaps) are built in |
 | Background jobs | BullMQ on Redis | OSM imports, stats, tiles, feeds, notifications, overdue alerts |
-| Auth | Better Auth | Passkeys, magic links, Google and Apple; self-hosted, no per-user fees |
+| Auth | Better Auth | Passkeys, magic links and Google (Apple in M8); self-hosted, no per-user fees |
 | Files | Cloudflare R2 + CDN | Free egress for tiles and photos |
 | Search | Postgres full text + trigram for trails; Photon for places | Typo-tolerant, location-biased, self-hosted |
 | Routing | BRouter (hiking profiles) | Light, with a customisable profile per activity family |
@@ -483,7 +483,7 @@ Everything ships before the public launch, but it's built in nine milestones, ea
 ```mermaid
 flowchart TB
   subgraph P1["Foundations"]
-    M0["M0 Foundations: monorepo, CI, Postgres + PostGIS, auth, design tokens, Railway deploys"] --> M1["M1 Data pipeline: OSM import, trail stats, parks, map and terrain tiles, search (ACT and NSW)"]
+    M0["M0 First trails live: real ACT trails as list, map and trail pages on trailaroo.com; installable; CI"] --> M1["M1 Data pipeline: Postgres + PostGIS, API service, OSM import, trail stats, parks, map and terrain tiles, search (ACT and NSW)"]
   end
   M1 --> G1{{"Gate: real ACT trails load with correct length, elevation and time"}}
   subgraph P2["Core app"]
@@ -508,17 +508,19 @@ Each gate is a hands-on test on a real phone. The next phase starts only once th
 
 ### Acceptance checks per milestone
 
-**M0 Foundations**
+**M0 First trails live** (reshaped 25 Nov 2026 so the first milestone ends with something people can use; plumbing arrives in the milestone that needs it)
 
+- [ ] Real ACT trails from OpenStreetMap are live on trailaroo.com as a list, a map and trail pages that match the mock-ups
+- [ ] The app installs to the Home Screen and reopens visited pages in flight mode on iPhone and Android
 - [ ] A fresh clone runs with one command; CI blocks merges on lint, types, tests and accessibility checks
-- [ ] Sign-in with passkey, magic link, Google and Apple works on iPhone and Android
-- [ ] Every pull request gets a preview deploy on Railway
+- [ ] Running cost is under US$10 a month
 
 **M1 Data pipeline**
 
 - [ ] At least 300 ACT and NSW trails imported, with length within 2% and elevation gain within 10% of a reference GPS track for 20 sample trails
 - [ ] Map, terrain and trail tiles served from R2 through the CDN; the app never calls public OSM servers
 - [ ] Daily OSM updates and 30-minute alert polling run on their own; a stalled feed raises an alert
+- [ ] Trails live in Postgres + PostGIS and are served by the Hono API, which the web app now reads from
 
 **M2 Explore and trail pages**
 
@@ -528,6 +530,7 @@ Each gate is a hands-on test on a real phone. The next phase starts only once th
 
 **M3 Community**
 
+- [ ] Sign-in with passkey, magic link and Google works in the browser and the installed app on iPhone and Android
 - [ ] A new user posts a review with photos in under 30 seconds
 - [ ] Moderation queue, reports, trust levels and appeals work; location data is removed from public photos
 - [ ] Official alerts appear on the matching trails within 30 minutes
@@ -565,7 +568,7 @@ Each gate is a hands-on test on a real phone. The next phase starts only once th
 
 ## Hosting, costs, operations
 
-Expect roughly US$100 to $200 a month at launch for Australia-first coverage, with no per-user fees. These are estimates from published unit prices, not quotes. Map tiles are the main thing that can get expensive, so they go on storage with free egress behind a CDN.
+Before launch, the goal is a few dollars a month (see Decisions > Running costs): only the services the current milestone needs. Expect roughly US$100 to $200 a month at public launch for Australia-first coverage, with no per-user fees. These are estimates from published unit prices, not quotes. Map tiles are the main thing that can get expensive, so they go on storage with free egress behind a CDN.
 
 **Where things run**
 
@@ -638,8 +641,9 @@ Your Raspberry Pi 3 B+ (1 GB RAM) runs one job: the conditions worker. The rest 
 | Launch region | ACT and NSW first, then the rest of Australia, then global |
 | Code licence | AGPL-3.0, public repo |
 | Activities | All 20 AllTrails activities at launch (see Activities) |
-| Sign-in | Passkeys, email magic link, Google and Apple |
-| Name and domain (25 Nov 2026) | Trailaroo, trailaroo.com. "Open Trails" was taken. Short, one word, says "trail" and nods to the Australian launch; the .com was free when checked on 24 Nov 2026. Still one config value (APP_NAME). Before launch: register the domain and check IP Australia for trademarks. |
+| Sign-in (changed 25 Nov 2026) | Passkeys, email magic link and Google. Sign in with Apple waits for M8: it needs the US$99-a-year Apple Developer Program even on the web, and M8 needs that account anyway for the iPhone app. Until M8, "works on iPhone and Android" means in the phone's browser and as an installed PWA, not an app-store app. |
+| Name and domain (25 Nov 2026) | Trailaroo, trailaroo.com. "Open Trails" was taken. Short, one word, says "trail" and nods to the Australian launch; the .com was free when checked on 24 Nov 2026. Still one config value (APP_NAME). Domain registered 25 Nov 2026. Before launch: check IP Australia for trademarks. |
+| Running costs (25 Nov 2026) | Keep them as close to zero as possible until launch: this is a community project with no budget. Run the fewest services that the current milestone needs; add heavy ones (Photon, BRouter, Redis, a separate worker) only in the milestone that uses them. Preview deploys sleep when idle or are turned off. Free tiers first. Anyone adding a paid service or an always-on process states its monthly cost in the PR. Railway stays in the VextoApps workspace, whose Pro plan is already paid, so Trailaroo adds usage, not a new subscription. |
 
 **Still open (sensible defaults so building isn't blocked)**
 
@@ -681,7 +685,7 @@ The full product spec is docs/SPEC.md. Read the relevant section before starting
 - API: Hono on Node, Zod schemas, OpenAPI generated; public read API.
 - DB: Postgres 16 + PostGIS; Drizzle ORM and migrations; UUIDv7 ids.
 - Jobs: BullMQ on Redis (imports, stats, tiles, feeds, notifications, overdue alerts).
-- Auth: Better Auth (passkeys, email magic link, Google, Apple).
+- Auth: Better Auth (passkeys, email magic link, Google; Apple in M8).
 - Storage: Cloudflare R2 (PMTiles, terrain, photos) behind CDN.
 - Self-hosted services: Photon (place search), BRouter (routing, one profile per activity family).
 - Hosting: Railway (web, api, worker, Postgres, Redis, Photon, BRouter).
@@ -705,7 +709,7 @@ The full product spec is docs/SPEC.md. Read the relevant section before starting
 ### First prompts, in order
 
 1. **Design first (plan mode):** "Read CLAUDE.md and docs/SPEC.md, especially Design system, Activities and Feature inventory. Create clickable HTML mock-ups in docs/mockups/ for Explore, Trail page, Record, Saved, Activity and Profile, mobile and desktop, dark and light. Don't write app code yet." Review and adjust until you like the look.
-2. **M0:** "Plan M0 from docs/SPEC.md > Build order, then build it: monorepo, CI (lint, typecheck, tests, axe, Lighthouse), Postgres + PostGIS via Docker Compose, the Drizzle schema from Data model, Better Auth, design tokens and components matching the approved mock-ups, and Railway deploys for previews and production. Stop when the M0 acceptance checks pass and tick them in SPEC."
+2. **M0:** "Plan M0 from docs/SPEC.md > Build order, then build it: the smallest monorepo that puts real ACT trails live on the domain as a list, map and trail pages matching the mock-ups, installable with an offline shell, with CI (lint, typecheck, tests, axe). Stop when the M0 acceptance checks pass and tick them in SPEC."
 3. **M1:** "Plan and build M1 for the ACT and NSW: OSM import into PostGIS, trails from route relations for every activity family, stats from Mapterhorn terrain, CAPAD parks, the Protomaps extract and our trail overlay as PMTiles on R2, BRouter with one profile per family, and a Photon index. Include pnpm db:seed with 50 real ACT trails across several activities."
 4. **M2 to M8:** one milestone per session, same pattern: "Plan M\<n> from SPEC, build it, run its acceptance checks, tick them in SPEC." Test each gate yourself on a real phone before moving on.
 
@@ -720,12 +724,12 @@ Claude Code can write all the code, but these accounts need you. Set up the M0 r
 | Account or key | Used for | Needed by | Cost |
 | --- | --- | --- | --- |
 | GitHub repo (public, AGPL-3.0) | Code, CI, pull request previews | M0 | Free |
-| Railway (Pro) | Web, API, worker, Postgres, Redis, Photon, BRouter | M0 | $20/month plus usage |
-| Domain name | App URL, email sending, passkeys | M0 | Domain registration fee |
+| Railway (VextoApps workspace, Pro plan already paid) | Web and Postgres first; API, worker, Redis, Photon and BRouter as milestones need them | M0 | No new subscription; usage counts against the plan's included $20 |
+| Domain name (trailaroo.com, registered) | App URL, email sending, passkeys | M0 | Done |
 | Resend | Magic-link and alert emails | M0 | Free tier |
 | Sentry | Error tracking | M0 | Free tier |
 | Google Cloud OAuth client | Sign in with Google | M0 | Free |
-| Apple Developer Program | Sign in with Apple, and the iPhone app in M8 | M0 | US$99/year |
+| Apple Developer Program | Sign in with Apple and the iPhone app | M8 | US$99/year |
 | Cloudflare (R2 + CDN, DNS) | Map, terrain and photo files | M1 | Mostly free tier at first |
 | Anthropic API key | Review summaries and alt-text suggestions | M3 | Pay per use |
 | VAPID keys (generated, no account) | Web push | M5 | Free |
