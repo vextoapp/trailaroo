@@ -15,14 +15,18 @@
     "lint": "biome check .",
     "format": "biome check --write .",
     "e2e": "pnpm --filter @trailaroo/web e2e",
-    "data:trails": "tsx infra/pipelines/trails.ts",
-    "mockups:check": "node docs/mockups/check.mjs"
+    "data:trails": "tsx infra/pipelines/trails.ts && tsx infra/pipelines/trail-stats.ts",
+    "mockups:check": "node docs/mockups/check.mjs",
+    "data:stats": "tsx infra/pipelines/trail-stats.ts",
+    "data:check": "tsx infra/pipelines/reference-check.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.9",
+    "pmtiles": "4.5.0",
+    "sharp": "0.35.5",
+    "tsx": "4.23.15",
     "turbo": "2.11.13",
     "typescript": "5.9.3",
-    "tsx": "4.23.15",
     "uuid": "14.0.3"
   }
 }

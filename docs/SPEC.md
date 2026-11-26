@@ -229,6 +229,13 @@ AllTrails' trails are curated routes: a start, an end, a line and stats. OpenStr
 
 Difficulty, time and surface are calculated from the line, elevation and OpenStreetMap path tags (`sac_scale`, `trail_visibility`, `surface`, `incline`), then adjusted by community votes.
 
+Models in use since M1 step 2 (26 Nov 2026), all labelled as estimates in the app:
+- **Elevation:** Mapterhorn terrain sampled every 25 m along the route (z12, about 16 m per pixel). Climb and descent ignore wobbles under 5 m. Checked against known summits: Black Mountain 809 m (812 m), Kosciuszko 2,225 m (2,228 m).
+- **Route type:** a loop if OSM says `roundtrip=yes`, or if the two ends are within 300 m; otherwise one way.
+- **Difficulty, walks:** effort km = km + 0.8 × climb per 100 m, raised by `sac_scale` where tagged. Easy, Moderate, Hard or Very hard.
+- **Difficulty, bike:** `mtb:scale` where tagged, otherwise distance and climb.
+- **Time:** walks 4.5 km/h plus 10 minutes per 100 m up; bike 12 km/h plus 6 minutes per 100 m up.
+
 ### Source table
 
 | Layer | Source | Licence and terms | How we use it |
@@ -530,9 +537,9 @@ Each gate is a hands-on test on a real phone. The next phase starts only once th
 
 **M1 Real trail data** (reshaped 25 Nov 2026, like M0: everything a hiker sees stays, plumbing moves to the milestone that needs it)
 
-- [ ] At least 300 ACT and NSW trails across activity families (step 1 done 26 Nov 2026: 383 trails, 177 walking and 206 mountain-bike, filtered to the real NSW and ACT borders; the accuracy check comes with step 2), mostly from OSM walking and MTB route relations (about 280 walking and 1,264 bike relations existed in Nov 2026), with length within 2% and elevation gain within 10% of a reference GPS track for 20 sample trails. Later sources: named OSM paths assembled into walks, official park walks where the licence allows, and routes contributed by clubs
-- [ ] Every trail shows elevation gain, an elevation profile, difficulty and estimated time from Mapterhorn terrain, and its park name from CAPAD; the preview banner no longer says "length only"
-- [ ] Map shows place and feature names from fonts we host; Explore has difficulty, length, elevation and activity filters and sorting
+- [ ] At least 300 ACT and NSW trails across activity families (step 1 done 26 Nov 2026: 383 trails, 177 walking and 206 mountain-bike, filtered to the real NSW and ACT borders; the length check ran in step 2 with `pnpm data:check`: only 5 of 24 trails are within 2% of published park figures, mostly because parks round to the nearest 0.5–1 km and measure from different starts; parks publish no climb figures, so climb is checked against known summits instead; this check stays open until it's compared with real GPS tracks), mostly from OSM walking and MTB route relations (about 280 walking and 1,264 bike relations existed in Nov 2026), with length within 2% and elevation gain within 10% of a reference GPS track for 20 sample trails. Later sources: named OSM paths assembled into walks, official park walks where the licence allows, and routes contributed by clubs
+- [ ] Every trail shows elevation gain, an elevation profile, difficulty and estimated time from Mapterhorn terrain, and its park name from CAPAD; the preview banner no longer says "length only" (step 2 done 26 Nov 2026: gain, profile with map scrub, difficulty and time on all 383 trails; parks come in step 3)
+- [ ] Map shows place and feature names from fonts we host; Explore has difficulty, length, elevation and activity filters and sorting (step 2: difficulty, length and activity filters, sort by distance, length or climb; map names come in step 4)
 - [ ] Map, terrain and trail tiles served from R2 through the Cloudflare CDN; the app never calls public OSM servers
 - [ ] A free nightly GitHub Action rebuilds the trail data from OSM and opens a PR when it changes; a failed rebuild raises an alert
 - [ ] Running cost still under US$10 a month (trail data stays a built file; no database yet)

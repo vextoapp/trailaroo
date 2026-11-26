@@ -83,3 +83,34 @@ test("Bike trails filter to mountain-bike routes and the list grows with Show mo
   await expect(cards.first()).toContainText("Bike trail");
   await expect(cards).toHaveCount(24); // a new filter starts from the first page again
 });
+
+test("Difficulty chips filter trails and the sort order is shareable", async ({ page }) => {
+  await page.goto("/explore");
+  const heading = page.locator("#count");
+  const total = Number((await heading.textContent())?.match(/\d+/)?.[0]);
+  await page.getByRole("group", { name: "Difficulty" }).getByRole("button", { name: "Easy" }).click();
+  await expect(page).toHaveURL(/diff=easy/);
+  await expect(heading).not.toHaveText(`${total} trails`);
+  await expect(page.locator(".pcard .difficulty").first()).toHaveAttribute("data-level", "easy");
+
+  await page.getByRole("combobox", { name: "Sort" }).selectOption("steepest");
+  await expect(page).toHaveURL(/sort=steepest/);
+  const climbs = await page.locator(".pcard .facts > span:last-child").evaluateAll((els) =>
+    els.slice(0, 5).map((el) => Number(el.textContent?.match(/([\d,]+) m up/)?.[1]?.replace(",", "") ?? -1)),
+  );
+  expect(climbs).toEqual([...climbs].sort((a, b) => b - a));
+  expect(await seriousViolations(page)).toEqual([]);
+});
+
+test("The elevation profile scrubs by keyboard and has a text version", async ({ page }) => {
+  const geo = await (await page.request.get("/trails.geojson")).json();
+  await page.goto(`/trails/${geo.features[0].properties.slug}`);
+  const slider = page.getByRole("slider").first();
+  await slider.focus();
+  const before = await slider.getAttribute("aria-valuetext");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await expect(slider).not.toHaveAttribute("aria-valuetext", before ?? "");
+  await expect(page.locator(".elevation table tr")).not.toHaveCount(0);
+  expect(await seriousViolations(page)).toEqual([]);
+});

@@ -114,3 +114,21 @@ function inRing([x, y]: Position, ring: Position[]): boolean {
 export function inMultiPolygon(point: Position, polygons: Position[][][]): boolean {
   return polygons.some(([outer, ...holes]) => !!outer && inRing(point, outer) && !holes.some((h) => inRing(point, h)));
 }
+
+/** The point `fraction` (0–1) of the way along a multi-line, measured by distance. */
+export function pointAlong(lines: Position[][], fraction: number): Position | undefined {
+  const total = multiLineLengthM(lines);
+  let left = Math.min(1, Math.max(0, fraction)) * total;
+  for (const line of lines) {
+    for (let i = 1; i < line.length; i++) {
+      const a = line[i - 1] as Position, b = line[i] as Position;
+      const seg = distanceM(a, b);
+      if (left <= seg) {
+        const f = seg ? left / seg : 0;
+        return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+      }
+      left -= seg;
+    }
+  }
+  return lines.at(-1)?.at(-1);
+}

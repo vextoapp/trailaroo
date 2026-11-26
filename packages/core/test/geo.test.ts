@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bbox, distanceM, inMultiPolygon, lineLengthM, multiLineLengthM, type Position, simplify, stitch } from "../src/geo";
+import { bbox, distanceM, inMultiPolygon, lineLengthM, multiLineLengthM, type Position, pointAlong, simplify, stitch } from "../src/geo";
 
 describe("distanceM", () => {
   it("measures Mt Ainslie summit to Parliament House at about 5.1 km", () => {
@@ -74,4 +74,17 @@ describe("inMultiPolygon", () => {
   it("finds a point inside the second polygon", () => expect(inMultiPolygon([25, 25], shape)).toBe(true));
   it("excludes a point in a hole", () => expect(inMultiPolygon([5, 5], shape)).toBe(false));
   it("excludes a point outside every polygon", () => expect(inMultiPolygon([15, 15], shape)).toBe(false));
+});
+
+describe("pointAlong", () => {
+  const line: Position[] = [[149, -35], [149, -35.01], [149, -35.02]];
+  it("finds the start and end", () => {
+    expect(pointAlong([line], 0)).toEqual([149, -35]);
+    expect(pointAlong([line], 1)?.[1]).toBeCloseTo(-35.02, 6);
+  });
+  it("finds the halfway point", () => expect(pointAlong([line], 0.5)?.[1]).toBeCloseTo(-35.01, 6));
+  it("carries on into the next piece of a multi-line", () => {
+    const second: Position[] = [[149.1, -35], [149.1, -35.02]];
+    expect(pointAlong([line, second], 0.75)?.[0]).toBeCloseTo(149.1, 6);
+  });
 });

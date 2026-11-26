@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDistance } from "../src/format";
+import { formatClimb, formatDistance, formatDuration } from "../src/format";
 import { t } from "../src/i18n";
 import { ACTIVE_REGION, REGIONS } from "../src/regions";
 import { slugify } from "../src/trail";
@@ -33,4 +33,15 @@ describe("regions", () => {
     }
   });
   it("launches with the ACT and NSW", () => expect(ACTIVE_REGION.states).toContain("Australian Capital Territory"));
+});
+
+describe("formatDuration", () => {
+  it("rounds to 5 minutes", () => expect(formatDuration(2380)).toBe("40 min"));
+  it("shows hours and minutes", () => expect(formatDuration(8100)).toBe("2 h 15 min"));
+  it("drops zero minutes", () => expect(formatDuration(7200)).toBe("2 h"));
+  it("never says 0 min", () => expect(formatDuration(30)).toBe("5 min"));
+});
+
+describe("formatClimb", () => {
+  it("formats metres", () => expect(formatClimb(259.6)).toBe("260 m"));
 });

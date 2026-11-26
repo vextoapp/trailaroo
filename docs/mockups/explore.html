@@ -42,17 +42,27 @@
       <button type="button" class="chip-cat" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="icons.svg#f-foot"/></svg>Walks</button>
       <button type="button" class="chip-cat" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="icons.svg#f-bike"/></svg>Bike trails</button>
     </div>
-    <div class="chips" role="group" aria-label="Length" data-single style="padding-top: var(--space-3)">
-      <button type="button" class="chip" aria-pressed="true">Any length</button>
-      <button type="button" class="chip" aria-pressed="false">Under 5 km</button>
-      <button type="button" class="chip" aria-pressed="false">5 to 15 km</button>
-      <button type="button" class="chip" aria-pressed="false">Over 15 km</button>
+    <div class="filter-rows">
+      <div class="chips" role="group" aria-label="Length" data-single>
+        <button type="button" class="chip" aria-pressed="true">Any length</button>
+        <button type="button" class="chip" aria-pressed="false">Under 5 km</button>
+        <button type="button" class="chip" aria-pressed="false">5 to 15 km</button>
+        <button type="button" class="chip" aria-pressed="false">Over 15 km</button>
+      </div>
+      <div class="chips" role="group" aria-label="Difficulty" data-single>
+        <button type="button" class="chip" aria-pressed="true">Any difficulty</button>
+        <button type="button" class="chip" aria-pressed="false"><span class="difficulty" data-level="easy"><svg aria-hidden="true"><use href="icons.svg#d-easy"/></svg></span>Easy</button>
+        <button type="button" class="chip" aria-pressed="false"><span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg></span>Moderate</button>
+        <button type="button" class="chip" aria-pressed="false"><span class="difficulty" data-level="hard"><svg aria-hidden="true"><use href="icons.svg#d-hard"/></svg></span>Hard</button>
+        <button type="button" class="chip" aria-pressed="false"><span class="difficulty" data-level="veryhard"><svg aria-hidden="true"><use href="icons.svg#d-veryhard"/></svg></span>Very hard</button>
+      </div>
     </div>
     </div>
   </div>
   <div class="ex-split">
     <section class="results" aria-labelledby="ex-h" data-text-version>
-      <h2 id="ex-h" class="meta num" style="font: 500 var(--step-0) var(--font-sans); margin-bottom: var(--space-4)"></h2>
+      <div class="results-bar"><h2 id="ex-h" class="meta num" style="font: 500 var(--step-0) var(--font-sans)"></h2>
+        <label class="sort">Sort <select name="sort"><option>Closest</option><option>Shortest</option><option>Longest</option><option>Least climbing</option><option>Most climbing</option></select></label></div>
       <div class="cards" id="ex-cards"></div>
       <p style="margin-top: var(--space-6); text-align: center"><button type="button" class="btn">Show 24 more</button></p>
       <p class="credit" style="margin-top: var(--space-5)">Trail data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors. Photos from Wikimedia Commons; time and difficulty are sample values.</p>

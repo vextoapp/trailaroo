@@ -11,6 +11,18 @@ const osmTagsSchema = z
   .object({ sac_scale: z.string(), mtb_scale: z.string(), surface: z.string(), roundtrip: z.string() })
   .partial();
 
+/** Elevation stats from Mapterhorn terrain (pnpm data:trails, step 2). Metres. */
+export const statsSchema = z.object({
+  gainM: z.number().int().nonnegative(),
+  lossM: z.number().int().nonnegative(),
+  minM: z.number().int(),
+  maxM: z.number().int(),
+  routeType: z.enum(["loop", "one-way"]),
+  /** 120 elevations evenly spaced along the route, for the profile chart. */
+  profile: z.array(z.number().int()).min(2),
+});
+export type TrailStats = z.infer<typeof statsSchema>;
+
 /** A trail as stored in the seed file. Validated with Zod whenever it's read. */
 export const trailSchema = z.object({
   id: z.uuid({ version: "v7" }),
@@ -28,6 +40,7 @@ export const trailSchema = z.object({
   description: z.string().optional(),
   website: z.url().optional(),
   osmTags: osmTagsSchema.optional(),
+  stats: statsSchema.optional(),
   /** Simplified for display; lengthM is measured on the full geometry. */
   lines: z.array(z.array(position).min(2)).min(1),
 });
