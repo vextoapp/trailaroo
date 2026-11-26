@@ -1,15 +1,29 @@
 "use client";
-import { ACTIVE_REGION, type Family, HOME_AREA, t } from "@trailaroo/core";
+import { ACTIVE_REGION, type Difficulty, type Family, HOME_AREA, t } from "@trailaroo/core";
 import Link from "next/link";
 import { type ReactNode, useDeferredValue, useEffect, useState } from "react";
+import { DifficultyBadge } from "@/components/difficulty-badge";
 import { Icon } from "@/components/icon";
 import { LazyMap } from "@/components/lazy-map";
 import { PreviewBanner } from "@/components/preview-banner";
 
-export type ExploreCard = { slug: string; name: string; lengthM: number; family: Family; meta: string; cover: ReactNode };
+export type ExploreCard = {
+  slug: string; name: string; lengthM: number; gainM: number; awayM: number; family: Family;
+  difficulty: Difficulty | undefined; facts: string; meta: string; cover: ReactNode;
+};
 type View = "list" | "map";
 type Len = "" | "short" | "mid" | "long";
 type Fam = "" | Family;
+type Diff = "" | Difficulty;
+type Sort = "closest" | "shortest" | "longest" | "flattest" | "steepest";
+const DIFFS: Difficulty[] = ["easy", "moderate", "hard", "veryhard"];
+const SORTS: { key: Sort; label: Parameters<typeof t>[0]; by: (a: ExploreCard, b: ExploreCard) => number }[] = [
+  { key: "closest", label: "sort.closest", by: (a, b) => a.awayM - b.awayM },
+  { key: "shortest", label: "sort.shortest", by: (a, b) => a.lengthM - b.lengthM },
+  { key: "longest", label: "sort.longest", by: (a, b) => b.lengthM - a.lengthM },
+  { key: "flattest", label: "sort.flattest", by: (a, b) => a.gainM - b.gainM },
+  { key: "steepest", label: "sort.steepest", by: (a, b) => (b.gainM === Number.POSITIVE_INFINITY ? -1 : a.gainM === Number.POSITIVE_INFINITY ? 1 : b.gainM - a.gainM) },
+];
 const PAGE = 24;
 
 const FAMILIES: { key: Fam; label: Parameters<typeof t>[0]; icon: string }[] = [
@@ -18,7 +32,6 @@ const FAMILIES: { key: Fam; label: Parameters<typeof t>[0]; icon: string }[] = [
   { key: "bike", label: "explore.bikes", icon: "f-bike" },
 ];
 
-// Activity and length are the filters with real data today; difficulty and time arrive in M1 step 2.
 const BANDS: { key: Len; label: Parameters<typeof t>[0]; test: (m: number) => boolean }[] = [
   { key: "", label: "explore.anyLength", test: () => true },
   { key: "short", label: "explore.short", test: (m) => m < 5000 },
@@ -31,6 +44,8 @@ export function ExploreView({ cards }: { cards: ExploreCard[] }) {
   const [q, setQ] = useState("");
   const [len, setLen] = useState<Len>("");
   const [fam, setFam] = useState<Fam>("");
+  const [diff, setDiff] = useState<Diff>("");
+  const [sort, setSort] = useState<Sort>("closest");
   const [limit, setLimit] = useState(PAGE);
   // On wide screens list and map sit side by side; on phones the map only loads when asked for.
   const [wide, setWide] = useState(false);
@@ -52,6 +67,10 @@ export function ExploreView({ cards }: { cards: ExploreCard[] }) {
     if (l === "short" || l === "mid" || l === "long") setLen(l);
     const f = params.get("fam");
     if (f === "foot" || f === "bike") setFam(f);
+    const d = params.get("diff");
+    if (DIFFS.includes(d as Difficulty)) setDiff(d as Difficulty);
+    const so = params.get("sort");
+    if (SORTS.some((x) => x.key === so)) setSort(so as Sort);
     if (params.get("view") === "map") setView("map");
     setUrlRead(true);
   }, []);
@@ -61,16 +80,21 @@ export function ExploreView({ cards }: { cards: ExploreCard[] }) {
     if (q) params.set("q", q);
     if (len) params.set("len", len);
     if (fam) params.set("fam", fam);
+    if (diff) params.set("diff", diff);
+    if (sort !== "closest") params.set("sort", sort);
     if (view === "map") params.set("view", "map");
     const search = params.toString();
     history.replaceState(null, "", search ? `?${search}` : location.pathname);
-  }, [q, len, fam, view, urlRead]);
+  }, [q, len, fam, diff, sort, view, urlRead]);
   // A new search or filter starts again from the first page.
   // biome-ignore lint/correctness/useExhaustiveDependencies: reset only when the filters change
-  useEffect(() => setLimit(PAGE), [query, len, fam]);
+  useEffect(() => setLimit(PAGE), [query, len, fam, diff, sort]);
 
   const band = BANDS.find((b) => b.key === len) ?? BANDS[0];
-  const shown = cards.filter((c) => (!fam || c.family === fam) && band?.test(c.lengthM) && (!query || c.name.toLowerCase().includes(query)));
+  const sorter = (SORTS.find((x) => x.key === sort) ?? SORTS[0])?.by;
+  const shown = cards
+    .filter((c) => (!fam || c.family === fam) && (!diff || c.difficulty === diff) && band?.test(c.lengthM) && (!query || c.name.toLowerCase().includes(query)))
+    .sort(sorter);
   const count = shown.length === 1 ? t("explore.countOne") : t("explore.count", { count: shown.length });
   const [osmCreditBefore, osmCreditAfter] = t("credit.osm").split("{osm}");
 
@@ -93,18 +117,34 @@ export function ExploreView({ cards }: { cards: ExploreCard[] }) {
             </button>
           ))}
         </div>
-        {/* biome-ignore lint/a11y/useSemanticElements: a fieldset would need a visible legend; the chips are labelled */}
-        <div className="chips ex-lengths" role="group" aria-label={t("explore.length")}>
-          {BANDS.map((b) => (
-            <button key={b.key || "any"} type="button" className="chip" aria-pressed={len === b.key} onClick={() => setLen(b.key)}>{t(b.label)}</button>
-          ))}
+        <div className="filter-rows">
+          {/* biome-ignore lint/a11y/useSemanticElements: a fieldset would need a visible legend; the chips are labelled */}
+          <div className="chips" role="group" aria-label={t("explore.length")}>
+            {BANDS.map((b) => (
+              <button key={b.key || "any"} type="button" className="chip" aria-pressed={len === b.key} onClick={() => setLen(b.key)}>{t(b.label)}</button>
+            ))}
+          </div>
+          {/* biome-ignore lint/a11y/useSemanticElements: a fieldset would need a visible legend; the chips are labelled */}
+          <div className="chips" role="group" aria-label={t("explore.difficulty")}>
+            <button type="button" className="chip" aria-pressed={diff === ""} onClick={() => setDiff("")}>{t("explore.anyDifficulty")}</button>
+            {DIFFS.map((d) => (
+              <button key={d} type="button" className="chip" aria-pressed={diff === d} onClick={() => setDiff(d)}><DifficultyBadge level={d} /></button>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="ex-split">
         <section className="results" aria-labelledby="count">
           <PreviewBanner />
-          <h2 id="count" className="ex-count num" aria-live="polite">{count}</h2>
+          <div className="results-bar">
+            <h2 id="count" className="ex-count num" aria-live="polite">{count}</h2>
+            <label className="sort">{t("sort.label")}
+              <select name="sort" value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
+                {SORTS.map((x) => <option key={x.key} value={x.key}>{t(x.label)}</option>)}
+              </select>
+            </label>
+          </div>
           {shown.length === 0 && query ? (
             <p>{t("explore.none", { q })}</p>
           ) : (
@@ -114,6 +154,7 @@ export function ExploreView({ cards }: { cards: ExploreCard[] }) {
                   <div className="cover drawn">{c.cover}</div>
                   <div>
                     <h3><Link className="title-link" href={`/trails/${c.slug}`}>{c.name}</Link></h3>
+                    <p className="facts num">{c.difficulty && <DifficultyBadge level={c.difficulty} />}<span>{c.facts}</span></p>
                     <p className="meta num">{c.meta}</p>
                   </div>
                 </article>

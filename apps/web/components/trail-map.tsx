@@ -7,6 +7,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useRouter } from "next/navigation";
 import { Protocol } from "pmtiles";
 import { useEffect, useRef, useState } from "react";
+import { SCRUB_EVENT } from "./elevation-profile";
 
 // ACT basemap extract served by this app (public/tiles). Moves to R2 behind a CDN in M1.
 const TILES = "/tiles/act.pmtiles";
@@ -15,6 +16,10 @@ const ACT_BOUNDS: [number, number, number, number] = [148.76, -35.93, 149.4, -35
 const [rw, rs, re, rn] = ACTIVE_REGION.bbox;
 const REGION_LIMIT: [number, number, number, number] = [rw - 0.5, rs - 0.5, re + 0.5, rn + 0.5];
 const insideTiles = ([w, s, e, n]: [number, number, number, number]) => w >= ACT_BOUNDS[0] && s >= ACT_BOUNDS[1] && e <= ACT_BOUNDS[2] && n <= ACT_BOUNDS[3];
+
+const EMPTY: FeatureCollection = { type: "FeatureCollection", features: [] };
+const pointFC = (p: [number, number] | null): FeatureCollection =>
+  p ? { type: "FeatureCollection", features: [{ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: p } }] } : EMPTY;
 
 let protocolAdded = false;
 function ensureProtocol() {
@@ -26,7 +31,7 @@ function ensureProtocol() {
 const cssVar = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const themeNow = (): "dark" | "light" => (document.documentElement.dataset.theme === "light" ? "light" : "dark");
 
-function buildStyle(data: string | FeatureCollection): StyleSpecification {
+function buildStyle(data: string | FeatureCollection, scrub: FeatureCollection = EMPTY): StyleSpecification {
   const theme = themeNow();
   return {
     version: 8,
@@ -37,12 +42,14 @@ function buildStyle(data: string | FeatureCollection): StyleSpecification {
         attribution: t("credit.map", { protomaps: '<a href="https://protomaps.com">Protomaps</a>', osm: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }),
       },
       trails: { type: "geojson", data },
+      scrub: { type: "geojson", data: scrub },
     },
     layers: [
       // Labels need self-hosted fonts; they arrive with the M1 tile pipeline.
       ...layers("basemap", namedFlavor(theme)).filter((l) => l.type !== "symbol"),
       { id: "trail-casing", type: "line", source: "trails", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": cssVar("--map-route-casing"), "line-width": ["interpolate", ["linear"], ["zoom"], 9, 4, 15, 9] } },
       { id: "trail-line", type: "line", source: "trails", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": cssVar("--route"), "line-width": ["interpolate", ["linear"], ["zoom"], 9, 2, 15, 5] } },
+      { id: "scrub-dot", type: "circle", source: "scrub", paint: { "circle-radius": 8, "circle-color": "#FFFFFF", "circle-stroke-width": 4, "circle-stroke-color": cssVar("--route") } },
     ],
   };
 }
@@ -104,10 +111,18 @@ export default function TrailMap(props: Props) {
       map.on("mouseleave", "trail-line", () => { map.getCanvas().style.cursor = ""; });
     }
 
-    const onTheme = () => map.setStyle(buildStyle(data));
+    // The elevation profile moves a dot along the route (components/elevation-profile.tsx).
+    let scrubAt: [number, number] | null = null;
+    const onScrub = (e: Event) => {
+      scrubAt = (e as CustomEvent<[number, number] | null>).detail;
+      map.getSource<maplibregl.GeoJSONSource>("scrub")?.setData(pointFC(scrubAt));
+    };
+    window.addEventListener(SCRUB_EVENT, onScrub);
+    const onTheme = () => map.setStyle(buildStyle(data, pointFC(scrubAt)));
     window.addEventListener("themechange", onTheme);
     return () => {
       window.removeEventListener("themechange", onTheme);
+      window.removeEventListener(SCRUB_EVENT, onScrub);
       resize.disconnect();
       map.remove();
     };

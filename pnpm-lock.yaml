@@ -11,6 +11,12 @@ importers:
       '@biomejs/biome':
         specifier: 2.6.9
         version: 2.6.9
+      pmtiles:
+        specifier: 4.5.0
+        version: 4.5.0
+      sharp:
+        specifier: 0.35.5
+        version: 0.35.5(@types/node@24.19.2)
       tsx:
         specifier: 4.23.15
         version: 4.23.15
@@ -1739,8 +1745,7 @@ snapshots:
 
   '@fontsource-variable/public-sans@5.3.0': {}
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.35.5':
     optionalDependencies:
@@ -2555,8 +2560,7 @@ snapshots:
 
   semver@7.8.5: {}
 
-  semver@7.8.6:
-    optional: true
+  semver@7.8.6: {}
 
   serwist@9.6.0(browserslist@4.29.3)(typescript@5.9.3):
     dependencies:
@@ -2599,7 +2603,6 @@ snapshots:
       '@img/sharp-win32-ia32': 0.35.5
       '@img/sharp-win32-x64': 0.35.5
       '@types/node': 24.19.2
-    optional: true
 
   source-map-js@1.2.4: {}
 

@@ -1,0 +1,218 @@
+[
+  {
+    "name": "Black Mountain Summit Walk",
+    "osmId": 11325858,
+    "publishedDistanceKm": 5.4,
+    "distanceBasis": "return",
+    "sourceUrl": "https://www.parks.act.gov.au/find-a-park/canberra-nature-park/black-mountain-nature-reserve",
+    "sourceTitle": "Black Mountain Nature Reserve - Parks ACT",
+    "notes": "Same page also gives 2.4km round trip plus 300m each way from the Frith Road substation (about 1.5km one way). Ours is 2.2km one way from near ANBG; compare with 2.7km one way (ANBG) or 1.5km one way (Frith Rd) depending on our start. Gain 220m is consistent with ANBG (~590m) to summit (812m)."
+  },
+  {
+    "name": "Forest Loop Walk",
+    "osmId": 11325859,
+    "publishedDistanceKm": 2,
+    "distanceBasis": "loop",
+    "sourceUrl": "https://www.parks.act.gov.au/find-a-park/canberra-nature-park/black-mountain-nature-reserve",
+    "sourceTitle": "Black Mountain Nature Reserve - Parks ACT",
+    "notes": "Page says 'return' but it is a loop walk; treat as total loop length."
+  },
+  {
+    "name": "Link walk",
+    "osmId": 9848390,
+    "publishedDistanceKm": 3,
+    "distanceBasis": "return",
+    "sourceUrl": "https://www.parks.act.gov.au/find-a-park/canberra-nature-park/black-mountain-nature-reserve",
+    "sourceTitle": "Black Mountain Nature Reserve - Parks ACT",
+    "notes": "Ours is mapped as a 2.68km loop; 'return' here likely means total walked distance."
+  },
+  {
+    "name": "Little Black Mountain Walk",
+    "osmId": 11325860,
+    "publishedDistanceKm": 5.2,
+    "distanceBasis": "return",
+    "sourceUrl": "https://www.parks.act.gov.au/find-a-park/canberra-nature-park/black-mountain-nature-reserve",
+    "sourceTitle": "Black Mountain Nature Reserve - Parks ACT",
+    "notes": "Lollipop: 1.4km approach + 2.4km circuit + 1.4km back. Ours is 3.38km 'one-way', i.e. approach plus circuit should be ~3.8km."
+  },
+  {
+    "name": "Black Mountain Woodland Walk",
+    "osmId": 9848391,
+    "publishedDistanceKm": 2,
+    "distanceBasis": "loop",
+    "sourceUrl": "https://www.parks.act.gov.au/find-a-park/canberra-nature-park/black-mountain-nature-reserve",
+    "sourceTitle": "Black Mountain Nature Reserve - Parks ACT",
+    "notes": "Page says 'return'; ours is a 2.27km loop, so treated as total loop length."
+  },
+  {
+    "name": "Cork Oaks Trail",
+    "osmId": 11275354,
+    "publishedDistanceKm": 1.9,
+    "distanceBasis": "return",
+    "sourceUrl": "https://www.nationalarboretum.act.gov.au/visit/tracks-and-trails",
+    "sourceTitle": "Tracks and trails - National Arboretum Canberra",
+    "notes": "Also '(from Himalayan cedars picnic deck) 1.3kms return'. Ours is 1.95km one way, so it may be the full trail rather than half of the 1.9km return; check which."
+  },
+  {
+    "name": "Central Valley Path",
+    "osmId": 11275357,
+    "publishedDistanceKm": 1.5,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.nationalarboretum.act.gov.au/visit/tracks-and-trails",
+    "sourceTitle": "Tracks and trails - National Arboretum Canberra",
+    "notes": null
+  },
+  {
+    "name": "Himalayan Cedar Trail",
+    "osmId": 11275355,
+    "publishedDistanceKm": 2.1,
+    "distanceBasis": "return",
+    "sourceUrl": "https://www.nationalarboretum.act.gov.au/visit/tracks-and-trails",
+    "sourceTitle": "Tracks and trails - National Arboretum Canberra",
+    "notes": "Official name 'Himalayan Cedar Track'. Ours 0.94km one way vs ~1.05km one way."
+  },
+  {
+    "name": "STEP Circuit",
+    "osmId": 11275356,
+    "publishedDistanceKm": 1,
+    "distanceBasis": "return",
+    "sourceUrl": "https://www.nationalarboretum.act.gov.au/visit/tracks-and-trails",
+    "sourceTitle": "Tracks and trails - National Arboretum Canberra",
+    "notes": "Official name 'STEP Track'; ours mapped as 1.1km loop."
+  },
+  {
+    "name": "Dairy Farmers Hill Circuit",
+    "osmId": 11275358,
+    "publishedDistanceKm": 2.3,
+    "distanceBasis": "return",
+    "sourceUrl": "https://www.nationalarboretum.act.gov.au/visit/tracks-and-trails",
+    "sourceTitle": "Tracks and trails - National Arboretum Canberra",
+    "notes": "Official name 'Dairy Farmers Hill Track'; ours mapped as 2.0km loop. Start point of the official figure not stated."
+  },
+  {
+    "name": "RG Menzies Walk",
+    "osmId": 2784339,
+    "publishedDistanceKm": 2,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.visitcanberra.com.au/attractions/56b23b72266140594567e372/r-g-menzies-walk",
+    "sourceTitle": "R G Menzies Walk | VisitCanberra",
+    "notes": "VisitCanberra (ACT Government tourism), not NCA; no NCA figure found. Commonwealth Avenue Bridge to Kings Avenue. Ours is 2.56km, so our mapped way may extend past Kings Avenue."
+  },
+  {
+    "name": "Shepherds Lookout Loop",
+    "osmId": 18794645,
+    "publishedDistanceKm": 6.8,
+    "distanceBasis": "return",
+    "sourceUrl": "https://www.parks.act.gov.au/home/features/explore-shepherds-lookout",
+    "sourceTitle": "Explore Shepherd's Lookout - Parks ACT",
+    "notes": "Lower confidence on the match: the official walk starts from McClymount Way, Ginninderry; ours (7.0km, starts near The Link, Strathnairn) looks like the same Ginninderry-to-lookout walk but the route may differ."
+  },
+  {
+    "name": "Light to Light Walk",
+    "osmId": 15102193,
+    "publishedDistanceKm": 32,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/light-to-light-walk-app/visitor-info",
+    "sourceTitle": "Light to Light walk | Visitor info | NSW National Parks",
+    "notes": "Boyds Tower to Green Cape Lighthouse. Other NSW Government material quotes 30km (VisitNSW) and 34km (NSW Great Walks list)."
+  },
+  {
+    "name": "Murramarang South Coast Walk",
+    "osmId": 2702047,
+    "publishedDistanceKm": 34,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/murramarang-south-coast-walk/visitor-info",
+    "sourceTitle": "Murramarang South Coast Walk | Visitor info | NSW National Parks",
+    "notes": "Pretty Beach to Maloneys Beach. Ours 34.49km."
+  },
+  {
+    "name": "Snowies Alpine Walk",
+    "osmId": 13360656,
+    "publishedDistanceKm": 56,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/snowies-alpine-walk-app/visitor-info",
+    "sourceTitle": "Snowies Alpine Walk | Visitor info | NSW National Parks",
+    "notes": "Guthega to Bullocks Flat over 4 days; some NPWS pages still say 55km. Ours is 44.4km, so the OSM relation is probably missing a section (e.g. the Main Range day or a link); check before using as a test case."
+  },
+  {
+    "name": "Gidjuum Gulganyi Walk",
+    "osmId": 20185053,
+    "publishedDistanceKm": 42,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/gidjuum-gulganyi-walk-app/visitor-info",
+    "sourceTitle": "Gidjuum Gulganyi Walk | Visitor info | NSW National Parks",
+    "notes": "Manns Road (Mount Jerusalem NP) to Minyon Falls. Ours 39.07km. One NPWS listing says 48km."
+  },
+  {
+    "name": "Historic Nightcap Track",
+    "osmId": 20185055,
+    "publishedDistanceKm": 18,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/historic-nightcap-walking-track",
+    "sourceTitle": "Historic Nightcap walking track | NSW National Parks",
+    "notes": null
+  },
+  {
+    "name": "Yuraygir Coastal Walk",
+    "osmId": 4869590,
+    "publishedDistanceKm": 65,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/yuraygir-coastal-walk/visitor-info",
+    "sourceTitle": "Yuraygir coastal walk | Visitor info | NSW National Parks",
+    "notes": "Angourie to Red Rock. Sections: 18 + 18 + 14 + 15.5km."
+  },
+  {
+    "name": "World Heritage Walk",
+    "osmId": 4803280,
+    "publishedDistanceKm": 45,
+    "distanceBasis": "loop",
+    "sourceUrl": "https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/gibraltarwashpool-world-heritage-walk/visitor-info",
+    "sourceTitle": "Gibraltar-Washpool World Heritage walk | NSW National Parks",
+    "notes": "Official name Gibraltar-Washpool World Heritage walk. Ours is tagged one-way but 45.33km matches the loop."
+  },
+  {
+    "name": "The Coast Track",
+    "osmId": 4609482,
+    "publishedDistanceKm": 27,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/the-coast-track/visitor-info",
+    "sourceTitle": "The Coast Track | Visitor info | NSW National Parks",
+    "notes": "Bundeena (Beachcomber Avenue) to Otford. Older versions of the page said 26km. Ours 25.27km."
+  },
+  {
+    "name": "Main Range Walking Track",
+    "osmId": 3838571,
+    "publishedDistanceKm": 22,
+    "distanceBasis": "loop",
+    "sourceUrl": "https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/main-range-walking-track",
+    "sourceTitle": "Main Range walk | NSW National Parks",
+    "notes": "Loop from Charlotte Pass; our start matches. Ours is tagged one-way but 21.94km matches the loop."
+  },
+  {
+    "name": "Kiama Coast Walk",
+    "osmId": 14273953,
+    "publishedDistanceKm": 20,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.kiama.nsw.gov.au/Facilities/Kiama-Coast-Walk",
+    "sourceTitle": "Kiama Coast Walk - Kiama Municipal Council",
+    "notes": "Minnamurra River mouth to Werri Beach, Gerringong. Council says 'in total', not explicitly one way, but it is an end-to-end walk. Ours 21.66km."
+  },
+  {
+    "name": "Wharf to Wharf Walk",
+    "osmId": 18488588,
+    "publishedDistanceKm": 27,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.nsw.gov.au/visiting-and-exploring-nsw/locations-and-attractions/wharf-to-wharf-walk",
+    "sourceTitle": "Wharf to Wharf Walk | NSW Government",
+    "notes": "Merimbula Wharf to Tathra Wharf. NSW Government tourism page, not a council or NPWS page. Ours 25.56km."
+  },
+  {
+    "name": "Wilderness Coast Walking Track",
+    "osmId": 15282770,
+    "publishedDistanceKm": 55,
+    "distanceBasis": "one-way",
+    "sourceUrl": "https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/nadgee-wilderness-walk",
+    "sourceTitle": "Nadgee wilderness walk | NSW National Parks",
+    "notes": "Lower confidence on the match: our relation is named for the Victorian Wilderness Coast Walk (100km in Croajingolong) but starts at Merrica River, so it looks like the Nadgee leg. Ours 48.65km may stop at the state border or Cape Howe rather than Mallacoota."
+  }
+]

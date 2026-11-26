@@ -1,8 +1,10 @@
-import { DEFAULT_LOCALE, formatDistance, HOME_AREA, t } from "@trailaroo/core";
-import { getTrail, importedAt, trails } from "@trailaroo/core/trails";
+import { DEFAULT_LOCALE, formatClimb, formatDistance, formatDuration, HOME_AREA, t } from "@trailaroo/core";
+import { getTrail, importedAt, trailFacts, trails } from "@trailaroo/core/trails";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { DifficultyBadge } from "@/components/difficulty-badge";
+import { ElevationProfile } from "@/components/elevation-profile";
 import { Icon } from "@/components/icon";
 import { LazyMap } from "@/components/lazy-map";
 import { NewHere } from "@/components/new-here";
@@ -35,8 +37,10 @@ export default async function TrailPage({ params }: Params) {
   const directions = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
   const osmUrl = `https://www.openstreetmap.org/relation/${trail.osmId}`;
   const place = trail.operator ?? trail.network;
+  const facts = trailFacts(trail);
   const length = formatDistance(trail.lengthM);
   const [dataCreditBefore, dataCreditAfter] = t("credit.osmLicence").split("{osm}");
+  const [elevCreditBefore, elevCreditAfter] = t("credit.elevation").split("{mapterhorn}");
   const [mapCreditBefore, mapCreditAfter] = t("credit.map", { osm: "OpenStreetMap" }).split("{protomaps}");
   const jsonLd = {
     "@context": "https://schema.org",
@@ -67,6 +71,14 @@ export default async function TrailPage({ params }: Params) {
       </div>
       <div className="gh-body">
         <div>
+          {facts && trail.stats && (
+            <div className="stats trail-stats num">
+              <div className="stat"><span className="value">{length}</span><span className="label">{t(trail.stats.routeType === "loop" ? "trail.lengthLoop" : "trail.lengthOneWay")}</span></div>
+              <div className="stat"><span className="value">{formatClimb(trail.stats.gainM)}</span><span className="label">{t("trail.climb")}</span></div>
+              <div className="stat"><span className="value">{formatDuration(facts.timeS)}</span><span className="label">{t(trail.stats.routeType === "loop" ? "trail.time" : "trail.timeOneWay")}</span></div>
+              <div className="stat"><span className="value"><DifficultyBadge level={facts.difficulty} /></span><span className="label">{t("trail.difficulty")}</span></div>
+            </div>
+          )}
           <div style={{ marginBottom: "var(--space-6)" }}><PreviewBanner /></div>
           {(trail.description || (trail.from && trail.to)) && (
             <section aria-labelledby="love-h" style={{ marginBottom: "var(--space-7)" }}>
@@ -82,7 +94,12 @@ export default async function TrailPage({ params }: Params) {
                 <LazyMap mode="one" label={t("trail.mapLabel", { name: trail.name })} lines={trail.lines} bbox={trail.bbox} />
               </div>
             </div>
-            <p className="meta" style={{ marginTop: "var(--space-3)" }}>{t("trail.notYet")}</p>
+            {trail.stats && (
+              <div className="mapcard" style={{ marginTop: "var(--space-3)" }}>
+                <ElevationProfile profile={trail.stats.profile} lengthM={trail.lengthM} lines={trail.lines} />
+              </div>
+            )}
+            <p className="meta" style={{ marginTop: "var(--space-3)" }}>{t("trail.estimates")}</p>
           </section>
           <section aria-labelledby="about-h" style={{ marginTop: "var(--space-7)" }}>
             <h2 id="about-h">{t("trail.aboutData")}</h2>
@@ -90,13 +107,14 @@ export default async function TrailPage({ params }: Params) {
             <p style={{ marginTop: "var(--space-2)" }}><a href={osmUrl}>{t("trail.viewOsm")}</a></p>
             <p className="meta" style={{ marginTop: "var(--space-2)" }}>
               {dataCreditBefore}<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>{dataCreditAfter}{" "}
-              {mapCreditBefore}<a href="https://protomaps.com">Protomaps</a>{mapCreditAfter}
+              {mapCreditBefore}<a href="https://protomaps.com">Protomaps</a>{mapCreditAfter}{" "}
+              {elevCreditBefore}<a href="https://mapterhorn.com/attribution">Mapterhorn</a>{elevCreditAfter}
             </p>
           </section>
         </div>
         <aside className="book" aria-label={t("trail.actions")}>
           <div className="book-detail">
-            <p className="num" style={{ fontWeight: 650, fontSize: "var(--step-1)" }}>{length}</p>
+            <p className="num" style={{ fontWeight: 650, fontSize: "var(--step-1)" }}>{facts ? `${length} · ${formatDuration(facts.timeS)}` : length}</p>
             <p className="meta num">{t("trail.start")}: {lat.toFixed(4)}, {lon.toFixed(4)}</p>
           </div>
           <b className="book-phone num">{length}</b>
