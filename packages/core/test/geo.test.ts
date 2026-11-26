@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bbox, distanceM, inMultiPolygon, lineLengthM, multiLineLengthM, type Position, pointAlong, simplify, stitch } from "../src/geo";
+import { bbox, distanceM, inMultiPolygon, lineLengthM, multiLineLengthM, orderPieces, type Position, pointAlong, simplify, stitch } from "../src/geo";
 
 describe("distanceM", () => {
   it("measures Mt Ainslie summit to Parliament House at about 5.1 km", () => {
@@ -87,4 +87,21 @@ describe("pointAlong", () => {
     const second: Position[] = [[149.1, -35], [149.1, -35.02]];
     expect(pointAlong([line, second], 0.75)?.[0]).toBeCloseTo(149.1, 6);
   });
+});
+
+describe("orderPieces", () => {
+  // Three pieces of a walk heading east, stored out of order and with the middle one reversed.
+  const p1: Position[] = [[149, -35], [149.01, -35]];
+  const p2: Position[] = [[149.011, -35], [149.02, -35]];
+  const p3: Position[] = [[149.021, -35], [149.03, -35]];
+  const rev = (l: Position[]) => [...l].reverse();
+  it("puts pieces in walking order and flips the ones stored backwards", () =>
+    expect(orderPieces([p3, rev(p2), p1])).toEqual([p1, p2, p3]));
+  it("starts from a loose end, not from the middle", () =>
+    expect(orderPieces([p2, p3, p1])).toEqual([p1, p2, p3]));
+  it("keeps the longest piece's mapped direction", () => {
+    const long: Position[] = [[149.021, -35], [149.025, -35], [149.03, -35]];
+    expect(orderPieces([rev(long), p1, p2])).toEqual([rev(long), rev(p2), rev(p1)]);
+  });
+  it("leaves a single piece alone", () => expect(orderPieces([p2])).toEqual([p2]));
 });
