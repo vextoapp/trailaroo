@@ -1,6 +1,6 @@
 "use client";
 import { layers, namedFlavor } from "@protomaps/basemaps";
-import { ACTIVE_REGION, t } from "@trailaroo/core";
+import { ACTIVE_REGION, HOME_AREA, t } from "@trailaroo/core";
 import type { FeatureCollection } from "geojson";
 import maplibregl, { type StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -10,12 +10,10 @@ import { useEffect, useRef, useState } from "react";
 import { SCRUB_EVENT } from "./elevation-profile";
 
 // Basemap (Protomaps) and terrain (Mapterhorn) extracts for the region, on R2 behind the Cloudflare CDN
-// (infra/pipelines/tiles.sh). Label fonts and icons are served by this app (public/map).
+// (infra/pipelines/tiles.ts). Label fonts and icons are served by this app (public/map).
 const TILES_URL = process.env.NEXT_PUBLIC_TILES_URL ?? "https://tiles.trailaroo.com";
 const BASEMAP = `${TILES_URL}/${ACTIVE_REGION.id}/basemap.pmtiles`;
 const TERRAIN = `${TILES_URL}/${ACTIVE_REGION.id}/terrain.pmtiles`;
-// Explore opens on Canberra.
-const HOME_VIEW: [number, number, number, number] = [148.76, -35.93, 149.4, -35.12];
 const [rw, rs, re, rn] = ACTIVE_REGION.bbox;
 const REGION_LIMIT: [number, number, number, number] = [rw - 0.5, rs - 0.5, re + 0.5, rn + 0.5];
 const absolute = (url: string) => new URL(url, location.origin).href;
@@ -59,11 +57,11 @@ function buildStyle(data: string | FeatureCollection, scrub: FeatureCollection =
     },
     layers: [
       ...layers("basemap", flavor).filter((l) => l.type !== "symbol"),
-      { id: "hillshade", type: "hillshade", source: "terrain", paint: { "hillshade-exaggeration": 0.35, "hillshade-shadow-color": theme === "dark" ? "#000000" : "#3A4A3E" } },
+      { id: "hillshade", type: "hillshade", source: "terrain", paint: { "hillshade-exaggeration": 0.35, "hillshade-shadow-color": cssVar("--map-hillshade") } },
       ...layers("basemap", flavor, { lang: "en", labelsOnly: true }),
       { id: "trail-casing", type: "line", source: "trails", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": cssVar("--map-route-casing"), "line-width": ["interpolate", ["linear"], ["zoom"], 9, 4, 15, 9] } },
       { id: "trail-line", type: "line", source: "trails", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": cssVar("--route"), "line-width": ["interpolate", ["linear"], ["zoom"], 9, 2, 15, 5] } },
-      { id: "scrub-dot", type: "circle", source: "scrub", paint: { "circle-radius": 8, "circle-color": "#FFFFFF", "circle-stroke-width": 4, "circle-stroke-color": cssVar("--route") } },
+      { id: "scrub-dot", type: "circle", source: "scrub", paint: { "circle-radius": 8, "circle-color": cssVar("--focus"), "circle-stroke-width": 4, "circle-stroke-color": cssVar("--map-route-casing") } },
     ],
   };
 }
@@ -98,7 +96,7 @@ export default function TrailMap(props: Props) {
     const map = new maplibregl.Map({
       container: el.current,
       style: buildStyle(data),
-      bounds: props.mode === "one" ? props.bbox : HOME_VIEW,
+      bounds: props.mode === "one" ? props.bbox : [...HOME_AREA.bbox],
       fitBoundsOptions: { padding: 40 },
       maxBounds: REGION_LIMIT,
       minZoom: 8,
@@ -144,6 +142,7 @@ export default function TrailMap(props: Props) {
 
   return (
     <>
+      <link rel="preconnect" href={TILES_URL} crossOrigin="anonymous" />
       <section ref={el} className="map-canvas" aria-label={props.label} />
       {!ready && <p className="map-status" aria-hidden={!offline}>{t(offline ? "map.offline" : "map.loading")}</p>}
     </>
