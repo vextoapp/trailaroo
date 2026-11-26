@@ -359,8 +359,9 @@ async function buildPhotos(outDir: string) {
     const res = await fetch(info.thumburl ?? info.url, { headers: { "User-Agent": USER_AGENT }, signal: AbortSignal.timeout(TIMEOUT_MS) });
     if (!res.ok) throw new Error(`Download of ${photo.commonsTitle} failed: ${res.status}`);
     const jpeg = await toJpeg(Buffer.from(await res.arrayBuffer()));
-    mkdirSync(dirname(`${outDir}/${photo.file}`), { recursive: true });
-    writeFileSync(`${outDir}/${photo.file}`, jpeg);
+    const dest = `${outDir}/${photo.file}`;
+    mkdirSync(dirname(dest), { recursive: true });
+    writeFileSync(dest, jpeg);
     console.log(`${photo.file}  ${(jpeg.length / 1024).toFixed(0)} KB  ${photo.commonsTitle}`);
   }
 }

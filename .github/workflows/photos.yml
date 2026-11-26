@@ -1,9 +1,13 @@
 name: Trail photos
-# After picked photos are merged (packages/core/data/trail-photos.json), builds the ones not yet on
-# R2 from Wikimedia Commons and uploads them to the tiles bucket under photos/ (served at
-# tiles.trailaroo.com/photos). Each photo's name changes with the pick, so it's cached for a year.
+# When picked photos change (packages/core/data/trail-photos.json), builds the ones not yet on R2
+# from Wikimedia Commons and uploads them to the tiles bucket under photos/ (served at
+# tiles.trailaroo.com/photos). It runs on the PR, so the photos are live before the merge deploys
+# pages that show them, and again on main as a safety net. Each photo's name changes with the pick,
+# so it's cached for a year, and an unmerged pick is never shown.
 on:
   workflow_dispatch:
+  pull_request:
+    paths: [packages/core/data/trail-photos.json]
   push:
     branches: [main]
     paths: [packages/core/data/trail-photos.json]
@@ -14,6 +18,8 @@ concurrency:
 
 jobs:
   photos:
+    # PRs from forks get no secrets, so a maintainer re-runs it after merge instead.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:

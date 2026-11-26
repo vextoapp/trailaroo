@@ -69,7 +69,7 @@ export default async function TrailPage({ params }: Params) {
       {photo ? (
         <div className="cover trail-cover">
           {/* biome-ignore lint/performance/noImgElement: photos are pre-sized on our CDN; no image optimiser on the server keeps it small and cheap */}
-          <img src={photo.src} alt={photo.alt} width={1000} height={667} fetchPriority="high" />
+          <img src={photo.src} alt={t("photo.trailAlt", { trail: trail.name })} width={1000} height={667} fetchPriority="high" />
           <PhotoCredit photo={photo} />
         </div>
       ) : (

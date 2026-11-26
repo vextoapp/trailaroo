@@ -11,11 +11,14 @@ export const asPhoto = (p: TrailPhoto): Photo => ({ src: `${TILES_URL}/${p.file}
  * is decorative (the title says what it is) and its credit is on the trail page the card links to.
  */
 export function TrailCover({ trail, photo, points, className }: { trail: Pick<Trail, "lines" | "bbox">; photo?: TrailPhoto; points?: number; className?: string }) {
-  if (!photo) return <div className={["cover drawn", className].filter(Boolean).join(" ")}><RouteSvg trail={trail} points={points} /></div>;
   return (
-    <div className={["cover", className].filter(Boolean).join(" ")}>
-      {/* biome-ignore lint/performance/noImgElement: photos are pre-sized on our CDN; no image optimiser on the server keeps it small and cheap */}
-      <img src={asPhoto(photo).src} alt="" width={1000} height={667} loading="lazy" decoding="async" />
+    <div className={["cover", !photo && "drawn", className].filter(Boolean).join(" ")}>
+      {photo ? (
+        // biome-ignore lint/performance/noImgElement: photos are pre-sized on our CDN; no image optimiser on the server keeps it small and cheap
+        <img src={`${TILES_URL}/${photo.file}`} alt="" width={1000} height={667} loading="lazy" decoding="async" />
+      ) : (
+        <RouteSvg trail={trail} points={points} />
+      )}
     </div>
   );
 }
