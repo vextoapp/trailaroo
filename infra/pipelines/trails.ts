@@ -10,7 +10,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { v7 as uuidv7 } from "uuid";
-import { bbox, inMultiPolygon, multiLineLengthM, type Position, simplify, stitch } from "../../packages/core/src/geo";
+import { bbox, inMultiPolygon, multiLineLengthM, orderPieces, type Position, simplify, stitch } from "../../packages/core/src/geo";
 import { ACTIVE_REGION } from "../../packages/core/src/regions";
 import { type Family, slugify, type Trail, trailFileSchema } from "../../packages/core/src/trail";
 
@@ -109,7 +109,7 @@ for (const r of relations) {
   if (wayMembers.some((m) => !ways.get(m.ref)?.every((n) => nodes.has(n)))) { skip("incomplete in the region extract"); continue; }
   if (r.members.some((m) => m.type === "r")) { skip("route of routes"); continue; }
   const segments = wayMembers.map((m) => (ways.get(m.ref) ?? []).map((n) => nodes.get(n)).filter((p): p is Position => !!p));
-  const lines = stitch(segments);
+  const lines = orderPieces(stitch(segments));
   if (!lines.length) { skip("no ways"); continue; }
   // Many disconnected pieces means the mapped route has gaps, so its length can't be trusted yet.
   if (lines.length > MAX_PIECES) { skip("too many gaps to measure"); continue; }

@@ -99,6 +99,38 @@ export function stitch(segments: Position[][]): Position[][] {
   return out;
 }
 
+/**
+ * Put the pieces stitch() leaves (where OSM has gaps) into walking order, flipping any stored
+ * backwards, so the elevation profile and the map scrub follow the route. Starts at the loosest
+ * end (furthest from any other piece), then always steps to the nearest unused piece end. The
+ * longest piece keeps its mapped direction, so the route isn't turned around (a summit walk stays uphill).
+ */
+export function orderPieces(lines: Position[][]): Position[][] {
+  if (lines.length < 2) return lines;
+  const ends = (l: Position[]) => [l[0] as Position, l[l.length - 1] as Position];
+  const gap = (p: Position, i: number) => Math.min(...lines.filter((_, j) => j !== i).flatMap((l) => ends(l).map((q) => distanceM(p, q))));
+  let start = 0, flipStart = false, loosest = -1;
+  for (const [i, l] of lines.entries()) for (const [k, p] of ends(l).entries()) {
+    const g = gap(p, i);
+    if (g > loosest) { loosest = g; start = i; flipStart = k === 1; }
+  }
+  const rest = lines.filter((_, i) => i !== start);
+  const first = lines[start] as Position[];
+  const out = [flipStart ? [...first].reverse() : first];
+  while (rest.length) {
+    const tail = out[out.length - 1]?.at(-1) as Position;
+    let best = 0, flip = false, nearest = Infinity;
+    for (const [i, l] of rest.entries()) for (const [k, p] of ends(l).entries()) {
+      const d = distanceM(tail, p);
+      if (d < nearest) { nearest = d; best = i; flip = k === 1; }
+    }
+    const next = rest.splice(best, 1)[0] as Position[];
+    out.push(flip ? [...next].reverse() : next);
+  }
+  const longest = lines.reduce((a, b) => (b.length > a.length ? b : a));
+  return out.includes(longest) ? out : out.reverse().map((l) => [...l].reverse());
+}
+
 /** Ray-casting test: is the point inside a polygon ring? */
 function inRing([x, y]: Position, ring: Position[]): boolean {
   let inside = false;
