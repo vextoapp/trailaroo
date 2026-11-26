@@ -12,16 +12,23 @@
  *     stopped. Add --fresh to search every trail again.
  *
  *   pnpm data:photos --apply .data/picks.json
- *     Downloads each picked photo, resizes it to 1000 px wide JPEG of about 80 KB with macOS
- *     `sips`, saves it as apps/web/public/photos/<slug>-<n>.jpg and records its author and licence
- *     in packages/core/data/trail-photos.json. Trails in the picks file are replaced; others are kept.
- *     A trail with an empty list loses its photos.
+ *     Checks each pick's licence on Commons and records it in packages/core/data/trail-photos.json
+ *     (Commons file, author, licence and the file name it will have on R2). Downloads nothing.
+ *     Trails in the picks file are replaced; others are kept. A trail with an empty list loses its photos.
+ *     Commit the change in a PR.
  *
- * Needs: network access to commons.wikimedia.org; `sips` (built into macOS) for --apply.
+ *   pnpm data:photos --build <dir>
+ *     Run by the "Trail photos" GitHub Action after a merge: for each recorded photo not yet on
+ *     tiles.trailaroo.com, downloads it from Commons and writes a 1000 px JPEG of about 80 KB to
+ *     <dir>/<file>, which the Action uploads to R2.
+ *
+ * Needs: network access to commons.wikimedia.org.
  * Photos are by Wikimedia Commons contributors under the licence recorded for each one.
  */
-import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
+import sharp from "sharp";
 import { z } from "zod";
 import { distanceM, type Position } from "../../packages/core/src/geo";
 import { isOpenPhotoLicence, type Trail, type TrailPhoto, trailFileSchema, trailPhotosSchema } from "../../packages/core/src/trail";
@@ -29,7 +36,7 @@ import { isOpenPhotoLicence, type Trail, type TrailPhoto, trailFileSchema, trail
 const TRAILS = "packages/core/data/trails.json";
 const PHOTOS_JSON = "packages/core/data/trail-photos.json";
 const CACHE = ".data/photo-candidates.json";
-const PHOTOS_DIR = "apps/web/public/photos";
+const TILES_URL = "https://tiles.trailaroo.com";
 const PICKER = ".data/photo-picker.html";
 const API = "https://commons.wikimedia.org/w/api.php";
 const USER_AGENT = "TrailarooPhotoPipeline/0.1 (https://github.com/vextoapp/trailaroo)";
@@ -301,64 +308,75 @@ async function writePicker(trails: Trail[], fresh: boolean) {
 // ---- Step 2: apply picks ----
 const picksSchema = z.record(z.string(), z.array(z.string().startsWith("File:")).max(MAX_PICKS));
 
-/**
- * Resizes to OUT_WIDTH px JPEG, lowering quality until it's about TARGET_BYTES. sips quality runs
- * high: most photos land near 80 KB at 40-50; very detailed ones (gravel, leaves) stay larger even
- * at the floor of 25, and are kept with a warning rather than made blotchy.
- */
-function toJpeg(input: string, output: string) {
-  for (const quality of [70, 60, 50, 40, 32, 25]) {
-    execFileSync("sips", ["-s", "format", "jpeg", "-s", "formatOptions", String(quality), "--resampleWidth", String(OUT_WIDTH), input, "--out", output], { stdio: "ignore" });
-    if (statSync(output).size <= TARGET_BYTES) return;
+/** Resizes to OUT_WIDTH px JPEG, lowering quality until it's about TARGET_BYTES (very detailed photos may stay larger). */
+async function toJpeg(input: Buffer): Promise<Buffer> {
+  let out = input;
+  for (const quality of [80, 72, 64, 56, 48]) {
+    out = await sharp(input).autoOrient().resize({ width: OUT_WIDTH, withoutEnlargement: true }).jpeg({ quality, mozjpeg: true }).toBuffer();
+    if (out.length <= TARGET_BYTES) break;
   }
-  console.warn(`  ${output} is ${(statSync(output).size / 1024).toFixed(0)} KB at the lowest quality; consider another photo`);
+  return out;
 }
+
+/** R2 key for a trail's photo: changes whenever the pick changes, so the CDN can cache it forever. */
+const photoKey = (osmId: number, commonsTitle: string) => `photos/${osmId}-${createHash("sha1").update(commonsTitle).digest("hex").slice(0, 8)}.jpg`;
 
 async function applyPicks(path: string, trails: Trail[]) {
   const picks = picksSchema.parse(JSON.parse(readFileSync(path, "utf8")));
-  const slugs = new Set(trails.map((t) => t.slug));
-  const unknown = Object.keys(picks).filter((slug) => !slugs.has(slug));
+  const osmBySlug = new Map(trails.map((t) => [t.slug, t.osmId]));
+  const unknown = Object.keys(picks).filter((slug) => !osmBySlug.has(slug));
   if (unknown.length) throw new Error(`Unknown trail slugs in ${path}: ${unknown.join(", ")}`);
 
   const photos = trailPhotosSchema.parse(existsSync(PHOTOS_JSON) ? JSON.parse(readFileSync(PHOTOS_JSON, "utf8")) : {});
-  const infos = await imageInfo(Object.values(picks).flat(), 1280);
-  const tmp = ".data/photo-downloads";
-  mkdirSync(tmp, { recursive: true });
-  mkdirSync(PHOTOS_DIR, { recursive: true });
-
+  const infos = await imageInfo(Object.values(picks).flat(), OUT_WIDTH);
   for (const [slug, titles] of Object.entries(picks)) {
-    for (const old of readdirSync(PHOTOS_DIR).filter((f) => new RegExp(`^${slug}-\\d\\.jpg$`).test(f))) rmSync(`${PHOTOS_DIR}/${old}`);
-    const list: TrailPhoto[] = [];
-    for (const [i, title] of titles.entries()) {
+    const osmId = osmBySlug.get(slug) as number;
+    const list = titles.map((title): TrailPhoto => {
       const info = infos.get(title);
       if (!info) throw new Error(`${title} not found on Commons`);
       const why = rejectReason(info);
       if (why) throw new Error(`${title} can't be used: ${why}`);
-      await sleep(DELAY_MS);
-      const res = await fetch(info.thumburl ?? info.url, { headers: { "User-Agent": USER_AGENT } });
-      if (!res.ok) throw new Error(`Download of ${title} failed: ${res.status}`);
-      const raw = `${tmp}/${slug}-${i + 1}`;
-      writeFileSync(raw, Buffer.from(await res.arrayBuffer()));
-      const name = `${slug}-${i + 1}.jpg`;
-      toJpeg(raw, `${PHOTOS_DIR}/${name}`);
-      list.push({ file: `/photos/${name}`, ...attribution(title, info) });
-      console.log(`${name}  ${(statSync(`${PHOTOS_DIR}/${name}`).size / 1024).toFixed(0)} KB  ${title}`);
-    }
-    if (list.length) photos[slug] = list;
-    else delete photos[slug];
+      return { file: photoKey(osmId, title), commonsTitle: title, ...attribution(title, info) };
+    });
+    if (list.length) photos[osmId] = list;
+    else delete photos[osmId];
   }
-  rmSync(tmp, { recursive: true, force: true });
-  const sorted = Object.fromEntries(Object.entries(trailPhotosSchema.parse(photos)).sort(([a], [b]) => a.localeCompare(b)));
+  const sorted = Object.fromEntries(Object.entries(trailPhotosSchema.parse(photos)).sort(([a], [b]) => Number(a) - Number(b)));
   writeFileSync(PHOTOS_JSON, `${JSON.stringify(sorted, null, 2)}\n`);
-  console.log(`Wrote ${PHOTOS_JSON} (${Object.keys(sorted).length} trails with photos).`);
+  console.log(`Wrote ${PHOTOS_JSON} (${Object.keys(sorted).length} trails with photos). Commit it in a PR; the Trail photos Action uploads the images after merge.`);
+}
+
+async function buildPhotos(outDir: string) {
+  const photos = Object.values(trailPhotosSchema.parse(JSON.parse(readFileSync(PHOTOS_JSON, "utf8")))).flat();
+  const missing = [];
+  for (const photo of photos) if (!(await fetch(`${TILES_URL}/${photo.file}`, { method: "HEAD" })).ok) missing.push(photo);
+  console.log(`${photos.length} photos recorded, ${missing.length} not on R2 yet.`);
+  const infos = await imageInfo(missing.map((p) => p.commonsTitle), OUT_WIDTH * 1.28);
+  for (const photo of missing) {
+    const info = infos.get(photo.commonsTitle);
+    if (!info) throw new Error(`${photo.commonsTitle} not found on Commons`);
+    await sleep(DELAY_MS);
+    const res = await fetch(info.thumburl ?? info.url, { headers: { "User-Agent": USER_AGENT }, signal: AbortSignal.timeout(TIMEOUT_MS) });
+    if (!res.ok) throw new Error(`Download of ${photo.commonsTitle} failed: ${res.status}`);
+    const jpeg = await toJpeg(Buffer.from(await res.arrayBuffer()));
+    mkdirSync(dirname(`${outDir}/${photo.file}`), { recursive: true });
+    writeFileSync(`${outDir}/${photo.file}`, jpeg);
+    console.log(`${photo.file}  ${(jpeg.length / 1024).toFixed(0)} KB  ${photo.commonsTitle}`);
+  }
 }
 
 // ---- Main ----
 const { trails } = trailFileSchema.parse(JSON.parse(readFileSync(TRAILS, "utf8")));
-const applyAt = process.argv.indexOf("--apply");
-const picksPath = process.argv[applyAt + 1];
-if (applyAt !== -1 && !picksPath) throw new Error("Usage: pnpm data:photos --apply <picks.json>");
-(picksPath && applyAt !== -1 ? applyPicks(picksPath, trails) : writePicker(trails, process.argv.includes("--fresh"))).catch((error: unknown) => {
+const arg = (flag: string) => {
+  const at = process.argv.indexOf(flag);
+  if (at === -1) return undefined;
+  const value = process.argv[at + 1];
+  if (!value) throw new Error(`Usage: pnpm data:photos ${flag} <path>`);
+  return value;
+};
+const picksPath = arg("--apply");
+const buildDir = arg("--build");
+(picksPath ? applyPicks(picksPath, trails) : buildDir ? buildPhotos(buildDir) : writePicker(trails, process.argv.includes("--fresh"))).catch((error: unknown) => {
   console.error(error);
   process.exit(1);
 });

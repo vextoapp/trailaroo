@@ -87,8 +87,10 @@ export function isOpenPhotoLicence(code: string): boolean {
 
 /** A picked trail photo, stored in packages/core/data/trail-photos.json by `pnpm data:photos --apply`. */
 export const trailPhotoSchema = z.object({
-  /** Public path in apps/web, e.g. "/photos/mt-ainslie-summit-1234-1.jpg". */
-  file: z.string().regex(/^\/photos\/[a-z0-9-]+-\d\.jpg$/),
+  /** Key in the tiles bucket, served at TILES_URL/<file>. Named after the trail and the photo, so a new pick gets a new name. */
+  file: z.string().regex(/^photos\/\d+-[0-9a-f]{8}\.jpg$/),
+  /** The "File:…" page on Wikimedia Commons the image is built from. */
+  commonsTitle: z.string().startsWith("File:"),
   title: z.string().min(1),
   author: z.string().min(1),
   licence: z.string().min(1),
@@ -98,6 +100,6 @@ export const trailPhotoSchema = z.object({
 });
 export type TrailPhoto = z.infer<typeof trailPhotoSchema>;
 
-/** Photos by trail slug, best first, at most three per trail. */
-export const trailPhotosSchema = z.record(z.string().regex(/^[a-z0-9-]+$/), z.array(trailPhotoSchema).max(3));
+/** Photos by OSM relation id (stable when a trail is renamed), best first, at most three per trail. */
+export const trailPhotosSchema = z.record(z.string().regex(/^\d+$/), z.array(trailPhotoSchema).max(3));
 export type TrailPhotos = z.infer<typeof trailPhotosSchema>;

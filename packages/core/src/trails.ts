@@ -26,4 +26,4 @@ export function trailFacts(trail: Trail): { difficulty: Difficulty; timeS: numbe
 
 const photos = trailPhotosSchema.parse(photoData as unknown);
 /** Picked photos for a trail, best first; empty when it has none (the app draws a route cover). */
-export const getTrailPhotos = (slug: string): readonly TrailPhoto[] => photos[slug] ?? [];
+export const getTrailPhotos = (osmId: number): readonly TrailPhoto[] => photos[String(osmId)] ?? [];
