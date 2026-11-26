@@ -83,7 +83,7 @@
   window.cardHtml = (t) => `<article class="pcard">
       <div class="cover${t.photos.length ? "" : " drawn"}">${t.photos.length ? `<img data-photo="${t.photos[0]}" alt="" loading="lazy"><span class="chip-map">${route(t)}</span>` : route(t)}</div>
       <button type="button" class="heart" data-save aria-pressed="false" aria-label="Save ${t.name}"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved"/></svg></button>
-      <div><h3><a class="title-link" href="trail.html">${t.name}</a></h3><p class="meta num">${t.away} km away · ${km(t)} · ${t.time} · ${label[t.diff]}</p></div></article>`;
+      <div><h3><a class="title-link" href="trail.html">${t.name}</a></h3><p class="meta num">${t.place} · ${t.away} km away · ${km(t)} · ${t.time} · ${label[t.diff]}</p></div></article>`;
 
   window.Dir = { fillPhotos, trailMap, T, byName, photo, profile, profilePath, route, credit, km, wireScrub };
 })();

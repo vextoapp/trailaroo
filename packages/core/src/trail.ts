@@ -41,6 +41,8 @@ export const trailSchema = z.object({
   website: z.url().optional(),
   osmTags: osmTagsSchema.optional(),
   stats: statsSchema.optional(),
+  /** The protected area most of the route runs through (CAPAD 2024, CC BY 4.0). */
+  park: z.string().optional(),
   /** Simplified for display; lengthM is measured on the full geometry. */
   lines: z.array(z.array(position).min(2)).min(1),
 });
@@ -66,4 +68,11 @@ export function slugify(name: string, osmId: number): string {
     .slice(0, 60)
     .replace(/-+$/, "");
   return base ? `${base}-${osmId}` : String(osmId);
+}
+
+/** "Namadgi" + "National Park" → "Namadgi National Park". Drops CAPAD's internal zone prefixes. */
+export function parkName(name: string, type: string): string {
+  const kind = type.replace(/^CCA Zone \d /, "").replace(/ \(Commonwealth\)$/, "");
+  if (/gazettal in progress|botanic gardens/i.test(kind) || name.toLowerCase().includes(kind.toLowerCase())) return name;
+  return `${name} ${kind}`;
 }

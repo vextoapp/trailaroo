@@ -114,3 +114,11 @@ test("The elevation profile scrubs by keyboard and has a text version", async ({
   await expect(page.locator(".elevation table tr")).not.toHaveCount(0);
   expect(await seriousViolations(page)).toEqual([]);
 });
+
+test("A trail inside a park names the park, with the CAPAD credit", async ({ page }) => {
+  await page.goto("/trails/black-mountain-summit-walk-11325858");
+  await expect(page.locator(".gh-head .sub")).toContainText("Black Mountain Nature Reserve");
+  await expect(page.getByRole("link", { name: "CAPAD 2024" })).toBeVisible();
+  await page.goto("/explore?q=Black%20Mountain%20Summit");
+  await expect(page.locator(".pcard .meta").first()).toContainText("Black Mountain Nature Reserve");
+});

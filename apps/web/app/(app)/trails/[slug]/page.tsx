@@ -13,6 +13,8 @@ import { RouteSvg } from "@/components/route-svg";
 
 type Params = { params: Promise<{ slug: string }> };
 
+const CAPAD_URL = "https://www.dcceew.gov.au/environment/land/nrs/science/capad";
+
 export const dynamicParams = false;
 export const generateStaticParams = () => trails.map((trail) => ({ slug: trail.slug }));
 
@@ -36,10 +38,11 @@ export default async function TrailPage({ params }: Params) {
   const [lon, lat] = trail.start;
   const directions = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
   const osmUrl = `https://www.openstreetmap.org/relation/${trail.osmId}`;
-  const place = trail.operator ?? trail.network;
+  const place = trail.park ?? trail.operator ?? trail.network;
   const facts = trailFacts(trail);
   const length = formatDistance(trail.lengthM);
   const [dataCreditBefore, dataCreditAfter] = t("credit.osmLicence").split("{osm}");
+  const [capadBefore, capadAfter] = t("credit.capad").split("{capad}");
   const [elevCreditBefore, elevCreditAfter] = t("credit.elevation").split("{mapterhorn}");
   const [mapCreditBefore, mapCreditAfter] = t("credit.map", { osm: "OpenStreetMap" }).split("{protomaps}");
   const jsonLd = {
@@ -109,6 +112,7 @@ export default async function TrailPage({ params }: Params) {
               {dataCreditBefore}<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>{dataCreditAfter}{" "}
               {mapCreditBefore}<a href="https://protomaps.com">Protomaps</a>{mapCreditAfter}{" "}
               {elevCreditBefore}<a href="https://mapterhorn.com/attribution">Mapterhorn</a>{elevCreditAfter}
+              {trail.park && <> {capadBefore}<a href={CAPAD_URL}>CAPAD 2024</a>{capadAfter}</>}
             </p>
           </section>
         </div>
