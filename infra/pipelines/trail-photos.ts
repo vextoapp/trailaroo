@@ -39,6 +39,7 @@ const MIN_WIDTH = 1000;
 const OUT_WIDTH = 1000;
 const TARGET_BYTES = 85_000;
 const DELAY_MS = 600;
+const TIMEOUT_MS = 30_000;
 const MAX_PICKS = 3;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -72,8 +73,18 @@ async function commons(params: Record<string, string>): Promise<z.infer<typeof r
   const url = `${API}?${new URLSearchParams({ format: "json", formatversion: "2", maxlag: "5", ...params })}`;
   for (let attempt = 0; ; attempt++) {
     await sleep(DELAY_MS);
-    const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
-    const body = res.ok ? responseSchema.parse(await res.json()) : null;
+    let res: Response;
+    let body: z.infer<typeof responseSchema> | null;
+    try {
+      res = await fetch(url, { headers: { "User-Agent": USER_AGENT }, signal: AbortSignal.timeout(TIMEOUT_MS) });
+      body = res.ok ? responseSchema.parse(await res.json()) : null;
+    } catch (error) {
+      // A stalled connection would otherwise hang the run; try again after a pause.
+      if (!(error instanceof DOMException && error.name === "TimeoutError") || attempt >= 5) throw error;
+      console.warn(`  request timed out, retrying`);
+      await sleep(2 ** attempt * 2000);
+      continue;
+    }
     const limited = res.status === 429 || res.status === 503 || body?.error?.code === "maxlag" || body?.error?.code === "ratelimited";
     if (limited && attempt < 5) {
       const wait = Number(res.headers.get("retry-after")) * 1000 || 2 ** attempt * 2000;
