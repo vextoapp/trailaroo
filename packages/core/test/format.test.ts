@@ -14,7 +14,7 @@ describe("formatDistance", () => {
 
 describe("t", () => {
   it("fills placeholders", () => expect(t("explore.count", { count: 48 })).toBe("48 trails"));
-  it("leaves unknown placeholders visible", () => expect(t("explore.where")).toBe("Trails near {area}"));
+  it("leaves unknown placeholders visible", () => expect(t("explore.where")).toBe("Trails across the {area}"));
 });
 
 describe("slugify", () => {
