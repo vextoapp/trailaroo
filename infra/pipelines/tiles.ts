@@ -14,9 +14,12 @@ const MAX_BYTES = 512 * 1024 * 1024;
 
 async function latestBasemap(): Promise<string> {
   const builds = z.array(z.object({ key: z.string() })).parse(await (await fetch("https://build-metadata.protomaps.dev/builds.json")).json());
-  const key = builds.at(-1)?.key;
-  if (!key) throw new Error("No Protomaps builds listed");
-  return `https://build.protomaps.com/${key}`;
+  // Keys are dated (YYYYMMDD.pmtiles); take the newest one that is actually downloadable.
+  for (const { key } of builds.toSorted((a, b) => b.key.localeCompare(a.key))) {
+    const url = `https://build.protomaps.com/${key}`;
+    if ((await fetch(url, { method: "HEAD" })).ok) return url;
+  }
+  throw new Error("No downloadable Protomaps build listed");
 }
 
 function extract(source: string, name: string, maxzoom: number) {

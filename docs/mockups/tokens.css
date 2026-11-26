@@ -79,6 +79,7 @@
   --map-contour: #CBD6CC;
   --map-water: #8FBBCB;
   --map-route-casing: #FFFFFF;
+  --map-hillshade: #3A4A3E;
 }
 
 [data-theme="dark"] {
@@ -112,4 +113,5 @@
   --map-contour: #2E3830;
   --map-water: #2B5566;
   --map-route-casing: #14110E;
+  --map-hillshade: #000000;
 }
