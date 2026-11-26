@@ -70,16 +70,15 @@ jobs:
           fi
           pnpm test
       - name: Compare with the current data
-        id: diff
         run: |
           # The import date changes every night; only a change to the trails themselves is worth a PR.
+          # With nothing left to change, the PR step below closes any open data PR, which is now out of date.
           if [ "$(jq -c 'del(.importedAt)' .data/trails-before.json)" = "$(jq -c 'del(.importedAt)' "$TRAILS")" ]; then
             echo "No trail changes."
-            git checkout -- "$TRAILS"
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+            git checkout -- "$TRAILS" packages/core/data/trail-ids.json
+            echo "No trail changes since this PR was opened; closing it." > .data/pr-body.md
             exit 0
           fi
-          echo "changed=true" >> "$GITHUB_OUTPUT"
           jq -rn --slurpfile a .data/trails-before.json --slurpfile b "$TRAILS" '
             def byId(f): f.trails | map({key: (.osmId | tostring), value: .}) | from_entries;
             byId($a[0]) as $A | byId($b[0]) as $B |
@@ -98,13 +97,15 @@ jobs:
             pnpm --silent data:check 2>&1 | tail -1 || true
           } >> .data/pr-body.md
           cat .data/pr-body.md >> "$GITHUB_STEP_SUMMARY"
-      - name: Open or update the PR
+      - name: Open, update or close the PR
         id: pr
-        if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
           branch: ${{ env.BRANCH }}
-          add-paths: ${{ env.TRAILS }}
+          delete-branch: true # closes the PR when the rebuild matches main again
+          add-paths: |
+            ${{ env.TRAILS }}
+            packages/core/data/trail-ids.json
           commit-message: "Trail data: nightly rebuild from OpenStreetMap"
           title: "Trail data: nightly rebuild from OpenStreetMap"
           body-path: .data/pr-body.md

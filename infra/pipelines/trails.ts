@@ -10,6 +10,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { v7 as uuidv7 } from "uuid";
+import { z } from "zod";
 import { bbox, gapsM, inMultiPolygon, multiLineLengthM, orderPieces, type Position, simplify, stitch } from "../../packages/core/src/geo";
 import { ACTIVE_REGION } from "../../packages/core/src/regions";
 import { type Family, slugify, type Trail, trailFileSchema } from "../../packages/core/src/trail";
@@ -17,6 +18,8 @@ import { type Family, slugify, type Trail, trailFileSchema } from "../../package
 const DATA = ".data";
 const PBF = `${DATA}/australia-latest.osm.pbf`;
 const OUT = "packages/core/data/trails.json";
+/** Every trail id ever issued, by OSM relation, so a trail left out for a while keeps its id when it returns. */
+const IDS = "packages/core/data/trail-ids.json";
 const REGION_BBOX = ACTIVE_REGION.bbox.join(",");
 const EXTRACT = `${DATA}/${ACTIVE_REGION.id}`;
 /** route=* value -> activity family. route=bicycle is left out: in Australia it's mostly road and commuter routes. */
@@ -91,7 +94,8 @@ function osmTags(tags: Record<string, string>): Pick<Trail, "osmTags"> {
   return Object.keys(picked).length ? { osmTags: picked } : {};
 }
 const previous = existsSync(OUT) ? trailFileSchema.parse(JSON.parse(readFileSync(OUT, "utf8"))) : null;
-const idByOsm = new Map(previous?.trails.map((t) => [t.osmId, t.id]));
+const issued = existsSync(IDS) ? z.record(z.string(), z.uuid()).parse(JSON.parse(readFileSync(IDS, "utf8"))) : {};
+const idByOsm = new Map([...Object.entries(issued).map(([osm, id]) => [Number(osm), id] as const), ...(previous?.trails.map((t) => [t.osmId, t.id] as const) ?? [])]);
 const round6 = (v: number) => Math.round(v * 1e6) / 1e6;
 const round = ([x, y]: Position): Position => [round6(x), round6(y)];
 const skipped: Record<string, number> = {};
@@ -147,6 +151,8 @@ out.sort((a, b) => a.osmId - b.osmId);
 const importedAt = new Date(statSync(PBF).mtime).toISOString().slice(0, 10);
 const file = trailFileSchema.parse({ importedAt, source: "OpenStreetMap via Geofabrik (australia-latest.osm.pbf)", licence: "ODbL-1.0", trails: out });
 writeFileSync(OUT, `${JSON.stringify(file)}\n`);
+for (const t of out) idByOsm.set(t.osmId, t.id);
+writeFileSync(IDS, `${JSON.stringify(Object.fromEntries([...idByOsm].sort(([a], [b]) => a - b)), null, 1)}\n`);
 console.log(`Wrote ${out.length} trails to ${OUT} (${(statSync(OUT).size / 1024).toFixed(0)} KB). Skipped:`, skipped);
 // Listed so mappers can fill the gaps in OSM; the trail returns on the next rebuild.
 console.log(`Left out for gaps in the map data: ${gapped.sort().join("; ") || "none"}`);
