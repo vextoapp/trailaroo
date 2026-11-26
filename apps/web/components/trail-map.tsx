@@ -9,13 +9,16 @@ import { Protocol } from "pmtiles";
 import { useEffect, useRef, useState } from "react";
 import { SCRUB_EVENT } from "./elevation-profile";
 
-// ACT basemap extract served by this app (public/tiles). Moves to R2 behind a CDN in M1.
-const TILES = "/tiles/act.pmtiles";
-// Basemap tiles cover the ACT today; the rest of the region arrives with the R2 tiles (M1 step 4).
-const ACT_BOUNDS: [number, number, number, number] = [148.76, -35.93, 149.4, -35.12];
+// Basemap (Protomaps) and terrain (Mapterhorn) extracts for the region, on R2 behind the Cloudflare CDN
+// (infra/pipelines/tiles.sh). Label fonts and icons are served by this app (public/map).
+const TILES_URL = process.env.NEXT_PUBLIC_TILES_URL ?? "https://tiles.trailaroo.com";
+const BASEMAP = `${TILES_URL}/${ACTIVE_REGION.id}/basemap.pmtiles`;
+const TERRAIN = `${TILES_URL}/${ACTIVE_REGION.id}/terrain.pmtiles`;
+// Explore opens on Canberra.
+const HOME_VIEW: [number, number, number, number] = [148.76, -35.93, 149.4, -35.12];
 const [rw, rs, re, rn] = ACTIVE_REGION.bbox;
 const REGION_LIMIT: [number, number, number, number] = [rw - 0.5, rs - 0.5, re + 0.5, rn + 0.5];
-const insideTiles = ([w, s, e, n]: [number, number, number, number]) => w >= ACT_BOUNDS[0] && s >= ACT_BOUNDS[1] && e <= ACT_BOUNDS[2] && n <= ACT_BOUNDS[3];
+const absolute = (url: string) => new URL(url, location.origin).href;
 
 const EMPTY: FeatureCollection = { type: "FeatureCollection", features: [] };
 const pointFC = (p: [number, number] | null): FeatureCollection =>
@@ -33,20 +36,31 @@ const themeNow = (): "dark" | "light" => (document.documentElement.dataset.theme
 
 function buildStyle(data: string | FeatureCollection, scrub: FeatureCollection = EMPTY): StyleSpecification {
   const theme = themeNow();
+  // Protomaps' light and dark flavours, with land and water from the Golden hour tokens.
+  const flavor = { ...namedFlavor(theme), earth: cssVar("--map-land"), water: cssVar("--map-water") };
   return {
     version: 8,
+    glyphs: `${location.origin}/map/fonts/{fontstack}/{range}.pbf`, // not new URL(): it would escape the braces
+    sprite: absolute(`/map/sprites/${theme}`),
     sources: {
       basemap: {
         type: "vector",
-        url: `pmtiles://${new URL(TILES, location.origin).href}`,
+        url: `pmtiles://${absolute(BASEMAP)}`,
         attribution: t("credit.map", { protomaps: '<a href="https://protomaps.com">Protomaps</a>', osm: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }),
+      },
+      terrain: {
+        type: "raster-dem",
+        url: `pmtiles://${absolute(TERRAIN)}`,
+        encoding: "terrarium",
+        attribution: '<a href="https://mapterhorn.com/attribution">Mapterhorn</a>',
       },
       trails: { type: "geojson", data },
       scrub: { type: "geojson", data: scrub },
     },
     layers: [
-      // Labels need self-hosted fonts; they arrive with the M1 tile pipeline.
-      ...layers("basemap", namedFlavor(theme)).filter((l) => l.type !== "symbol"),
+      ...layers("basemap", flavor).filter((l) => l.type !== "symbol"),
+      { id: "hillshade", type: "hillshade", source: "terrain", paint: { "hillshade-exaggeration": 0.35, "hillshade-shadow-color": theme === "dark" ? "#000000" : "#3A4A3E" } },
+      ...layers("basemap", flavor, { lang: "en", labelsOnly: true }),
       { id: "trail-casing", type: "line", source: "trails", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": cssVar("--map-route-casing"), "line-width": ["interpolate", ["linear"], ["zoom"], 9, 4, 15, 9] } },
       { id: "trail-line", type: "line", source: "trails", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": cssVar("--route"), "line-width": ["interpolate", ["linear"], ["zoom"], 9, 2, 15, 5] } },
       { id: "scrub-dot", type: "circle", source: "scrub", paint: { "circle-radius": 8, "circle-color": "#FFFFFF", "circle-stroke-width": 4, "circle-stroke-color": cssVar("--route") } },
@@ -84,7 +98,7 @@ export default function TrailMap(props: Props) {
     const map = new maplibregl.Map({
       container: el.current,
       style: buildStyle(data),
-      bounds: props.mode === "one" ? props.bbox : ACT_BOUNDS,
+      bounds: props.mode === "one" ? props.bbox : HOME_VIEW,
       fitBoundsOptions: { padding: 40 },
       maxBounds: REGION_LIMIT,
       minZoom: 8,
@@ -132,7 +146,6 @@ export default function TrailMap(props: Props) {
     <>
       <section ref={el} className="map-canvas" aria-label={props.label} />
       {!ready && <p className="map-status" aria-hidden={!offline}>{t(offline ? "map.offline" : "map.loading")}</p>}
-      {props.mode === "one" && !insideTiles(props.bbox) && <p className="map-note">{t("map.noDetail")}</p>}
     </>
   );
 }

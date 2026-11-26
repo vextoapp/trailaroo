@@ -28,11 +28,12 @@ test("Explore lists real trails, filters by name and opens a trail page", async 
   expect(await seriousViolations(page)).toEqual([]);
 });
 
-test("The map loads the trail overlay from our own server only", async ({ page, isMobile }) => {
+test("The map loads only from our own servers (the app and tiles.trailaroo.com)", async ({ page, isMobile }) => {
   const external: string[] = [];
   page.on("request", (r) => {
     const url = new URL(r.url());
-    if (url.protocol.startsWith("http") && url.hostname !== "localhost") external.push(r.url());
+    const ours = url.hostname === "localhost" || url.hostname === "tiles.trailaroo.com";
+    if (url.protocol.startsWith("http") && !ours) external.push(r.url());
   });
   await page.goto("/explore");
   const overlay = page.waitForResponse((r) => r.url().endsWith("/trails.geojson"));
