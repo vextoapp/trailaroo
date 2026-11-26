@@ -17,7 +17,7 @@ async function latestBasemap(): Promise<string> {
   // Keys are dated (YYYYMMDD.pmtiles); take the newest one that is actually downloadable.
   for (const { key } of builds.toSorted((a, b) => b.key.localeCompare(a.key))) {
     const url = `https://build.protomaps.com/${key}`;
-    if ((await fetch(url, { method: "HEAD" })).ok) return url;
+    if ((await fetch(url, { method: "HEAD" }).catch(() => null))?.ok) return url; // a dropped connection moves on to the next build
   }
   throw new Error("No downloadable Protomaps build listed");
 }
