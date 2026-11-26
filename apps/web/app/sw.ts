@@ -18,7 +18,7 @@ const serwist = new Serwist({
   navigationPreload: true,
   runtimeCaching: [
     // Map tiles are read with range requests, which don't cache cleanly. Offline maps arrive in M5.
-    { matcher: ({ url }) => url.pathname.startsWith("/tiles/"), handler: new NetworkOnly() },
+    { matcher: ({ url }) => url.pathname.endsWith(".pmtiles"), handler: new NetworkOnly() },
     ...defaultCache,
   ],
   fallbacks: {

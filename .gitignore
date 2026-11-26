@@ -18,3 +18,4 @@ next-env.d.ts
 *.tsbuildinfo
 !apps/web/public/tiles/act.pmtiles
 .claude/worktrees/
+apps/web/public/tiles-dev/

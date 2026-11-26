@@ -10,6 +10,8 @@ export const { dynamic, dynamicParams, revalidate, generateStaticParams, GET } =
     { url: "/explore", revision },
     { url: "/trails.geojson", revision },
   ],
+  // Map fonts and icons load with the map; precache them with the offline maps in M5, not on install.
+  globIgnores: ["**/node_modules/**/*", "public/map/**/*", "public/tiles-dev/**/*"],
   swSrc: "app/sw.ts",
   useNativeEsbuild: true,
 });
