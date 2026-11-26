@@ -1,3 +1,4 @@
+import { simplify } from "@trailaroo/core";
 import { trails } from "@trailaroo/core/trails";
 
 export const dynamic = "force-static";
@@ -8,8 +9,9 @@ export function GET() {
     type: "FeatureCollection",
     features: trails.map((trail) => ({
       type: "Feature",
-      properties: { slug: trail.slug, name: trail.name },
-      geometry: { type: "MultiLineString", coordinates: trail.lines },
+      properties: { slug: trail.slug, name: trail.name, family: trail.family },
+      // 15 m is plenty for the overview map and keeps the file small with hundreds of trails.
+      geometry: { type: "MultiLineString", coordinates: trail.lines.map((l) => simplify(l, 15)) },
     })),
   });
 }

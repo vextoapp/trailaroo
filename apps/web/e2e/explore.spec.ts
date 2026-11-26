@@ -17,7 +17,7 @@ test("Explore lists real trails, filters by name and opens a trail page", async 
 
   const firstLink = page.locator(".pcard .title-link").first();
   const name = (await firstLink.textContent()) ?? "";
-  await page.getByRole("searchbox", { name: "Trails near Canberra" }).fill(name.slice(0, 6));
+  await page.getByRole("searchbox", { name: "Trails across the ACT and NSW" }).fill(name.slice(0, 6));
   await expect(heading).not.toHaveText(`${total} trails`);
   await expect(page).toHaveURL(/\?q=/);
 
@@ -58,7 +58,7 @@ test("Length chips filter trails; someone browsing Explore isn't shown the intro
   const heading = page.locator("#count");
   await expect(heading).toHaveText(/^\d+ trails?$/);
   const long = Number((await heading.textContent())?.match(/\d+/)?.[0]);
-  await page.getByRole("button", { name: "All trails" }).click();
+  await page.getByRole("button", { name: "Any length" }).click();
   await expect(heading).not.toHaveText(`${long} trails`);
   await page.locator(".pcard .title-link").first().click();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -70,4 +70,16 @@ test("Someone opening a shared trail link directly gets the intro strip, and the
   await page.goto(`/trails/${geo.features[0].properties.slug}`);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByRole("link", { name: "See what it does" })).toBeVisible();
+});
+
+test("Bike trails filter to mountain-bike routes and the list grows with Show more", async ({ page }) => {
+  await page.goto("/explore");
+  const cards = page.locator(".pcard");
+  await expect(cards).toHaveCount(24);
+  await page.getByRole("button", { name: /^Show \d+ more$/ }).click();
+  await expect(cards).toHaveCount(48);
+  await page.getByRole("button", { name: "Bike trails" }).click();
+  await expect(page).toHaveURL(/fam=bike/);
+  await expect(cards.first()).toContainText("Bike trail");
+  await expect(cards).toHaveCount(24); // a new filter starts from the first page again
 });

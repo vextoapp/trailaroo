@@ -13,8 +13,9 @@ export default function ExplorePage() {
     slug: trail.slug,
     name: trail.name,
     lengthM: trail.lengthM,
-    meta: [trail.operator ?? trail.network, t("explore.away", { distance: formatDistance(distanceM(home, trail.start)) }), formatDistance(trail.lengthM)].filter(Boolean).join(" · "),
-    cover: <RouteSvg trail={trail} />,
+    family: trail.family,
+    meta: [t(`family.${trail.family}`), t("explore.away", { distance: formatDistance(distanceM(home, trail.start)) }), formatDistance(trail.lengthM)].join(" · "),
+    cover: <RouteSvg trail={trail} points={28} />,
   }));
   return (
     <>
