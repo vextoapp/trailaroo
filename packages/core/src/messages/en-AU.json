@@ -111,5 +111,6 @@
   "sort.steepest": "Most climbing",
   "duration.m": "{m} min",
   "duration.h": "{h} h",
-  "duration.hm": "{h} h {m} min"
+  "duration.hm": "{h} h {m} min",
+  "credit.capad": "Park names from {capad}, © Commonwealth of Australia (DCCEEW), CC BY 4.0."
 }

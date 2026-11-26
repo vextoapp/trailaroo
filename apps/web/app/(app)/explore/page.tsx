@@ -21,7 +21,7 @@ export default function ExplorePage() {
       family: trail.family,
       difficulty: facts?.difficulty,
       facts: [formatDistance(trail.lengthM), trail.stats && t("explore.climb", { climb: formatClimb(trail.stats.gainM) }), facts && formatDuration(facts.timeS)].filter(Boolean).join(" · "),
-      meta: [t(`family.${trail.family}`), t("explore.away", { distance: formatDistance(awayM) })].join(" · "),
+      meta: [t(`family.${trail.family}`), trail.park, t("explore.away", { distance: formatDistance(awayM) })].filter(Boolean).join(" · "),
       cover: <RouteSvg trail={trail} points={28} />,
     };
   });

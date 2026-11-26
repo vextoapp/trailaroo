@@ -97,6 +97,7 @@ export function ExploreView({ cards }: { cards: ExploreCard[] }) {
     .sort(sorter);
   const count = shown.length === 1 ? t("explore.countOne") : t("explore.count", { count: shown.length });
   const [osmCreditBefore, osmCreditAfter] = t("credit.osm").split("{osm}");
+  const [capadBefore, capadAfter] = t("credit.capad").split("{capad}");
 
   return (
     <main id="main" className="page explore" data-view={view}>
@@ -170,6 +171,9 @@ export function ExploreView({ cards }: { cards: ExploreCard[] }) {
           )}
           <p className="credit" style={{ marginTop: "var(--space-5)" }}>
             {osmCreditBefore}<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>{osmCreditAfter}
+          </p>
+          <p className="credit">
+            {capadBefore}<a href="https://www.dcceew.gov.au/environment/land/nrs/science/capad">CAPAD 2024</a>{capadAfter}
           </p>
         </section>
         <div className="map ex-map">

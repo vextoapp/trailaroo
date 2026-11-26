@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { formatClimb, formatDistance, formatDuration } from "../src/format";
 import { t } from "../src/i18n";
 import { ACTIVE_REGION, REGIONS } from "../src/regions";
-import { slugify } from "../src/trail";
+import { parkName, slugify } from "../src/trail";
 
 describe("formatDistance", () => {
   it("shows one decimal under 10 km", () => expect(formatDistance(8240)).toBe("8.2 km"));
@@ -44,4 +44,11 @@ describe("formatDuration", () => {
 
 describe("formatClimb", () => {
   it("formats metres", () => expect(formatClimb(259.6)).toBe("260 m"));
+});
+
+describe("parkName", () => {
+  it("joins name and type", () => expect(parkName("Namadgi", "National Park")).toBe("Namadgi National Park"));
+  it("drops CAPAD zone prefixes", () => expect(parkName("Cobbora", "CCA Zone 3 State Conservation Area")).toBe("Cobbora State Conservation Area"));
+  it("doesn't repeat a type already in the name", () => expect(parkName("Australian National Botanic Gardens", "Botanic Gardens (Commonwealth)")).toBe("Australian National Botanic Gardens"));
+  it("drops (Commonwealth)", () => expect(parkName("Booderee", "National Park (Commonwealth)")).toBe("Booderee National Park"));
 });

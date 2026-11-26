@@ -15,9 +15,10 @@
     "lint": "biome check .",
     "format": "biome check --write .",
     "e2e": "pnpm --filter @trailaroo/web e2e",
-    "data:trails": "tsx infra/pipelines/trails.ts && tsx infra/pipelines/trail-stats.ts",
+    "data:trails": "tsx infra/pipelines/trails.ts && tsx infra/pipelines/trail-stats.ts && tsx infra/pipelines/parks.ts",
     "mockups:check": "node docs/mockups/check.mjs",
     "data:stats": "tsx infra/pipelines/trail-stats.ts",
+    "data:parks": "tsx infra/pipelines/parks.ts",
     "data:check": "tsx infra/pipelines/reference-check.ts"
   },
   "devDependencies": {
