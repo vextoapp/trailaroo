@@ -1,14 +1,15 @@
 import type { Trail } from "@trailaroo/core";
+import { getTrailPhotos } from "@trailaroo/core/trails";
 import Link from "next/link";
-import { RouteSvg } from "./route-svg";
+import { TrailCover } from "./trail-cover";
 
-export type CardTrail = Pick<Trail, "slug" | "name" | "lines" | "bbox">;
+export type CardTrail = Pick<Trail, "slug" | "osmId" | "name" | "lines" | "bbox">;
 
-/** Golden hour trail card. No photos yet in the live data, so every card uses the drawn cover. */
+/** Golden hour trail card: the trail's first photo, or its drawn route when it has none. */
 export function TrailCard({ trail, meta }: { trail: CardTrail; meta: string }) {
   return (
     <article className="pcard">
-      <div className="cover drawn"><RouteSvg trail={trail} /></div>
+      <TrailCover trail={trail} photo={getTrailPhotos(trail.osmId)[0]} />
       <div>
         <h3><Link className="title-link" href={`/trails/${trail.slug}`}>{trail.name}</Link></h3>
         <p className="meta num">{meta}</p>

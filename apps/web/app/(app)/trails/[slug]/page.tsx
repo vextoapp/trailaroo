@@ -1,5 +1,5 @@
 import { DEFAULT_LOCALE, formatClimb, formatDistance, formatDuration, HOME_AREA, t } from "@trailaroo/core";
-import { getTrail, importedAt, trailFacts, trails } from "@trailaroo/core/trails";
+import { getTrail, getTrailPhotos, importedAt, trailFacts, trails } from "@trailaroo/core/trails";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -8,8 +8,9 @@ import { ElevationProfile } from "@/components/elevation-profile";
 import { Icon } from "@/components/icon";
 import { LazyMap } from "@/components/lazy-map";
 import { NewHere } from "@/components/new-here";
+import { PhotoCredit } from "@/components/photo-credit";
 import { PreviewBanner } from "@/components/preview-banner";
-import { RouteSvg } from "@/components/route-svg";
+import { asPhoto, TrailCover } from "@/components/trail-cover";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -41,6 +42,8 @@ export default async function TrailPage({ params }: Params) {
   const place = trail.park ?? trail.operator ?? trail.network;
   const facts = trailFacts(trail);
   const length = formatDistance(trail.lengthM);
+  const firstPhoto = getTrailPhotos(trail.osmId)[0];
+  const photo = firstPhoto && asPhoto(firstPhoto);
   const [dataCreditBefore, dataCreditAfter] = t("credit.osmLicence").split("{osm}");
   const [capadBefore, capadAfter] = t("credit.capad").split("{capad}");
   const [elevCreditBefore, elevCreditAfter] = t("credit.elevation").split("{mapterhorn}");
@@ -63,7 +66,15 @@ export default async function TrailPage({ params }: Params) {
         <Link href="/explore" className="btn btn-quiet"><Icon id="i-back" small />{t("trail.back")}</Link>
         <NewHere />
       </div>
-      <div className="cover drawn trail-cover"><RouteSvg trail={trail} /></div>
+      {photo ? (
+        <div className="cover trail-cover">
+          {/* biome-ignore lint/performance/noImgElement: photos are pre-sized on our CDN; no image optimiser on the server keeps it small and cheap */}
+          <img src={photo.src} alt={photo.alt} width={1000} height={667} fetchPriority="high" />
+          <PhotoCredit photo={photo} />
+        </div>
+      ) : (
+        <TrailCover trail={trail} className="trail-cover" />
+      )}
       <div className="gh-head">
         <h1>{trail.name}</h1>
         <div className="sub">

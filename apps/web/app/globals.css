@@ -46,6 +46,9 @@ html { scroll-padding-top: calc(72px + env(safe-area-inset-top)); }
 .trail-top .newhere { flex: 1; min-width: 240px; }
 .trail-cover { aspect-ratio: 21 / 8; border-radius: var(--radius-m); overflow: hidden; }
 .trail-cover svg { width: 70%; height: 82%; }
+.trail-cover { position: relative; }
+.trail-cover > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.trail-cover .credit { position: absolute; left: var(--space-3); bottom: var(--space-3); max-width: calc(100% - 2 * var(--space-3)); background: var(--surface); color: var(--text-muted); font-size: 0.6875rem; padding: 2px 8px; border-radius: 999px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 899px) { .trail-cover { aspect-ratio: 16 / 10; } }
 .trail-cover .route-casing, .trail-cover .route { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .trail-cover .route-casing { stroke-width: 10; } .trail-cover .route { stroke-width: 4.5; }

@@ -7,11 +7,11 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useRouter } from "next/navigation";
 import { Protocol } from "pmtiles";
 import { useEffect, useRef, useState } from "react";
+import { TILES_URL } from "@/lib/tiles";
 import { SCRUB_EVENT } from "./elevation-profile";
 
 // Basemap (Protomaps) and terrain (Mapterhorn) extracts for the region, on R2 behind the Cloudflare CDN
 // (infra/pipelines/tiles.ts). Label fonts and icons are served by this app (public/map).
-const TILES_URL = process.env.NEXT_PUBLIC_TILES_URL ?? "https://tiles.trailaroo.com";
 const BASEMAP = `${TILES_URL}/${ACTIVE_REGION.id}/basemap.pmtiles`;
 const TERRAIN = `${TILES_URL}/${ACTIVE_REGION.id}/terrain.pmtiles`;
 const [rw, rs, re, rn] = ACTIVE_REGION.bbox;
