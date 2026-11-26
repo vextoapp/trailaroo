@@ -1,0 +1,46 @@
+name: Map tiles
+# Rebuilds the basemap and terrain extracts and uploads them to R2 (served at tiles.trailaroo.com).
+# Monthly and on demand. Free for public repos; R2 storage stays inside the free tier (about 0.7 GB).
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 18 1 * *" # 1st of each month, early morning in Canberra
+
+concurrency:
+  group: tiles
+  cancel-in-progress: false
+
+jobs:
+  tiles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      BUCKET: trailaroo-tiles
+      PMTILES_VERSION: 1.31.2
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install pmtiles CLI
+        run: |
+          curl -sSfL "https://github.com/protomaps/go-pmtiles/releases/download/v${PMTILES_VERSION}/go-pmtiles_${PMTILES_VERSION}_Linux_x86_64.tar.gz" | tar -xz -C /usr/local/bin pmtiles
+      - run: pnpm data:tiles
+      - name: Upload to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          # R2 doesn't support the newer default checksums in AWS CLI v2.23+.
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+        run: |
+          region=$(pnpm --silent exec tsx -e 'import { ACTIVE_REGION } from "./packages/core/src/regions"; console.log(ACTIVE_REGION.id)')
+          for f in basemap terrain; do
+            aws s3 cp ".data/tiles/$f.pmtiles" "s3://$BUCKET/$region/$f.pmtiles" --endpoint-url "$ENDPOINT" \
+              --content-type application/vnd.pmtiles --cache-control "public, max-age=86400"
+          done
