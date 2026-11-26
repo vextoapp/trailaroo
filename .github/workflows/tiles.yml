@@ -40,7 +40,18 @@ jobs:
           ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
         run: |
           region=$(pnpm --silent exec tsx -e 'import { ACTIVE_REGION } from "./packages/core/src/regions"; console.log(ACTIVE_REGION.id)')
+          echo "REGION=$region" >> "$GITHUB_ENV"
           for f in basemap terrain; do
             aws s3 cp ".data/tiles/$f.pmtiles" "s3://$BUCKET/$region/$f.pmtiles" --endpoint-url "$ENDPOINT" \
               --content-type application/vnd.pmtiles --cache-control "public, max-age=86400"
           done
+      # Files are replaced in place, so clear the CDN copies; otherwise a map could mix cached old ranges with new ones for a day.
+      - name: Purge CDN cache
+        env:
+          CLOUDFLARE_PURGE_TOKEN: ${{ secrets.CLOUDFLARE_PURGE_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          curl -sS "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache" \
+            -H "Authorization: Bearer $CLOUDFLARE_PURGE_TOKEN" -H "Content-Type: application/json" \
+            --data "{\"files\":[\"https://tiles.trailaroo.com/$REGION/basemap.pmtiles\",\"https://tiles.trailaroo.com/$REGION/terrain.pmtiles\"]}" \
+            | tee /dev/stderr | jq -e '.success' > /dev/null
