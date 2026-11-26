@@ -19,6 +19,7 @@
     "mockups:check": "node docs/mockups/check.mjs",
     "data:stats": "tsx infra/pipelines/trail-stats.ts",
     "data:parks": "tsx infra/pipelines/parks.ts",
+    "data:tiles": "tsx infra/pipelines/tiles.ts",
     "data:check": "tsx infra/pipelines/reference-check.ts"
   },
   "devDependencies": {

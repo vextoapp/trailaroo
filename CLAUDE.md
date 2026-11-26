@@ -58,5 +58,6 @@ The full product spec is docs/SPEC.md. Read the relevant section before starting
 ## Commands
 - node docs/mockups/check.mjs (mock-up checks: contrast, no external calls, links; works before M0)
 - pnpm dev / pnpm test / pnpm lint / pnpm typecheck / pnpm build / pnpm e2e (e2e runs against the production build)
+- pnpm data:tiles (maintainers: builds the basemap and terrain extracts into .data/tiles; needs the pmtiles CLI. The "Map tiles" GitHub Action uploads them to R2)
 - pnpm data:trails (maintainers: rebuilds packages/core/data/trails.json for the region in packages/core/src/regions.ts from OSM; needs osmium-tool and .data/australia-latest.osm.pbf)
 - pnpm db:migrate / pnpm db:seed arrive with Postgres in M1
