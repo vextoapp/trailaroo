@@ -131,6 +131,30 @@ export function orderPieces(lines: Position[][]): Position[][] {
   return out.includes(longest) ? out : out.reverse().map((l) => [...l].reverse());
 }
 
+/**
+ * The unmapped distance in a route split into pieces: the shortest straight links that would join
+ * every piece, in metres. A piece whose end meets another piece anywhere (a junction) counts as joined.
+ */
+export function gapsM(lines: Position[][]): number {
+  const toPiece = (p: Position, line: Position[]) => Math.min(...line.map((q) => distanceM(p, q)));
+  const link = (a: Position[], b: Position[]) =>
+    Math.min(toPiece(a[0] as Position, b), toPiece(a.at(-1) as Position, b), toPiece(b[0] as Position, a), toPiece(b.at(-1) as Position, a));
+  // Prim's minimum spanning tree over the pieces.
+  const joined = [0];
+  const rest = lines.map((_, i) => i).slice(1);
+  let total = 0;
+  while (rest.length) {
+    let best = Infinity, pick = 0;
+    for (const [k, j] of rest.entries()) for (const i of joined) {
+      const d = link(lines[i] as Position[], lines[j] as Position[]);
+      if (d < best) { best = d; pick = k; }
+    }
+    joined.push(rest.splice(pick, 1)[0] as number);
+    total += best;
+  }
+  return total;
+}
+
 /** Ray-casting test: is the point inside a polygon ring? */
 function inRing([x, y]: Position, ring: Position[]): boolean {
   let inside = false;

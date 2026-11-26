@@ -10,7 +10,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { v7 as uuidv7 } from "uuid";
-import { bbox, inMultiPolygon, multiLineLengthM, orderPieces, type Position, simplify, stitch } from "../../packages/core/src/geo";
+import { bbox, gapsM, inMultiPolygon, multiLineLengthM, orderPieces, type Position, simplify, stitch } from "../../packages/core/src/geo";
 import { ACTIVE_REGION } from "../../packages/core/src/regions";
 import { type Family, slugify, type Trail, trailFileSchema } from "../../packages/core/src/trail";
 
@@ -25,6 +25,8 @@ const MIN_M = 300;
 const MAX_M = 250_000;
 const DISPLAY_TOLERANCE_M = 4;
 const MAX_PIECES = 8;
+/** Unmapped gaps over this share of the mapped length would make the shown length dangerously short. */
+const MAX_GAP_SHARE = 0.1;
 
 if (!existsSync(PBF)) {
   console.error(`Missing ${PBF}. Download it from https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf`);
@@ -94,6 +96,7 @@ const round6 = (v: number) => Math.round(v * 1e6) / 1e6;
 const round = ([x, y]: Position): Position => [round6(x), round6(y)];
 const skipped: Record<string, number> = {};
 const skip = (why: string) => { skipped[why] = (skipped[why] ?? 0) + 1; };
+const gapped: string[] = [];
 
 const out: Trail[] = [];
 for (const r of relations) {
@@ -117,6 +120,7 @@ for (const r of relations) {
   if (lengthM < MIN_M || lengthM > MAX_M) { skip("too short or too long"); continue; }
   const longest = lines.reduce((a, b) => (b.length > a.length ? b : a));
   if (!inRegion(longest[0] as Position)) { skip("starts outside the region"); continue; }
+  if (gapsM(lines) > MAX_GAP_SHARE * lengthM) { skip("gaps over 10% of the mapped length"); gapped.push(name); continue; }
   const optional = (k: string) => (tags[k]?.trim() ? { [k]: tags[k].trim() } : {});
   const website = tags.website?.startsWith("http") ? { website: tags.website } : {};
   out.push({
@@ -144,3 +148,5 @@ const importedAt = new Date(statSync(PBF).mtime).toISOString().slice(0, 10);
 const file = trailFileSchema.parse({ importedAt, source: "OpenStreetMap via Geofabrik (australia-latest.osm.pbf)", licence: "ODbL-1.0", trails: out });
 writeFileSync(OUT, `${JSON.stringify(file)}\n`);
 console.log(`Wrote ${out.length} trails to ${OUT} (${(statSync(OUT).size / 1024).toFixed(0)} KB). Skipped:`, skipped);
+// Listed so mappers can fill the gaps in OSM; the trail returns on the next rebuild.
+console.log(`Left out for gaps in the map data: ${gapped.sort().join("; ") || "none"}`);
