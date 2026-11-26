@@ -530,7 +530,7 @@ Each gate is a hands-on test on a real phone. The next phase starts only once th
 
 **M1 Real trail data** (reshaped 25 Nov 2026, like M0: everything a hiker sees stays, plumbing moves to the milestone that needs it)
 
-- [ ] At least 300 ACT and NSW trails across activity families, mostly from OSM walking and MTB route relations (about 280 walking and 1,264 bike relations existed in Nov 2026), with length within 2% and elevation gain within 10% of a reference GPS track for 20 sample trails. Later sources: named OSM paths assembled into walks, official park walks where the licence allows, and routes contributed by clubs
+- [ ] At least 300 ACT and NSW trails across activity families (step 1 done 26 Nov 2026: 383 trails, 177 walking and 206 mountain-bike, filtered to the real NSW and ACT borders; the accuracy check comes with step 2), mostly from OSM walking and MTB route relations (about 280 walking and 1,264 bike relations existed in Nov 2026), with length within 2% and elevation gain within 10% of a reference GPS track for 20 sample trails. Later sources: named OSM paths assembled into walks, official park walks where the licence allows, and routes contributed by clubs
 - [ ] Every trail shows elevation gain, an elevation profile, difficulty and estimated time from Mapterhorn terrain, and its park name from CAPAD; the preview banner no longer says "length only"
 - [ ] Map shows place and feature names from fonts we host; Explore has difficulty, length, elevation and activity filters and sorting
 - [ ] Map, terrain and trail tiles served from R2 through the Cloudflare CDN; the app never calls public OSM servers

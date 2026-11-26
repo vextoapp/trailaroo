@@ -98,3 +98,19 @@ export function stitch(segments: Position[][]): Position[][] {
   }
   return out;
 }
+
+/** Ray-casting test: is the point inside a polygon ring? */
+function inRing([x, y]: Position, ring: Position[]): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i] as Position;
+    const [xj, yj] = ring[j] as Position;
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+/** Is the point inside a GeoJSON MultiPolygon (outer rings minus their holes)? */
+export function inMultiPolygon(point: Position, polygons: Position[][][]): boolean {
+  return polygons.some(([outer, ...holes]) => !!outer && inRing(point, outer) && !holes.some((h) => inRing(point, h)));
+}

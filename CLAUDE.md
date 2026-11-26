@@ -58,5 +58,5 @@ The full product spec is docs/SPEC.md. Read the relevant section before starting
 ## Commands
 - node docs/mockups/check.mjs (mock-up checks: contrast, no external calls, links; works before M0)
 - pnpm dev / pnpm test / pnpm lint / pnpm typecheck / pnpm build / pnpm e2e (e2e runs against the production build)
-- pnpm data:act (maintainers: rebuilds packages/core/data/act-trails.json from OSM; needs osmium-tool and .data/australia-latest.osm.pbf)
+- pnpm data:trails (maintainers: rebuilds packages/core/data/trails.json for the region in packages/core/src/regions.ts from OSM; needs osmium-tool and .data/australia-latest.osm.pbf)
 - pnpm db:migrate / pnpm db:seed arrive with Postgres in M1

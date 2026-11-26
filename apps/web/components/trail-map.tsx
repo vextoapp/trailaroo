@@ -1,6 +1,6 @@
 "use client";
 import { layers, namedFlavor } from "@protomaps/basemaps";
-import { t } from "@trailaroo/core";
+import { ACTIVE_REGION, t } from "@trailaroo/core";
 import type { FeatureCollection } from "geojson";
 import maplibregl, { type StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -10,7 +10,11 @@ import { useEffect, useRef, useState } from "react";
 
 // ACT basemap extract served by this app (public/tiles). Moves to R2 behind a CDN in M1.
 const TILES = "/tiles/act.pmtiles";
+// Basemap tiles cover the ACT today; the rest of the region arrives with the R2 tiles (M1 step 4).
 const ACT_BOUNDS: [number, number, number, number] = [148.76, -35.93, 149.4, -35.12];
+const [rw, rs, re, rn] = ACTIVE_REGION.bbox;
+const REGION_LIMIT: [number, number, number, number] = [rw - 0.5, rs - 0.5, re + 0.5, rn + 0.5];
+const insideTiles = ([w, s, e, n]: [number, number, number, number]) => w >= ACT_BOUNDS[0] && s >= ACT_BOUNDS[1] && e <= ACT_BOUNDS[2] && n <= ACT_BOUNDS[3];
 
 let protocolAdded = false;
 function ensureProtocol() {
@@ -75,7 +79,7 @@ export default function TrailMap(props: Props) {
       style: buildStyle(data),
       bounds: props.mode === "one" ? props.bbox : ACT_BOUNDS,
       fitBoundsOptions: { padding: 40 },
-      maxBounds: [ACT_BOUNDS[0] - 0.3, ACT_BOUNDS[1] - 0.3, ACT_BOUNDS[2] + 0.3, ACT_BOUNDS[3] + 0.3],
+      maxBounds: REGION_LIMIT,
       minZoom: 8,
       maxZoom: 17,
       attributionControl: { compact: true },
@@ -113,6 +117,7 @@ export default function TrailMap(props: Props) {
     <>
       <section ref={el} className="map-canvas" aria-label={props.label} />
       {!ready && <p className="map-status" aria-hidden={!offline}>{t(offline ? "map.offline" : "map.loading")}</p>}
+      {props.mode === "one" && !insideTiles(props.bbox) && <p className="map-note">{t("map.noDetail")}</p>}
     </>
   );
 }

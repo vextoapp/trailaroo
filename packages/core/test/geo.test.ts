@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bbox, distanceM, lineLengthM, multiLineLengthM, type Position, simplify, stitch } from "../src/geo";
+import { bbox, distanceM, inMultiPolygon, lineLengthM, multiLineLengthM, type Position, simplify, stitch } from "../src/geo";
 
 describe("distanceM", () => {
   it("measures Mt Ainslie summit to Parliament House at about 5.1 km", () => {
@@ -64,4 +64,14 @@ describe("stitch", () => {
   it("ignores empty or one-point segments", () => {
     expect(stitch([[a], [], [a, b]])).toEqual([[a, b]]);
   });
+});
+
+describe("inMultiPolygon", () => {
+  const square: Position[] = [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]];
+  const hole: Position[] = [[4, 4], [6, 4], [6, 6], [4, 6], [4, 4]];
+  const shape = [[square, hole], [[[20, 20], [30, 20], [30, 30], [20, 30], [20, 20]]]] as Position[][][];
+  it("finds a point inside the first polygon", () => expect(inMultiPolygon([2, 2], shape)).toBe(true));
+  it("finds a point inside the second polygon", () => expect(inMultiPolygon([25, 25], shape)).toBe(true));
+  it("excludes a point in a hole", () => expect(inMultiPolygon([5, 5], shape)).toBe(false));
+  it("excludes a point outside every polygon", () => expect(inMultiPolygon([15, 15], shape)).toBe(false));
 });

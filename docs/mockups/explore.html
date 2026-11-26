@@ -37,19 +37,24 @@
       <label><b>Who's coming</b><input type="text" name="who" placeholder="Just me" autocomplete="off"></label>
       <button class="go" type="submit" aria-label="Search"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-search"/></svg></button>
     </form>
-    <div class="cats" role="group" aria-label="Kind of trail" data-single>
+    <div class="cats" role="group" aria-label="Activity" data-single>
       <button type="button" class="chip-cat" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-explore"/></svg>All trails</button>
-      <button type="button" class="chip-cat" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-walk"/></svg>Short and easy</button>
-      <button type="button" class="chip-cat" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-view"/></svg>Lookouts</button>
-      <button type="button" class="chip-cat" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-water"/></svg>Water</button>
-      <button type="button" class="chip-cat" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-sun"/></svg>Long days</button>
+      <button type="button" class="chip-cat" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="icons.svg#f-foot"/></svg>Walks</button>
       <button type="button" class="chip-cat" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="icons.svg#f-bike"/></svg>Bike trails</button>
+    </div>
+    <div class="chips" role="group" aria-label="Length" data-single style="padding-top: var(--space-3)">
+      <button type="button" class="chip" aria-pressed="true">Any length</button>
+      <button type="button" class="chip" aria-pressed="false">Under 5 km</button>
+      <button type="button" class="chip" aria-pressed="false">5 to 15 km</button>
+      <button type="button" class="chip" aria-pressed="false">Over 15 km</button>
+    </div>
     </div>
   </div>
   <div class="ex-split">
     <section class="results" aria-labelledby="ex-h" data-text-version>
       <h2 id="ex-h" class="meta num" style="font: 500 var(--step-0) var(--font-sans); margin-bottom: var(--space-4)"></h2>
       <div class="cards" id="ex-cards"></div>
+      <p style="margin-top: var(--space-6); text-align: center"><button type="button" class="btn">Show 24 more</button></p>
       <p class="credit" style="margin-top: var(--space-5)">Trail data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors. Photos from Wikimedia Commons; time and difficulty are sample values.</p>
     </section>
     <div class="ex-map map" role="region" aria-label="Map of trails near Canberra. The list shows the same trails as text." data-focus-on="view=map" tabindex="-1">

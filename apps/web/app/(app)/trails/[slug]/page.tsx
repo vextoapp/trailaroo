@@ -62,7 +62,7 @@ export default async function TrailPage({ params }: Params) {
         <div className="sub">
           {place && <span>{place}</span>}
           <span className="pill-tag num">{length}</span>
-          <span>{t("trail.walkingRoute")}</span>
+          <span>{t(trail.family === "bike" ? "trail.kindBike" : "trail.kindFoot")}</span>
         </div>
       </div>
       <div className="gh-body">

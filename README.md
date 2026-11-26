@@ -21,4 +21,4 @@ Then open http://localhost:3000. That's all: trail data and the ACT map are in t
 
 Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build && pnpm e2e` for the browser tests (the first run needs `pnpm --filter @trailaroo/web exec playwright install chromium`).
 
-Maintainers refresh the trail data with `pnpm data:act` (needs `osmium-tool` and the Geofabrik Australia extract in `.data/`; see the script header).
+Maintainers refresh the trail data with `pnpm data:trails` (needs `osmium-tool` and the Geofabrik Australia extract in `.data/`; see the script header).

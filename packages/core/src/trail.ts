@@ -2,12 +2,22 @@ import { z } from "zod";
 
 const position = z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)]);
 
+/** Activity families (SPEC > Activities). M1 imports foot and bike routes. */
+export const familySchema = z.enum(["foot", "bike"]);
+export type Family = z.infer<typeof familySchema>;
+
+/** The few OSM tags later steps use for difficulty and route type. */
+const osmTagsSchema = z
+  .object({ sac_scale: z.string(), mtb_scale: z.string(), surface: z.string(), roundtrip: z.string() })
+  .partial();
+
 /** A trail as stored in the seed file. Validated with Zod whenever it's read. */
 export const trailSchema = z.object({
   id: z.uuid({ version: "v7" }),
   slug: z.string().regex(/^[a-z0-9-]+$/),
   osmId: z.number().int().positive(),
   name: z.string().min(1),
+  family: familySchema,
   lengthM: z.number().positive(),
   start: position,
   bbox: z.tuple([z.number(), z.number(), z.number(), z.number()]),
@@ -17,6 +27,7 @@ export const trailSchema = z.object({
   operator: z.string().optional(),
   description: z.string().optional(),
   website: z.url().optional(),
+  osmTags: osmTagsSchema.optional(),
   /** Simplified for display; lengthM is measured on the full geometry. */
   lines: z.array(z.array(position).min(2)).min(1),
 });

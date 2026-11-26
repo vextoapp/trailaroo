@@ -1,4 +1,4 @@
-import data from "../data/act-trails.json";
+import data from "../data/trails.json";
 import { HOME_AREA } from "./config";
 import { distanceM, type Position } from "./geo";
 import { type Trail, trailFileSchema } from "./trail";
