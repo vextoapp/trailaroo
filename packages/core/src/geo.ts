@@ -133,12 +133,16 @@ export function orderPieces(lines: Position[][]): Position[][] {
 
 /**
  * The unmapped distance in a route split into pieces: the shortest straight links that would join
- * every piece, in metres. A piece whose end meets another piece anywhere (a junction) counts as joined.
+ * every piece, in metres. Pieces that share a point, or where one ends on the other (a junction), count as joined.
  */
 export function gapsM(lines: Position[][]): number {
   const toPiece = (p: Position, line: Position[]) => Math.min(...line.map((q) => distanceM(p, q)));
-  const link = (a: Position[], b: Position[]) =>
-    Math.min(toPiece(a[0] as Position, b), toPiece(a.at(-1) as Position, b), toPiece(b[0] as Position, a), toPiece(b.at(-1) as Position, a));
+  const key = ([x, y]: Position) => `${x},${y}`;
+  const link = (a: Position[], b: Position[]) => {
+    const bPoints = new Set(b.map(key));
+    if (a.some((p) => bPoints.has(key(p)))) return 0; // they cross or touch at a shared OSM node
+    return Math.min(toPiece(a[0] as Position, b), toPiece(a.at(-1) as Position, b), toPiece(b[0] as Position, a), toPiece(b.at(-1) as Position, a));
+  };
   // Prim's minimum spanning tree over the pieces.
   const joined = lines.slice(0, 1);
   const rest = lines.slice(1);

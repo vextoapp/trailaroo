@@ -17,10 +17,14 @@ permissions:
   issues: write
   actions: write # to start CI on the PR branch
 
+defaults:
+  run:
+    shell: bash # an explicit bash adds pipefail, so a failed rebuild piped into tee still fails the step
+
 env:
   BRANCH: data/nightly-refresh
   TRAILS: packages/core/data/trails.json
-  MAX_DROP: "0.1" # fail if more than 10% of trails vanish in one night: that's a broken extract, not real edits
+  MAX_DROP: "0.1" # fail if more than 10% of yesterday's trails vanish in one night: that's a broken extract, not real edits
 
 jobs:
   refresh:
@@ -63,9 +67,12 @@ jobs:
         run: |
           before=$(jq '.trails | length' .data/trails-before.json)
           after=$(jq '.trails | length' "$TRAILS")
-          echo "Trails: $before before, $after after"
-          if [ "$(jq -n "$after < $before * (1 - $MAX_DROP)")" = true ]; then
-            echo "::error::Trail count fell from $before to $after; the extract is probably broken."
+          # Count trails that disappeared, so new trails can't hide lost ones.
+          gone=$(jq -n --slurpfile a .data/trails-before.json --slurpfile b "$TRAILS" \
+            '($b[0].trails | map(.osmId)) as $now | [$a[0].trails[] | select(.osmId as $id | $now | index($id) | not)] | length')
+          echo "Trails: $before before, $after after, $gone gone"
+          if [ "$(jq -n "$gone > $before * $MAX_DROP")" = true ]; then
+            echo "::error::$gone of $before trails vanished in one night; the extract is probably broken."
             exit 1
           fi
           pnpm test
@@ -111,7 +118,8 @@ jobs:
           body-path: .data/pr-body.md
       - name: Run CI on the PR
         # PRs opened with the workflow token don't trigger CI by themselves; a dispatch does.
-        if: steps.pr.outputs.pull-request-operation == 'created' || steps.pr.outputs.pull-request-operation == 'updated'
+        # Any open data PR, so a re-run also recovers a CI start that failed last time.
+        if: steps.pr.outputs.pull-request-number != '' && steps.pr.outputs.pull-request-operation != 'closed'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run ci.yml --ref "$BRANCH"

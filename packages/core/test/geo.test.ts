@@ -116,5 +116,10 @@ describe("gapsM", () => {
     const spur: Position[] = [[149.01, -35], [149.01, -35.01]];
     expect(gapsM([main, spur])).toBe(0);
   });
+  it("counts pieces that cross at a shared point, where neither ends, as joined", () => {
+    const westEast: Position[] = [[148.99, -35], [149, -35], [149.01, -35]];
+    const southNorth: Position[] = [[149, -35.01], [149, -35], [149, -34.99]];
+    expect(gapsM([westEast, southNorth])).toBe(0);
+  });
   it("is zero for one piece", () => expect(gapsM([[[149, -35], [149.01, -35]]])).toBe(0));
 });
