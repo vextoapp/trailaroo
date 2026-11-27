@@ -44,7 +44,7 @@ const CLIMBS: { key: Climb; label: Parameters<typeof t>[0]; test: (m: number) =>
   { key: "", label: "explore.anyClimb", test: () => true },
   { key: "low", label: "explore.climbLow", test: (m) => m < 100 },
   { key: "mid", label: "explore.climbMid", test: (m) => m >= 100 && m <= 300 },
-  { key: "high", label: "explore.climbHigh", test: (m) => m > 300 && Number.isFinite(m) },
+  { key: "high", label: "explore.climbHigh", test: (m) => m > 300 && Number.isFinite(m) }, // no climb data is stored as Infinity
 ];
 
 export function ExploreView({ cards }: { cards: ExploreCard[] }) {
