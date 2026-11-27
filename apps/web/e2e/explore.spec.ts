@@ -66,6 +66,22 @@ test("Length chips filter trails; someone browsing Explore isn't shown the intro
   await expect(page.getByRole("link", { name: "See what it does" })).toHaveCount(0);
 });
 
+test("Climb chips filter trails and are kept in a shareable link", async ({ page }) => {
+  await page.goto("/explore");
+  const heading = page.locator("#count");
+  await expect(heading).toHaveText(/^\d+ trails?$/);
+  const all = Number((await heading.textContent())?.match(/\d+/)?.[0]);
+  await page.getByRole("button", { name: "Over 300 m" }).click();
+  await expect(page).toHaveURL(/climb=high/);
+  const steepText = (await heading.textContent()) ?? "";
+  const steep = Number(steepText.match(/\d+/)?.[0]);
+  expect(steep).toBeGreaterThan(0);
+  expect(steep).toBeLessThan(all);
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Over 300 m" })).toHaveAttribute("aria-pressed", "true");
+  await expect(heading).toHaveText(steepText); // "1 trail" or "N trails"
+});
+
 test("Someone opening a shared trail link directly gets the intro strip, and the trail first", async ({ page }) => {
   const geo = await (await page.request.get("/trails.geojson")).json();
   await page.goto(`/trails/${geo.features[0].properties.slug}`);
