@@ -60,4 +60,5 @@ The full product spec is docs/SPEC.md. Read the relevant section before starting
 - pnpm dev / pnpm test / pnpm lint / pnpm typecheck / pnpm build / pnpm e2e (e2e runs against the production build)
 - pnpm data:tiles (maintainers: builds the basemap and terrain extracts into .data/tiles; needs the pmtiles CLI. The "Map tiles" GitHub Action uploads them to R2)
 - pnpm data:trails (maintainers: rebuilds packages/core/data/trails.json for the region in packages/core/src/regions.ts from OSM; needs osmium-tool and .data/australia-latest.osm.pbf)
+- pnpm data:photos, then pnpm data:photos --apply <picks.json> (maintainers: Commons photo picker at .data/photo-picker.html, then records the picks in packages/core/data/trail-photos.json; after merge the "Trail photos" GitHub Action builds and uploads them to R2)
 - pnpm db:migrate / pnpm db:seed arrive with Postgres in M1

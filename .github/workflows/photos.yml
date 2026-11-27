@@ -1,0 +1,50 @@
+name: Trail photos
+# When picked photos change (packages/core/data/trail-photos.json), builds the ones not yet on R2
+# from Wikimedia Commons and uploads them to the tiles bucket under photos/ (served at
+# tiles.trailaroo.com/photos). It runs on the PR, so the photos are live before the merge deploys
+# pages that show them, and again on main as a safety net. Each photo's name changes with the pick,
+# so it's cached for a year, and an unmerged pick is never shown.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: [packages/core/data/trail-photos.json]
+  push:
+    branches: [main]
+    paths: [packages/core/data/trail-photos.json]
+
+concurrency:
+  # PR runs queue per PR, so they never displace a pending run on main.
+  group: ${{ github.event_name == 'pull_request' && format('photos-pr-{0}', github.event.pull_request.number) || 'photos-main' }}
+  cancel-in-progress: false
+
+jobs:
+  photos:
+    # PRs from forks get no secrets, so a maintainer re-runs it after merge instead.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BUCKET: trailaroo-tiles
+      OUT: .data/photo-build
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm data:photos --build "$OUT"
+      - name: Upload to R2
+        if: hashFiles('.data/photo-build/**') != ''
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          # R2 doesn't support the newer default checksums in AWS CLI v2.23+.
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+        run: |
+          aws s3 cp "$OUT/photos" "s3://$BUCKET/photos" --recursive --endpoint-url "$ENDPOINT" \
+            --content-type image/jpeg --cache-control "public, max-age=31536000, immutable"

@@ -61,6 +61,7 @@
   "home.previewNote": "Early preview: walking and mountain-bike routes across the ACT and NSW with climb, time and difficulty. Photos and conditions are coming.",
   "home.photosFrom": "Photos from Wikimedia Commons:",
   "photo.credit": "Photo:",
+  "photo.trailAlt": "Photo along {trail}",
   "newHere.text": "New here? {app} is a free, open trail app for Canberra.",
   "newHere.link": "See what it does",
   "explore.all": "All trails",
@@ -111,5 +112,6 @@
   "duration.m": "{m} min",
   "duration.h": "{h} h",
   "duration.hm": "{h} h {m} min",
+  "credit.photos": "Photos from Wikimedia Commons; each is credited on its trail page.",
   "credit.capad": "Park names from {capad}, © Commonwealth of Australia (DCCEEW), CC BY 4.0."
 }

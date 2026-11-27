@@ -152,7 +152,7 @@ export function ExploreView({ cards }: { cards: ExploreCard[] }) {
             <div className="cards">
               {shown.slice(0, limit).map((c) => (
                 <article key={c.slug} className="pcard">
-                  <div className="cover drawn">{c.cover}</div>
+                  {c.cover}
                   <div>
                     <h3><Link className="title-link" href={`/trails/${c.slug}`}>{c.name}</Link></h3>
                     <p className="facts num">{c.difficulty && <DifficultyBadge level={c.difficulty} />}<span>{c.facts}</span></p>
@@ -175,6 +175,7 @@ export function ExploreView({ cards }: { cards: ExploreCard[] }) {
           <p className="credit">
             {capadBefore}<a href="https://www.dcceew.gov.au/environment/land/nrs/science/capad">CAPAD 2024</a>{capadAfter}
           </p>
+          <p className="credit">{t("credit.photos")}</p>
         </section>
         <div className="map ex-map">
           {(wide || view === "map") && <LazyMap mode="all" label={t("explore.mapLabel", { count, area: HOME_AREA.name })} />}

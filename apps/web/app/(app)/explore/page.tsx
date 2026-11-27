@@ -1,8 +1,8 @@
 import { distanceM, formatClimb, formatDistance, formatDuration, HOME_AREA, t } from "@trailaroo/core";
-import { trailFacts, trails } from "@trailaroo/core/trails";
+import { getTrailPhotos, trailFacts, trails } from "@trailaroo/core/trails";
 import type { Metadata } from "next";
-import { RouteSvg } from "@/components/route-svg";
 import { SeenHome } from "@/components/seen-home";
+import { TrailCover } from "@/components/trail-cover";
 import { type ExploreCard, ExploreView } from "../explore-view";
 
 export const metadata: Metadata = { title: t("explore.title") };
@@ -22,7 +22,7 @@ export default function ExplorePage() {
       difficulty: facts?.difficulty,
       facts: [formatDistance(trail.lengthM), trail.stats && t("explore.climb", { climb: formatClimb(trail.stats.gainM) }), facts && formatDuration(facts.timeS)].filter(Boolean).join(" · "),
       meta: [t(`family.${trail.family}`), trail.park, t("explore.away", { distance: formatDistance(awayM) })].filter(Boolean).join(" · "),
-      cover: <RouteSvg trail={trail} points={28} />,
+      cover: <TrailCover trail={trail} photo={getTrailPhotos(trail.osmId)[0]} points={28} />,
     };
   });
   return (

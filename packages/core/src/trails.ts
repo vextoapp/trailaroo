@@ -1,8 +1,9 @@
+import photoData from "../data/trail-photos.json";
 import data from "../data/trails.json";
 import { HOME_AREA } from "./config";
 import { type Difficulty, difficulty, estimateTimeS } from "./difficulty";
 import { distanceM, type Position } from "./geo";
-import { type Trail, trailFileSchema } from "./trail";
+import { type Trail, type TrailPhoto, trailFileSchema, trailPhotosSchema } from "./trail";
 
 const file = trailFileSchema.parse(data as unknown);
 const home: Position = [HOME_AREA.lon, HOME_AREA.lat];
@@ -22,3 +23,7 @@ export function trailFacts(trail: Trail): { difficulty: Difficulty; timeS: numbe
     timeS: estimateTimeS(trail.family, trail.lengthM, trail.stats.gainM),
   };
 }
+
+const photos = trailPhotosSchema.parse(photoData as unknown);
+/** Picked photos for a trail, best first; empty when it has none (the app draws a route cover). */
+export const getTrailPhotos = (osmId: number): readonly TrailPhoto[] => photos[String(osmId)] ?? [];

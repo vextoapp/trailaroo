@@ -76,3 +76,30 @@ export function parkName(name: string, type: string): string {
   if (/gazettal in progress|botanic gardens/i.test(kind) || name.toLowerCase().includes(kind.toLowerCase())) return name;
   return `${name} ${kind}`;
 }
+
+/**
+ * Commons licence codes (imageinfo extmetadata `License`) we can show: CC BY, CC BY-SA
+ * (any version, including ported ones like cc-by-3.0-au), CC0 and public domain.
+ */
+export function isOpenPhotoLicence(code: string): boolean {
+  return /^(cc-by(-sa)?-\d(\.\d)?(-[a-z]{2})?|cc0|pd)$/.test(code.trim().toLowerCase());
+}
+
+/** A picked trail photo, stored in packages/core/data/trail-photos.json by `pnpm data:photos --apply`. */
+export const trailPhotoSchema = z.object({
+  /** Key in the tiles bucket, served at TILES_URL/<file>. Named after the trail and the photo, so a new pick gets a new name. */
+  file: z.string().regex(/^photos\/\d+-[0-9a-f]{8}\.jpg$/),
+  /** The "File:…" page on Wikimedia Commons the image is built from. */
+  commonsTitle: z.string().startsWith("File:"),
+  title: z.string().min(1),
+  author: z.string().min(1),
+  licence: z.string().min(1),
+  /** Public-domain images have no licence page. */
+  licenceUrl: z.url().optional(),
+  sourceUrl: z.url(),
+});
+export type TrailPhoto = z.infer<typeof trailPhotoSchema>;
+
+/** Photos by OSM relation id (stable when a trail is renamed), best first, at most three per trail. */
+export const trailPhotosSchema = z.record(z.string().regex(/^\d+$/), z.array(trailPhotoSchema).max(3));
+export type TrailPhotos = z.infer<typeof trailPhotosSchema>;
