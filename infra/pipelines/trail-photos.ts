@@ -143,6 +143,8 @@ async function imageInfo(titles: string[], thumbWidth: number): Promise<Map<stri
 function rejectReason(info: ImageInfo): string | null {
   if (info.mime !== "image/jpeg" && info.mime !== "image/png" && info.mime !== "image/webp") return "not a photo";
   if (!isOpenPhotoLicence(meta(info, "License"))) return "licence";
+  // CC BY and BY-SA need the creator's name; only public-domain and CC0 photos may go uncredited.
+  if (!stripHtml(meta(info, "Artist")) && !/^(pd|cc0)$/i.test(meta(info, "License"))) return "no named author";
   if (info.width < MIN_WIDTH) return "too small";
   if (info.width <= info.height) return "not landscape";
   return null;
@@ -152,7 +154,7 @@ function attribution(title: string, info: ImageInfo) {
   const licenceUrl = meta(info, "LicenseUrl");
   return {
     title: stripHtml(meta(info, "ObjectName")) || fileTitle(title),
-    author: stripHtml(meta(info, "Artist")) || stripHtml(meta(info, "Credit")) || "Unknown author",
+    author: stripHtml(meta(info, "Artist")) || "Unknown author", // public domain or CC0 only (see rejectReason)
     licence: meta(info, "LicenseShortName") || meta(info, "License"),
     ...(licenceUrl ? { licenceUrl: licenceUrl.replace(/^\/\//, "https://") } : {}),
     sourceUrl: info.descriptionurl,
@@ -349,7 +351,12 @@ async function applyPicks(path: string, trails: Trail[]) {
 async function buildPhotos(outDir: string) {
   const photos = Object.values(trailPhotosSchema.parse(JSON.parse(readFileSync(PHOTOS_JSON, "utf8")))).flat();
   const missing = [];
-  for (const photo of photos) if (!(await fetch(`${TILES_URL}/${photo.file}`, { method: "HEAD" })).ok) missing.push(photo);
+  for (const photo of photos) {
+    // Only a real "not found" means build it; a CDN error must not overwrite a published, cached photo.
+    const res = await fetch(`${TILES_URL}/${photo.file}`, { method: "HEAD", signal: AbortSignal.timeout(TIMEOUT_MS) });
+    if (res.status === 404) missing.push(photo);
+    else if (!res.ok) throw new Error(`Couldn't check ${photo.file} on R2: HTTP ${res.status}. Re-run the workflow.`);
+  }
   console.log(`${photos.length} photos recorded, ${missing.length} not on R2 yet.`);
   const infos = await imageInfo(missing.map((p) => p.commonsTitle), OUT_WIDTH * 1.28);
   for (const photo of missing) {

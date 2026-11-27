@@ -13,7 +13,8 @@ on:
     paths: [packages/core/data/trail-photos.json]
 
 concurrency:
-  group: photos
+  # PR runs queue per PR, so they never displace a pending run on main.
+  group: ${{ github.event_name == 'pull_request' && format('photos-pr-{0}', github.event.pull_request.number) || 'photos-main' }}
   cancel-in-progress: false
 
 jobs:

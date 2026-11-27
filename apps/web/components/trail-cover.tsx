@@ -7,17 +7,17 @@ import { RouteSvg } from "./route-svg";
 export const asPhoto = (p: TrailPhoto): Photo => ({ src: `${TILES_URL}/${p.file}`, alt: p.title, author: p.author, licence: p.licence, page: p.sourceUrl });
 
 /**
- * A trail's cover: its first picked photo, or the drawn route when it has none. On cards the photo
- * is decorative (the title says what it is) and its credit is on the trail page the card links to.
+ * A trail's cover: its first picked photo over the drawn route, so a photo that can't load (offline,
+ * say) leaves the drawing showing. On cards the photo is decorative (the title says what it is) and
+ * its credit is on the trail page the card links to.
  */
 export function TrailCover({ trail, photo, points, className }: { trail: Pick<Trail, "lines" | "bbox">; photo?: TrailPhoto; points?: number; className?: string }) {
   return (
-    <div className={["cover", !photo && "drawn", className].filter(Boolean).join(" ")}>
-      {photo ? (
+    <div className={["cover drawn", className].filter(Boolean).join(" ")}>
+      <RouteSvg trail={trail} points={points} />
+      {photo && (
         // biome-ignore lint/performance/noImgElement: photos are pre-sized on our CDN; no image optimiser on the server keeps it small and cheap
-        <img src={`${TILES_URL}/${photo.file}`} alt="" width={1000} height={667} loading="lazy" decoding="async" />
-      ) : (
-        <RouteSvg trail={trail} points={points} />
+        <img className="cover-photo" src={`${TILES_URL}/${photo.file}`} alt="" width={1000} height={667} loading="lazy" decoding="async" />
       )}
     </div>
   );

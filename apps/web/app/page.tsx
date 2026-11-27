@@ -83,6 +83,7 @@ export default function Home() {
                 <span key={photo.src}>{i ? "; " : ""}<PhotoCredit photo={photo} className="" /></span>
               ))}
             </p>
+            <p style={{ marginTop: "var(--space-2)" }}>{t("credit.photos")}</p>
           </footer>
         </div>
       </main>
