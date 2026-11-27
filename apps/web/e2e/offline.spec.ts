@@ -20,6 +20,7 @@ test("A visited trail page reopens in flight mode; an unvisited one shows the of
 
   // Navigate like a person following a link; Playwright's goto is sometimes cancelled while offline.
   await page.evaluate((href) => location.assign(href), unvisited ?? "/");
-  await page.waitForURL(new RegExp(`${unvisited}$`));
+  // An offline navigation can report as aborted, so poll for the result rather than wait for the navigation.
+  await expect(page).toHaveURL(new RegExp(`${unvisited}$`));
   await expect(page.getByRole("heading", { name: "You're offline" })).toBeVisible();
 });

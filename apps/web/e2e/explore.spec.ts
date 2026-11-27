@@ -73,12 +73,13 @@ test("Climb chips filter trails and are kept in a shareable link", async ({ page
   const all = Number((await heading.textContent())?.match(/\d+/)?.[0]);
   await page.getByRole("button", { name: "Over 300 m" }).click();
   await expect(page).toHaveURL(/climb=high/);
-  const steep = Number((await heading.textContent())?.match(/\d+/)?.[0]);
+  const steepText = (await heading.textContent()) ?? "";
+  const steep = Number(steepText.match(/\d+/)?.[0]);
   expect(steep).toBeGreaterThan(0);
   expect(steep).toBeLessThan(all);
   await page.reload();
   await expect(page.getByRole("button", { name: "Over 300 m" })).toHaveAttribute("aria-pressed", "true");
-  await expect(heading).toHaveText(`${steep} trails`);
+  await expect(heading).toHaveText(steepText); // "1 trail" or "N trails"
 });
 
 test("Someone opening a shared trail link directly gets the intro strip, and the trail first", async ({ page }) => {
