@@ -131,6 +131,34 @@ export function orderPieces(lines: Position[][]): Position[][] {
   return out.includes(longest) ? out : out.reverse().map((l) => [...l].reverse());
 }
 
+/**
+ * The unmapped distance in a route split into pieces: the shortest straight links that would join
+ * every piece, in metres. Pieces that share a point, or where one ends on the other (a junction), count as joined.
+ */
+export function gapsM(lines: Position[][]): number {
+  const toPiece = (p: Position, line: Position[]) => Math.min(...line.map((q) => distanceM(p, q)));
+  const key = ([x, y]: Position) => `${x},${y}`;
+  const link = (a: Position[], b: Position[]) => {
+    const bPoints = new Set(b.map(key));
+    if (a.some((p) => bPoints.has(key(p)))) return 0; // they cross or touch at a shared OSM node
+    return Math.min(toPiece(a[0] as Position, b), toPiece(a.at(-1) as Position, b), toPiece(b[0] as Position, a), toPiece(b.at(-1) as Position, a));
+  };
+  // Prim's minimum spanning tree over the pieces.
+  const joined = lines.slice(0, 1);
+  const rest = lines.slice(1);
+  let total = 0;
+  while (rest.length) {
+    let best = Infinity, pick = 0;
+    for (const [k, b] of rest.entries()) for (const a of joined) {
+      const d = link(a, b);
+      if (d < best) { best = d; pick = k; }
+    }
+    joined.push(...rest.splice(pick, 1));
+    total += best;
+  }
+  return total;
+}
+
 /** Ray-casting test: is the point inside a polygon ring? */
 function inRing([x, y]: Position, ring: Position[]): boolean {
   let inside = false;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bbox, distanceM, inMultiPolygon, lineLengthM, multiLineLengthM, orderPieces, type Position, pointAlong, simplify, stitch } from "../src/geo";
+import { bbox, distanceM, gapsM, inMultiPolygon, lineLengthM, multiLineLengthM, orderPieces, type Position, pointAlong, simplify, stitch } from "../src/geo";
 
 describe("distanceM", () => {
   it("measures Mt Ainslie summit to Parliament House at about 5.1 km", () => {
@@ -104,4 +104,22 @@ describe("orderPieces", () => {
     expect(orderPieces([rev(long), p1, p2])).toEqual([rev(long), rev(p2), rev(p1)]);
   });
   it("leaves a single piece alone", () => expect(orderPieces([p2])).toEqual([p2]));
+});
+
+describe("gapsM", () => {
+  it("adds the shortest links needed to join every piece", () => {
+    const gaps = gapsM([[[149, -35], [149.01, -35]], [[149.03, -35], [149.04, -35]], [[149.02, -35], [149.03, -35]]]);
+    expect(gaps).toBeCloseTo(distanceM([149.01, -35], [149.02, -35]), 6);
+  });
+  it("counts a piece that meets another mid-way, at a junction, as joined", () => {
+    const main: Position[] = [[149, -35], [149.01, -35], [149.02, -35]];
+    const spur: Position[] = [[149.01, -35], [149.01, -35.01]];
+    expect(gapsM([main, spur])).toBe(0);
+  });
+  it("counts pieces that cross at a shared point, where neither ends, as joined", () => {
+    const westEast: Position[] = [[148.99, -35], [149, -35], [149.01, -35]];
+    const southNorth: Position[] = [[149, -35.01], [149, -35], [149, -34.99]];
+    expect(gapsM([westEast, southNorth])).toBe(0);
+  });
+  it("is zero for one piece", () => expect(gapsM([[[149, -35], [149.01, -35]]])).toBe(0));
 });

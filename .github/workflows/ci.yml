@@ -1,6 +1,7 @@
 name: CI
 on:
   pull_request:
+  workflow_dispatch: # the nightly data refresh starts CI on its PR this way
   push:
     branches: [main]
 
