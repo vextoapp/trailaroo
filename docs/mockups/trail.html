@@ -22,7 +22,7 @@
 
   .hero { position: relative; border-radius: var(--radius-m); overflow: hidden; aspect-ratio: 4 / 3; background: var(--surface-2); }
   @media (min-width: 640px) { .hero { aspect-ratio: 16 / 10; } }
-  .hero > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hero-actions, .hero .credit { z-index: 3; }
   .hero .photo-count { left: auto; right: var(--space-3); bottom: var(--space-3); }
   .hero .credit { position: absolute; left: var(--space-3); bottom: var(--space-3); background: var(--surface); color: var(--text-muted); font-size: 0.6875rem; padding: 2px 8px; border-radius: 999px; }
   .hero-actions { position: absolute; top: var(--space-3); left: var(--space-3); right: var(--space-3); display: flex; justify-content: space-between; align-items: flex-start; }
@@ -87,17 +87,36 @@
   details.text-version { margin-top: var(--space-2); }
   details.text-version summary { cursor: pointer; font-size: var(--step--1); font-weight: 650; color: var(--accent); min-height: var(--tap); display: flex; align-items: center; }
   .steps { margin: 0; padding-left: 1.4em; font-size: var(--step--1); display: grid; gap: var(--space-2); }
+
+  .mock-switch { display: grid; gap: var(--space-2); padding: var(--space-3); border: 1.5px dashed var(--border); border-radius: var(--radius-m); }
+  .mock-switch .segmented { flex-wrap: wrap; border-radius: var(--radius-m); }
+  .alert-state { display: none; gap: var(--space-2); }
+  body[data-alerts="act"] [data-state="act"], body[data-alerts="current"] [data-state="current"], body[data-alerts="park"] [data-state="park"],
+  body[data-alerts="closed"] [data-state="closed"], body[data-alerts="stale"] [data-state="stale"], body[data-alerts="offline"] [data-state="offline"] { display: grid; }
+  .route-band { fill: none; stroke-width: 5; stroke-linecap: butt; }
+  body:not([data-routecolour="steepness"]) #steep-bands, body:not([data-routecolour="surface"]) #surface-bands { display: none; }
+  .band-legend { margin-top: var(--space-2); }
+  body[data-routecolour="steepness"] #trail-route { stroke: var(--text-muted); }
+  .tags-src { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .tags-src li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-3); }
+  .hours { overflow-x: auto; }
 </style>
 </head>
-<body data-screen="trail">
+<body data-screen="trail" data-alerts="act" data-routecolour="plain">
 <a class="skip" href="#main">Skip to content</a>
 <nav class="nav" aria-label="Main"></nav>
 <main id="main" class="main">
 <div class="trail-layout">
 
   <div class="t-head">
-    <div class="hero">
-      <img data-photo="gibraltar-roo" alt="An eastern grey kangaroo grazing beside the Gibraltar Peak track">
+    <div class="hero carousel" id="hero">
+      <div class="slides">
+        <img data-photo="gibraltar-roo" data-credit="gibraltar-roo" alt="An eastern grey kangaroo grazing beside the Gibraltar Peak track">
+        <img data-photo="tidbinbilla" data-credit="tidbinbilla" alt="Tidbinbilla valley from the ranges" loading="lazy">
+        <img data-photo="namadgi-trail" data-credit="namadgi-trail" alt="A dirt track through eucalypt forest" loading="lazy">
+      </div>
+      <button type="button" class="step" data-dir="-1" aria-label="Previous photo of Gibraltar Peak"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></button>
+      <button type="button" class="step" data-dir="1" aria-label="Next photo of Gibraltar Peak"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></button>
       <div class="hero-actions">
         <a class="btn btn-icon" href="explore.html" aria-label="Back to Explore"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-back"/></svg></a>
         <span class="actions">
@@ -106,7 +125,7 @@
         </span>
       </div>
       <span class="credit" id="hero-credit"></span>
-      <span class="photo-count">1 of 24</span>
+      <span class="photo-count">1 of 3</span>
     </div>
 
     <div class="newhere" role="note"><span>New here? <span data-app-name translate="no"></span> is a free, open trail app for Canberra.</span><a href="home.html">See what it does</a></div>
@@ -140,15 +159,88 @@
 
     <section class="safety" aria-labelledby="safety-h">
       <h2 id="safety-h" class="visually-hidden">Safety today</h2>
-      <div class="notice fire" role="note">
-        <svg class="icon" aria-hidden="true"><use href="icons.svg#i-fire"/></svg>
-        <div><span class="afdrs" data-rating="moderate">Moderate</span> <strong>fire danger today.</strong> No total fire ban.</div>
-        <p class="src">ACT Emergency Services Agency, updated 9:30 am today</p>
+      <div class="mock-switch">
+        <p class="meta" id="mock-switch-h">Mock-up only. Gibraltar Peak is in the ACT, so it opens on the ACT state; the others show how a NSW trail looks.</p>
+        <div class="segmented" role="group" aria-labelledby="mock-switch-h">
+          <button type="button" data-set="alerts=act" aria-pressed="true">ACT</button>
+          <button type="button" data-set="alerts=current" aria-pressed="false">Current</button>
+          <button type="button" data-set="alerts=park" aria-pressed="false">Park alert</button>
+          <button type="button" data-set="alerts=closed" aria-pressed="false">Closed</button>
+          <button type="button" data-set="alerts=stale" aria-pressed="false">Out of date</button>
+          <button type="button" data-set="alerts=offline" aria-pressed="false">Offline</button>
+        </div>
       </div>
-      <div class="notice" data-severity="warning" role="note">
-        <svg class="icon" aria-hidden="true"><use href="icons.svg#i-alert"/></svg>
-        <div><strong>Gates close at 6 pm.</strong> Cars left inside after closing are locked in overnight.</div>
-        <p class="src">ACT Parks and Conservation, posted 22 Nov</p>
+
+      <div class="alert-state" data-state="act">
+        <div class="notice fire" role="note" data-alert="fire">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-fire"/></svg>
+          <div><span class="afdrs" data-rating="moderate">Moderate</span> <strong>fire danger today.</strong> No total fire ban.</div>
+          <p class="src">ACT Emergency Services Agency, updated 9:30 am today</p>
+        </div>
+        <div class="notice" data-severity="unknown" role="note">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-info"/></svg>
+          <div><strong>Park closures aren't tracked here yet.</strong> <a href="https://www.parks.act.gov.au/">Check ACT Parks</a></div>
+        </div>
+      </div>
+      <div class="alert-state" data-state="current">
+        <div class="notice fire" role="note" data-alert="fire">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-fire"/></svg>
+          <div><span class="afdrs" data-rating="moderate">Moderate</span> <strong>fire danger today.</strong> No total fire ban.</div>
+          <p class="src">NSW RFS, Southern Ranges district, updated 9:30 am today</p>
+        </div>
+        <div class="notice" data-severity="ok" role="note" data-alert="current">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-check"/></svg>
+          <div>No alerts from NSW NPWS for this park.</div>
+          <p class="src">NSW NPWS, checked 9:30 am today</p>
+        </div>
+      </div>
+      <div class="alert-state" data-state="park">
+        <div class="notice" data-severity="warning" role="note" data-alert="park">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-alert"/></svg>
+          <div><strong>Park alert: check before you go.</strong> Track works on the Mountain Creek fire trail. <a href="https://www.nationalparks.nsw.gov.au/alerts">Read it on the NPWS site</a></div>
+          <p class="src">NSW NPWS, posted 22 Nov, checked 9:30 am today</p>
+        </div>
+        <div class="notice fire" role="note" data-alert="fire">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-fire"/></svg>
+          <div><span class="afdrs" data-rating="moderate">Moderate</span> <strong>fire danger today.</strong> No total fire ban.</div>
+          <p class="src">NSW RFS, Southern Ranges district, updated 9:30 am today</p>
+        </div>
+      </div>
+      <div class="alert-state" data-state="closed">
+        <div class="notice" data-severity="danger" role="note" data-alert="closed">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-alert"/></svg>
+          <div><strong>Closed.</strong> Gibraltar Peak track is closed for track repairs. <a href="https://www.nationalparks.nsw.gov.au/alerts">Read it on the NPWS site</a></div>
+          <p class="src">NSW NPWS, posted 25 Nov, until 12 Dec, checked 9:30 am today</p>
+        </div>
+        <div class="notice fire" role="note" data-alert="fire">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-fire"/></svg>
+          <div><span class="afdrs" data-rating="moderate">Moderate</span> <strong>fire danger today.</strong> No total fire ban.</div>
+          <p class="src">NSW RFS, Southern Ranges district, updated 9:30 am today</p>
+        </div>
+      </div>
+      <div class="alert-state" data-state="stale">
+        <div class="notice" data-severity="warning" role="note" data-alert="stale">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-clock"/></svg>
+          <div><strong>Alerts may be out of date, last checked 2 h ago. Check the official site.</strong> <a href="https://www.nationalparks.nsw.gov.au/alerts">NSW NPWS alerts</a>, <a href="https://www.rfs.nsw.gov.au/fire-information/fdr-and-tobans">NSW RFS fire danger</a></div>
+          <p class="src">Last good check 7:30 am today</p>
+        </div>
+        <div class="notice fire" role="note" data-alert="fire">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-fire"/></svg>
+          <div><span class="afdrs" data-rating="moderate">Moderate</span> <strong>fire danger today.</strong> No total fire ban.</div>
+          <p class="src">NSW RFS, updated 7:30 am today, may have changed</p>
+        </div>
+      </div>
+      <div class="alert-state" data-state="offline">
+        <div class="notice" data-severity="unknown" role="note" data-alert="offline">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-cloud-off"/></svg>
+          <div><strong>You're offline. Last checked 3 h ago.</strong> These are the last alerts we had. Expired ones are hidden.</div>
+          <p class="src">Last good check 6:30 am today</p>
+        </div>
+        <div class="notice fire" role="note" data-alert="fire">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-fire"/></svg>
+          <div><span class="afdrs" data-rating="moderate">Moderate</span> <strong>fire danger today.</strong> No total fire ban.</div>
+          <p class="src">NSW RFS, updated 6:30 am today</p>
+        </div>
       </div>
       <div class="notice" data-severity="ok" role="note">
         <svg class="icon" aria-hidden="true"><use href="icons.svg#i-sunset"/></svg>
@@ -171,6 +263,7 @@
         <use href="icons.svg#terrain-water" class="creek"/>
         <path class="route-casing" d="M110 520 C190 500 230 470 300 450 S380 380 430 340 S520 300 560 250 S600 210 610 200"/>
         <path id="trail-route" class="route" d="M110 520 C190 500 230 470 300 450 S380 380 430 340 S520 300 560 250 S600 210 610 200"/>
+        <g id="steep-bands"></g><g id="surface-bands"></g>
         <path class="route-arrows" d="M222 480 l14 -2 -9 -10 M392 372 l14 -4 -9 -10 M528 290 l14 -6 -10 -9"/>
         <circle class="pin-start" cx="110" cy="520" r="14"/>
         <g class="poi-icon"><circle class="poi" cx="70" cy="560" r="16"/><use href="icons.svg#i-parking" x="60" y="550" width="20" height="20"/></g>
@@ -189,15 +282,21 @@
       </div>
       <p class="attribution">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Protomaps, Mapterhorn</p>
     </div>
+    <div class="segmented" role="group" aria-label="Colour the route by">
+      <button type="button" data-set="routecolour=plain" aria-pressed="true">Plain</button>
+      <button type="button" data-set="routecolour=steepness" aria-pressed="false">Steepness</button>
+      <button type="button" data-set="routecolour=surface" aria-pressed="false">Surface</button>
+    </div>
     <details class="text-version" data-text-version>
       <summary>Route in words</summary>
       <ol class="steps">
         <li>Start at Dalsetta car park. Toilets are next to the car park.</li>
         <li>Follow the fire trail north-east for 1.2 km. Water tank at 1.1 km.</li>
         <li>Turn left onto the signed Gibraltar Peak track. It climbs steadily, with some steps.</li>
-        <li>At 3.6 km the track passes granite tors. Steepest part: 14% for about 300 m.</li>
+        <li>From 1.6 km to 3.1 km the track climbs at 10% or more, up to 14%. Granite tors at 3.6 km.</li>
         <li>Reach the summit lookout at 4.1 km. Return the same way.</li>
       </ol>
+      <p class="meta" style="margin-top: var(--space-2)">Along the way: parking and toilets at the start, a water tank at 1.1 km, a photo spot at 2.9 km and the lookout at 4.1 km. Points of interest are from OpenStreetMap, within 200 m of the route.</p>
     </details>
 
     <section class="elev" aria-labelledby="elev-h">
@@ -214,59 +313,70 @@
         <summary>Elevation as a table</summary>
         <table><thead><tr><th>Distance</th><th>Height</th><th>Grade</th></tr></thead><tbody id="elev-table"></tbody></table>
       </details>
+      <p class="legend band-legend">
+        <span><i style="background: var(--text-muted)"></i>Flat, under 5%</span>
+        <span><i style="background: var(--diff-moderate)"></i>Moderate, 5 to 10%</span>
+        <span><i style="background: var(--diff-hard)"></i>Steep, 10 to 15%</span>
+        <span><i style="background: var(--diff-veryhard)"></i>Very steep, over 15%</span>
+      </p>
     </section>
 
     <section class="card card-pad" aria-labelledby="surface-h">
       <h2 id="surface-h" class="visually-hidden">Surface</h2>
       <h3 style="font-size: var(--step-0); margin-bottom: var(--space-2)">Surface</h3>
       <div class="bar" aria-hidden="true">
-        <span style="width: 61%; background: var(--fam-foot)"></span>
-        <span style="width: 22%; background: var(--text-muted)"></span>
-        <span style="width: 12%; background: var(--fam-snow)"></span>
-        <span style="width: 5%; background: var(--fam-technical)"></span>
+        <span style="width: 5%; background: var(--fam-snow)"></span>
+        <span style="width: 24%; background: var(--fam-technical)"></span>
+        <span style="width: 59%; background: var(--fam-foot)"></span>
+        <span style="width: 12%; background: var(--text-muted)"></span>
       </div>
-      <p class="legend">
-        <span><i style="background: var(--fam-foot)"></i>Dirt 61%</span>
-        <span><i style="background: var(--text-muted)"></i>Rock 22%</span>
-        <span><i style="background: var(--fam-snow)"></i>Gravel 12%</span>
-        <span><i style="background: var(--fam-technical)"></i>Steps 5%</span>
+      <p class="legend num">
+        <span><i style="background: var(--fam-snow)"></i>Sealed 0.4 km, 5%</span>
+        <span><i style="background: var(--fam-technical)"></i>Gravel 2.0 km, 24%</span>
+        <span><i style="background: var(--fam-foot)"></i>Dirt 4.8 km, 59%</span>
+        <span><i style="background: var(--text-muted)"></i>Unknown 1.0 km, 12%</span>
       </p>
+      <p class="meta" style="margin-top: var(--space-2)">From the surface tag on each OpenStreetMap path. "Unknown" means it isn't tagged.</p>
     </section>
   </aside>
 
   <div class="t-body">
     <section class="section prose" aria-labelledby="about-h">
       <h2 id="about-h">About this trail</h2>
-      <p>A steady climb through dry eucalypt forest to a granite summit with views across Tidbinbilla valley to the Brindabella Ranges. The last kilometre is steeper, with rock steps and some loose gravel.</p>
-      <p id="more-text" hidden>Kangaroos are common near the car park in the early morning. The summit has no shade, so take more water in summer. Dogs are not allowed in the reserve.</p>
-      <p><button type="button" class="btn btn-quiet" data-toggle="more-text" aria-expanded="false">Read more</button></p>
-      <p class="byline">Written by Canberra Bushwalking Club members, last edited 3 Nov 2026. <a href="#">Suggest an edit</a></p>
+      <p>An out and back walk of 8.2 km from Dalsetta car park to the granite summit of Gibraltar Peak, climbing 520 m. The first 1.2 km follows a gravel fire trail; the rest is a dirt track that climbs at 10% or more for 1.5 km, up to 14%. Along the way it passes a water tank, granite tors and a lookout at the summit. The nearest town is Tharwa, 16 km away.</p>
+      <p class="byline">Written from map data. <a href="https://www.openstreetmap.org/relation/7654321">Suggest an edit on OpenStreetMap</a></p>
       <h3>Getting there</h3>
-      <p>Dalsetta car park, Tidbinbilla Nature Reserve, 45 min drive from Civic. Reserve entry needs a vehicle pass from ACT Parks. <a href="https://www.tidbinbilla.act.gov.au">Buy a pass on the official site</a>.</p>
+      <p>Starts at Dalsetta car park, Tidbinbilla Nature Reserve (-35.4560, 148.9417). Reserve entry needs a vehicle pass from ACT Parks. <a href="https://www.tidbinbilla.act.gov.au">Buy a pass on the official site</a>.</p>
+      <p class="actions">
+        <a class="btn" href="#"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-car"/></svg>Drive</a>
+        <a class="btn" href="#"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-bus"/></svg>Public transport</a>
+        <a class="btn" href="#"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-walk"/></svg>Walk</a>
+      </p>
+      <p class="meta">These open the maps app on your device.</p>
     </section>
 
     <section class="section sights" aria-labelledby="sights-h">
       <h2 id="sights-h">Top sights</h2>
       <div class="hscroll">
-        <article class="card"><div class="pic" aria-hidden="true"><svg><use href="icons.svg#i-view"/></svg></div><div class="body"><h3 style="font-size: var(--step-0)">Summit lookout</h3><p class="meta">Viewpoint at 4.1 km. From OpenStreetMap</p></div></article>
-        <article class="card"><div class="pic" aria-hidden="true"><svg><use href="icons.svg#i-up"/></svg></div><div class="body"><h3 style="font-size: var(--step-0)">Granite tors</h3><p class="meta">Rock formations at 3.6 km. From Wikidata</p></div></article>
-        <article class="card"><div class="pic" aria-hidden="true"><svg><use href="icons.svg#i-water"/></svg></div><div class="body"><h3 style="font-size: var(--step-0)">Mountain Creek</h3><p class="meta">Crossing at 0.6 km. From OpenStreetMap</p></div></article>
+        <article class="card"><div class="pic" aria-hidden="true"><svg><use href="icons.svg#i-view"/></svg></div><div class="body"><h3 style="font-size: var(--step-0)">Summit lookout</h3><p>Views over the Tidbinbilla valley to the Brindabella Ranges.</p><p class="meta">Viewpoint at 4.1 km. From OpenStreetMap; description from Wikidata, CC0</p></div></article>
+        <article class="card"><div class="pic" aria-hidden="true"><svg><use href="icons.svg#i-up"/></svg></div><div class="body"><h3 style="font-size: var(--step-0)">Granite tors</h3><p class="meta">Rock formations at 3.6 km. From OpenStreetMap</p></div></article>
+        <article class="card"><div class="pic" aria-hidden="true"><svg><use href="icons.svg#i-water"/></svg></div><div class="body"><h3 style="font-size: var(--step-0)">Mountain Creek</h3><p>Stream rising in the Tidbinbilla Range.</p><p class="meta">Crossing at 0.6 km. From OpenStreetMap; description from Wikidata, CC0</p></div></article>
       </div>
     </section>
 
     <section class="section" aria-labelledby="tags-h">
       <h2 id="tags-h">What it's like</h2>
-      <div class="chips wrap" style="gap: var(--space-2)">
-        <span class="tag">Views <span class="conf">92%, map data and 48 votes</span></span>
-        <span class="tag">Wildlife <span class="conf">85%, 31 votes</span></span>
-        <span class="tag">Forest <span class="conf">from map data</span></span>
-        <span class="tag">No dogs <span class="conf">park rule</span></span>
-        <span class="tag">Kid friendly <span class="conf">54%, 12 votes</span></span>
-      </div>
+      <ul class="tags-src">
+        <li><span class="tag">Views</span><span class="meta">Lookout mapped in OpenStreetMap at 4.1 km</span></li>
+        <li><span class="tag">Forest</span><span class="meta">Route passes through mapped woodland for 6.9 km</span></li>
+        <li><span class="tag">Waterfall</span><span class="meta">Mapped in OpenStreetMap 80 m from the route</span></li>
+        <li><span class="tag">No dogs</span><span class="meta">Tagged on the route in OpenStreetMap</span></li>
+      </ul>
+      <p class="meta" style="margin-top: var(--space-3)">Kid-friendly and wheelchair access aren't tagged for this trail, so we don't say either way.</p>
     </section>
 
     <section class="section weather" aria-labelledby="wx-h">
-      <div class="section-head"><h2 id="wx-h">Weather at the trailhead</h2><span class="meta">Open-Meteo, updated 10:00 am</span></div>
+      <div class="section-head"><h2 id="wx-h">Weather at the trailhead</h2><span class="meta">Open-Meteo, CC BY 4.0, updated 10:00 am</span></div>
       <div class="card card-pad weather">
         <div class="days">
           <div><strong>Today</strong><svg class="icon" aria-hidden="true"><use href="icons.svg#i-sun"/></svg><span>27°</span><span class="meta">11°</span></div>
@@ -281,19 +391,31 @@
           <span><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-sun"/></svg>UV 11, extreme</span>
           <span><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-wind"/></svg>Wind 18 km/h NW</span>
           <span><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-rain"/></svg>Rain chance 5%</span>
+          <span><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-rain"/></svg>Rain in the last 72 hours: 14 mm</span>
           <span><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-sunset"/></svg>Sunrise 5:48 am, sunset 8:02 pm</span>
         </p>
-        <button type="button" class="btn btn-quiet" style="justify-self: start">Hour by hour</button>
+        <button type="button" class="btn btn-quiet" style="justify-self: start" data-toggle="hours" aria-expanded="false" aria-controls="hours">Hour by hour</button>
+        <div class="hours" id="hours" hidden><table><caption class="visually-hidden">Weather hour by hour today</caption><thead><tr><th>Time</th><th><span class="visually-hidden">Sky</span></th><th>Temp</th><th>Rain</th><th>Wind</th></tr></thead><tbody><tr><td>10 am</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-sun"/></svg></td><td>21°</td><td>0%</td><td>12 NW km/h</td></tr><tr><td>11 am</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-sun"/></svg></td><td>23°</td><td>0%</td><td>14 NW km/h</td></tr><tr><td>12 pm</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-sun"/></svg></td><td>24°</td><td>0%</td><td>16 NW km/h</td></tr><tr><td>1 pm</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-sun"/></svg></td><td>25°</td><td>0%</td><td>18 NW km/h</td></tr><tr><td>2 pm</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-cloud"/></svg></td><td>26°</td><td>5%</td><td>20 NW km/h</td></tr><tr><td>3 pm</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-cloud"/></svg></td><td>27°</td><td>5%</td><td>22 NW km/h</td></tr><tr><td>4 pm</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-cloud"/></svg></td><td>26°</td><td>5%</td><td>20 W km/h</td></tr><tr><td>5 pm</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-cloud"/></svg></td><td>25°</td><td>0%</td><td>16 W km/h</td></tr><tr><td>6 pm</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-sun"/></svg></td><td>23°</td><td>0%</td><td>12 W km/h</td></tr><tr><td>7 pm</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-sun"/></svg></td><td>21°</td><td>0%</td><td>8 W km/h</td></tr><tr><td>8 pm</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-sunset"/></svg></td><td>18°</td><td>0%</td><td>6 SW km/h</td></tr><tr><td>9 pm</td><td><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-cloud"/></svg></td><td>16°</td><td>0%</td><td>4 SW km/h</td></tr></tbody></table></div>
       </div>
     </section>
 
     <section class="section" aria-labelledby="cond-h">
       <div class="section-head"><h2 id="cond-h">Conditions</h2><button type="button" class="btn">Report conditions</button></div>
       <div class="safety">
-        <div class="notice" data-severity="warning">
+        <div class="notice" data-severity="warning" role="note">
           <svg class="icon" aria-hidden="true"><use href="icons.svg#i-rain"/></svg>
-          <div><strong>Some wet ground likely.</strong> 14 mm of rain fell in the last 72 hours.</div>
-          <p class="src">Worked out from Open-Meteo rain data, 10:00 am</p>
+          <div><span class="computed">Computed</span><strong>Likely wet underfoot.</strong></div>
+          <p class="src">Because 14 mm of rain fell in the last 72 hours. Open-Meteo, 10:00 am</p>
+        </div>
+        <div class="notice" data-severity="warning" role="note">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-sun"/></svg>
+          <div><span class="computed">Computed</span><strong>Hot this afternoon.</strong> Carry extra water; the summit has no shade.</div>
+          <p class="src">Because it reaches 33° at 3 pm, over our 32° threshold. Open-Meteo, 10:00 am</p>
+        </div>
+        <div class="notice" data-severity="warning" role="note">
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#i-wind"/></svg>
+          <div><span class="computed">Computed</span><strong>Strong wind on the exposed summit</strong> on Thursday.</div>
+          <p class="src">Because gusts reach 55 km/h and the top 300 m is above the tree line. Open-Meteo, 10:00 am</p>
         </div>
         <div class="notice" data-severity="warning">
           <svg class="icon" aria-hidden="true"><use href="icons.svg#i-users"/></svg>
@@ -358,6 +480,14 @@
       </ul>
     </section>
 
+    <section class="section" aria-labelledby="similar-h">
+      <h2 id="similar-h">Similar trails</h2>
+      <ul class="rows">
+        <li><a class="row" href="trail.html"><span class="grow"><strong>Booroomba Rocks</strong><span class="meta">Similar length and climb · 7.4 km, 410 m climb</span></span><span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg>Moderate</span></a></li>
+        <li><a class="row" href="trail.html"><span class="grow"><strong>Square Rock Lookout</strong><span class="meta">Similar length and climb · 8.6 km, 390 m climb</span></span><span class="difficulty" data-level="moderate"><svg aria-hidden="true"><use href="icons.svg#d-moderate"/></svg>Moderate</span></a></li>
+      </ul>
+    </section>
+
     <section class="section" aria-labelledby="src-h">
       <h2 id="src-h">About this data</h2>
       <ul class="sources rows">
@@ -365,7 +495,10 @@
         <li class="row"><span class="grow">Elevation from Mapterhorn (Copernicus 30 m)</span><span class="end">Oct 2026</span></li>
         <li class="row"><span class="grow">Park boundary from CAPAD 2024, CC BY 4.0</span><span class="end">2024</span></li>
         <li class="row"><span class="grow">Weather from Open-Meteo, CC BY 4.0</span><span class="end">10:00 am</span></li>
-        <li class="row"><span class="grow">Fire danger from ACT ESA</span><span class="end">9:30 am</span></li>
+        <li class="row"><span class="grow">Fire danger from <a href="https://esa.act.gov.au">ACT ESA</a> (ACT trails) and <a href="https://www.rfs.nsw.gov.au">NSW RFS</a> (NSW trails)</span><span class="end">9:30 am</span></li>
+        <li class="row"><span class="grow">Park alerts and closures from <a href="https://www.nationalparks.nsw.gov.au/alerts">NSW NPWS</a> (NSW trails only)</span><span class="end">9:30 am</span></li>
+        <li class="row"><span class="grow">Sight descriptions from <a href="https://www.wikidata.org">Wikidata</a>, CC0</span><span class="end">22 Nov</span></li>
+        <li class="row"><span class="grow">Photos from <a href="https://commons.wikimedia.org">Wikimedia Commons</a>, each credited on the photo</span><span class="end">20 Nov</span></li>
       </ul>
     </section>
 
@@ -391,15 +524,19 @@
     <ul class="rows">
       <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-route"/></svg><span class="grow">Customise this route</span></button></li>
       <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-saved"/></svg><span class="grow">Add to a list</span></button></li>
-      <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-export"/></svg><span class="grow">Export GPX, KML or FIT</span></button></li>
-      <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-edit"/></svg><span class="grow">Suggest an edit</span></button></li>
+      <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-export"/></svg><span class="grow">Export GPX or KML</span></button></li>
+      <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-edit"/></svg><span class="grow">Suggest an edit on OpenStreetMap</span></button></li>
       <li><button type="button" class="row"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-flag"/></svg><span class="grow">Report a problem</span></button></li>
     </ul>
   </div>
 </dialog>
 
 <script>
-  window.Dir.fillPhotos(); document.getElementById("hero-credit").innerHTML = window.Dir.credit("gibraltar-roo");
+  window.Dir.fillPhotos();
+  const hero = document.getElementById("hero"), heroCredit = document.getElementById("hero-credit");
+  const showCredit = (i) => { heroCredit.innerHTML = window.Dir.credit(hero.querySelectorAll(".slides > img")[i].dataset.credit); };
+  hero.addEventListener("slide", (e) => showCredit(e.detail));
+  showCredit(0);
   // Elevation profile: sample heights every 100 m along the out and back route.
   const N = 82, KM = 8.2, W = 400, H = 140;
   const out = (d) => { const t = Math.min(d / 4.1, 1); return 690 + 348 * (t * t * (3 - 2 * t)) + 22 * Math.sin(t * 9) * (1 - t); };
@@ -416,8 +553,17 @@
   [700, 850, 1000].forEach((e) => grid.insertAdjacentHTML("beforeend", `<line class="grid" x1="0" x2="${W}" y1="${y(e)}" y2="${y(e)}"/>`));
   document.getElementById("elev-table").innerHTML = E.map((e, i) => (i % 5 === 0 || i === 41 || i === N) ? `<tr><td>${(i / 10).toFixed(1)} km</td><td>${e.toLocaleString("en-AU")} m</td><td>${grade(i)}%</td></tr>` : "").join("");
 
-  const maxGrade = Math.max(...E.map((_, i) => Math.abs(grade(i))));
-  document.getElementById("elev-readout").innerHTML = `Highest ${Math.max(...E).toLocaleString("en-AU")} m <span>Steepest ${maxGrade}%, shown in red</span> <span>Drag or use arrow keys</span>`;
+  // Steepest point, and how much of the way up is 10% or steeper.
+  const grades = E.map((_, i) => Math.abs(grade(i)));
+  const maxGrade = Math.max(...grades), steepKm = grades.slice(1, 42).filter((g) => g >= 10).length / 10;
+  document.getElementById("elev-readout").innerHTML = `Highest ${Math.max(...E).toLocaleString("en-AU")} m <span>Steepest ${maxGrade}% at ${(grades.indexOf(maxGrade) / 10).toFixed(1)} km, 10% or more for ${steepKm} km each way</span> <span>Drag or use arrow keys</span>`;
+
+  // Route colouring on the map (the drawn route is the way up, 4.1 km): one dash per 100 m stretch.
+  const band = (g) => g >= 15 ? "var(--diff-veryhard)" : g >= 10 ? "var(--diff-hard)" : g >= 5 ? "var(--diff-moderate)" : null;
+  const segD = document.getElementById("trail-route").getAttribute("d"), UP = 41;
+  const dash = (from, to, colour) => `<path class="route-band" d="${segD}" pathLength="${UP}" stroke="${colour}" stroke-dasharray="0 ${from} ${to - from} ${UP}"/>`;
+  document.getElementById("steep-bands").innerHTML = grades.slice(1, UP + 1).map((g, i) => band(g) && dash(i, i + 1, band(g))).filter(Boolean).join("");
+  document.getElementById("surface-bands").innerHTML = [[0, 2, "var(--fam-snow)"], [2, 12, "var(--fam-technical)"], [12, 36, "var(--fam-foot)"], [36, 41, "var(--text-muted)"]].map(([f, t, c]) => dash(f, t, c)).join("");
   const svg = document.getElementById("elev"), cursor = document.getElementById("elev-cursor");
   const readout = document.getElementById("elev-readout"), route = document.getElementById("trail-route"), dot = document.getElementById("scrub-dot");
   const len = route.getTotalLength();
