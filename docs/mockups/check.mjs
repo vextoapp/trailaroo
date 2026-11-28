@@ -117,7 +117,7 @@ for (const f of htmlFiles) {
     if (!/<time\b[^>]*>[^<]*\d[^<]*<\/time>/.test(inner)) fail("alerts", `${rel(f)}: a [data-alert] has no <time> saying when it was checked`);
   }
   // Alert badges built in script (cardHtml's t.badge): each sample needs a source and a check time.
-  for (const m of s.matchAll(/\{[^{}]*\bseverity:[^{}]*\}/g)) {
+  for (const m of s.matchAll(/\{[^{}]*(?<=[{,]\s*)(?:state|severity|text|from|checked):[^{}]*\}/g)) {
     if (!/\bfrom:\s*"[^"]*[A-Za-z]/.test(m[0]) || !/\bchecked:\s*"[^"]*\d/.test(m[0])) fail("alerts", `${rel(f)}: an alert badge has no from (source) or checked (time)`);
   }
 }
