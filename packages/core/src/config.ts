@@ -8,3 +8,5 @@ export const DEFAULT_LOCALE = "en-AU";
 
 /** localStorage key for the chosen theme. */
 export const THEME_KEY = "theme";
+/** Local-storage key set once a visitor has seen home or Explore; trail pages then hide "New here?". */
+export const SEEN_HOME_KEY = "seen-home";

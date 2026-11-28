@@ -103,6 +103,25 @@ for (const f of htmlFiles) {
   if (s.includes(APP_NAME)) fail("app-name", `${rel(f)} hard-codes the app name; use data-app-name`);
 }
 
+// ---------- every alert shows its source and time (CLAUDE.md > Non-negotiables) ----------
+for (const f of htmlFiles) {
+  const s = read(f);
+  for (const m of s.matchAll(/<([a-z]+)\b[^>]*\bdata-alert\b[^>]*>/g)) {
+    const tag = m[1];
+    const re = new RegExp(`<${tag}\\b|</${tag}>`, "g");
+    re.lastIndex = m.index + m[0].length;
+    let depth = 1, end = s.length;
+    for (let t; depth && (t = re.exec(s)); ) { depth += t[0][1] === "/" ? -1 : 1; if (!depth) end = t.index; }
+    const inner = s.slice(m.index, end);
+    if (!/<span class="from">[^<]*[A-Za-z][^<]*<\/span>/.test(inner)) fail("alerts", `${rel(f)}: a [data-alert] has no <span class="from"> naming its source`);
+    if (!/<time\b[^>]*>[^<]*\d[^<]*<\/time>/.test(inner)) fail("alerts", `${rel(f)}: a [data-alert] has no <time> saying when it was checked`);
+  }
+  // Alert badges built in script (cardHtml's t.badge): each sample needs a source and a check time.
+  for (const m of s.matchAll(/\{[^{}]*(?<=[{,]\s*)(?:state|severity|text|from|checked):[^{}]*\}/g)) {
+    if (!/\bfrom:\s*"[^"]*[A-Za-z]/.test(m[0]) || !/\bchecked:\s*"[^"]*\d/.test(m[0])) fail("alerts", `${rel(f)}: an alert badge has no from (source) or checked (time)`);
+  }
+}
+
 // ---------- screens exist and share the base files ----------
 const screens = ["home", "explore", "trail", "record", "saved", "activity", "profile"];
 if (existsSync(join(root, "index.html"))) {
@@ -119,4 +138,4 @@ if (failures.length) {
   console.error(`\n${failures.length} problem(s).`);
   process.exit(1);
 }
-console.log(`OK contrast, no-external, links, maps, app-name, screens (${files.length} files)`);
+console.log(`OK contrast, no-external, links, maps, app-name, alerts, screens (${files.length} files)`);

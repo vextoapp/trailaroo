@@ -12,9 +12,14 @@
 <style>
   .ex-top { position: sticky; top: 0; z-index: 12; background: var(--bg); padding-top: var(--space-4); }
   @media (min-width: 1024px) { .ex-top { top: 69px; } }
+  .finder-wrap { position: relative; }
   .ex-split { display: grid; gap: var(--space-6); padding: var(--space-5) 0 140px; }
   .ex-map { position: relative; height: 70vh; border-radius: var(--radius-m); }
   .ex-map img { width: 100%; height: 100%; object-fit: cover; }
+  .ex-map .map-overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ex-map .pin { r: 13; }
+  .ex-map .pin[data-hl] { fill: var(--accent); r: 17; }
+  .ex-map .pin-closed { fill: var(--danger); stroke: var(--map-route-casing); stroke-width: 3; }
   body:not([data-view="map"]) .ex-map { display: none; }
   body[data-view="map"] .results { display: none; }
   @media (min-width: 1100px) {
@@ -23,20 +28,78 @@
     body[data-view] .results { display: block; }
     .float-switch { display: none; }
   }
+  .where { display: inline-flex; align-items: center; gap: var(--space-2); }
+  .where .btn { min-height: 40px; padding: 0 var(--space-4); }
+  .filter-group { display: grid; gap: var(--space-2); }
+  .filter-group h3 { font-size: var(--step-0); }
+  .filter-group .meta { max-width: 52ch; }
+  .switch-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); min-height: var(--tap); }
+  body[data-search="open"] .float-switch { display: none; }
+  .pcard[data-hl] .cover { outline: 3px solid var(--accent); outline-offset: 3px; }
 </style>
 </head>
-<body data-screen="explore" data-view="list">
+<body data-screen="explore" data-view="list" data-search="closed" data-q="empty">
 <a class="skip" href="#main">Skip to content</a>
 <nav class="nav" aria-label="Main"></nav>
 <main id="main" class="page">
   <h1 class="visually-hidden">Explore trails</h1>
   <div class="ex-top">
-    <form class="finder" role="search" action="explore.html">
-      <label><b>Where</b><input type="search" name="q" placeholder="Near Canberra" autocomplete="off"></label>
-      <label><b>How long</b><input type="text" name="len" placeholder="Any length" autocomplete="off"></label>
-      <label><b>Who's coming</b><input type="text" name="who" placeholder="Just me" autocomplete="off"></label>
-      <button class="go" type="submit" aria-label="Search"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-search"/></svg></button>
-    </form>
+    <div class="finder-wrap">
+      <form class="finder" role="search" action="explore.html">
+        <label><b>Where</b><input id="q" type="search" name="q" placeholder="Trail, place, park or peak…" autocomplete="off" aria-controls="search-panel" aria-expanded="false"></label>
+        <label><b>How long</b><input type="text" name="len" placeholder="Any length" autocomplete="off"></label>
+        <label><b>Who's coming</b><input type="text" name="who" placeholder="Just me" autocomplete="off"></label>
+        <button class="go" type="submit" aria-label="Search"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-search"/></svg></button>
+      </form>
+
+      <section class="search-panel" id="search-panel" aria-label="Search suggestions">
+        <div class="head"><p class="meta q-empty">Type to search trails, places, parks and peaks.</p><p class="meta q-typed" id="q-echo"></p>
+          <button type="button" class="btn btn-quiet" data-set="search=closed" aria-label="Close search suggestions"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-close"/></svg></button></div>
+
+        <!-- Before typing: near me, recent searches, last viewed -->
+        <ul class="rows q-empty">
+          <li><button type="button" class="row" data-set="search=closed"><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-locate"/></svg></span><span class="grow"><strong>Near me</strong><span class="meta">Asks for your location only when you tap this</span></span></button></li>
+        </ul>
+        <div class="q-empty">
+          <div class="head"><h2>Recent searches</h2><button type="button" class="btn btn-quiet">Clear</button></div>
+          <ul class="rows">
+            <li><button type="button" class="row"><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-clock"/></svg></span><span class="grow">Waterfalls near Canberra</span></button></li>
+            <li><button type="button" class="row"><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-clock"/></svg></span><span class="grow">Namadgi National Park</span></button></li>
+          </ul>
+        </div>
+        <div class="q-empty">
+          <div class="head"><h2>Last viewed</h2><button type="button" class="btn btn-quiet">Clear</button></div>
+          <ul class="rows">
+            <li><a class="row" href="trail.html"><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#f-foot"/></svg></span><span class="grow"><strong>Gibraltar Peak</strong><span class="meta">Tidbinbilla Nature Reserve, viewed yesterday</span></span></a></li>
+            <li><a class="row" href="trail.html"><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#f-foot"/></svg></span><span class="grow"><strong>Square Rock Lookout</strong><span class="meta">Namadgi National Park, viewed 3 days ago</span></span></a></li>
+          </ul>
+          <p class="meta" style="margin-top: var(--space-2)">Recent searches and last viewed are kept on this device only.</p>
+        </div>
+
+        <!-- After typing: grouped by kind, best match first, then closest -->
+        <div class="q-typed">
+          <h2>Trails</h2>
+          <ul class="rows">
+            <li><a class="row" href="trail.html"><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#f-foot"/></svg></span><span class="grow"><strong>Gibraltar Peak</strong><span class="meta"><mark>Tidbin</mark>billa Nature Reserve, 38 km away</span></span></a></li>
+            <li><a class="row" href="trail.html"><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#f-foot"/></svg></span><span class="grow"><strong><mark>Tidbin</mark>billa Peak walk</strong><span class="meta"><mark>Tidbin</mark>billa Nature Reserve, 39 km away</span></span></a></li>
+          </ul>
+        </div>
+        <div class="q-typed">
+          <h2>Places</h2>
+          <ul class="rows"><li><button type="button" class="row" data-set="search=closed"><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-pin"/></svg></span><span class="grow"><strong><mark>Tidbin</mark>billa, ACT</strong><span class="meta">Locality. Shows trails near here</span></span></button></li></ul>
+        </div>
+        <div class="q-typed">
+          <h2>Parks</h2>
+          <ul class="rows"><li><button type="button" class="row" data-set="search=closed"><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-map"/></svg></span><span class="grow"><strong><mark>Tidbin</mark>billa Nature Reserve</strong><span class="meta">14 trails</span></span></button></li></ul>
+        </div>
+        <div class="q-typed">
+          <h2>Peaks</h2>
+          <ul class="rows"><li><button type="button" class="row" data-set="search=closed"><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-up"/></svg></span><span class="grow"><strong><mark>Tidbin</mark>billa Peak</strong><span class="meta num">1,615 m, 3 trails go near it</span></span></button></li></ul>
+          <p class="meta" style="margin-top: var(--space-3)">Places from OpenStreetMap. Search runs on this device; nothing you type is sent anywhere.</p>
+        </div>
+      </section>
+    </div>
+
     <div class="cats" role="group" aria-label="Activity" data-single>
       <button type="button" class="chip-cat" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-explore"/></svg>All trails</button>
       <button type="button" class="chip-cat" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="icons.svg#f-foot"/></svg>Walks</button>
@@ -63,18 +126,32 @@
         <button type="button" class="chip" aria-pressed="false"><span class="difficulty" data-level="veryhard"><svg aria-hidden="true"><use href="icons.svg#d-veryhard"/></svg></span>Very hard</button>
       </div>
     </div>
-    </div>
   </div>
   <div class="ex-split">
     <section class="results" aria-labelledby="ex-h" data-text-version>
-      <div class="results-bar"><h2 id="ex-h" class="meta num" style="font: 500 var(--step-0) var(--font-sans)"></h2>
-        <label class="sort">Sort <select name="sort"><option>Closest</option><option>Shortest</option><option>Longest</option><option>Least climbing</option><option>Most climbing</option></select></label></div>
+      <div class="results-bar">
+        <div><h2 id="ex-h" tabindex="-1" data-focus-on="search=closed" class="meta num" style="font: 500 var(--step-0) var(--font-sans)"></h2>
+          <p class="where"><span class="meta">Near <strong id="where-name" style="color: var(--text)">Canberra</strong></span><button type="button" class="btn btn-quiet" data-open-sheet="location-sheet">Change</button></p></div>
+        <p class="actions"><button type="button" class="chip" data-open-sheet="filters-sheet"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-filter"/></svg>Filters (2)</button>
+        <label class="sort">Sort <select name="sort"><option>Closest</option><option>Most relevant</option><option>Newest</option><option>Shortest</option><option>Longest</option><option>Least climbing</option><option>Most climbing</option></select></label></p></div>
       <div class="cards" id="ex-cards"></div>
       <p style="margin-top: var(--space-6); text-align: center"><button type="button" class="btn">Show 24 more</button></p>
-      <p class="credit" style="margin-top: var(--space-5)">Trail data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors. Photos from Wikimedia Commons; each is credited on its trail page. Time and difficulty are sample values.</p>
+      <p class="credit" style="margin-top: var(--space-5)">Trail data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors. Closures from <a href="https://www.nationalparks.nsw.gov.au/alerts">NSW NPWS</a>. Photos from Wikimedia Commons; each is credited on its trail page. Time, difficulty and the two alert badges are sample values.</p>
     </section>
-    <div class="ex-map map" role="region" aria-label="Map of trails near Canberra. The list shows the same trails as text." data-focus-on="view=map" tabindex="-1">
+    <div class="ex-map map" role="region" aria-label="Map of trails near Canberra, grouped into numbered clusters when zoomed out. The list shows the same trails as text." data-focus-on="view=map" tabindex="-1">
       <img class="map-img" data-themed-map="act" alt="">
+      <svg class="map-overlay" viewBox="0 0 1400 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g><circle class="cluster" cx="640" cy="330" r="34"/><text class="cluster-text" x="640" y="330">12</text></g>
+        <g><circle class="cluster" cx="790" cy="470" r="28"/><text class="cluster-text" x="790" y="470">7</text></g>
+        <g><circle class="cluster" cx="420" cy="690" r="26"/><text class="cluster-text" x="420" y="690">5</text></g>
+        <g><circle class="cluster" cx="980" cy="250" r="22"/><text class="cluster-text" x="980" y="250">3</text></g>
+        <circle class="pin" data-pin="0" cx="700" cy="560"/>
+        <circle class="pin" data-pin="1" cx="860" cy="380"/>
+        <circle class="pin" data-pin="2" cx="530" cy="520"/>
+        <circle class="pin-closed" cx="1090" cy="640" r="13"/>
+      </svg>
+      <div class="map-top"><button type="button" class="btn"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-search"/></svg>Search this area</button></div>
+      <div class="map-controls"><button type="button" class="btn btn-icon" aria-label="Show my location"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-locate"/></svg></button></div>
       <p class="attribution">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Protomaps</p>
     </div>
   </div>
@@ -83,11 +160,86 @@
     <button type="button" data-set="view=map" aria-pressed="false"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-map"/></svg>Map</button>
   </div>
 </main>
+
+<dialog class="sheet" id="location-sheet" aria-labelledby="loc-title">
+  <div class="sheet-head"><h2 id="loc-title">Show trails near</h2><button type="button" class="btn btn-icon btn-quiet" data-close aria-label="Close"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-close"/></svg></button></div>
+  <div class="sheet-body">
+    <ul class="rows">
+      <li><button type="button" class="row" data-close><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-locate"/></svg></span><span class="grow"><strong>Use my location</strong><span class="meta">Your phone will ask first</span></span></button></li>
+      <li><button type="button" class="row" data-close aria-current="true"><span class="kind"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-check"/></svg></span><span class="grow"><strong>Home area: Canberra</strong><span class="meta">The default</span></span></button></li>
+    </ul>
+    <label class="search"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-search"/></svg><span class="visually-hidden">Type a town or suburb</span><input type="search" name="place" autocomplete="off" placeholder="Type a town or suburb…"></label>
+    <p class="meta">Your location stays on this device.</p>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="filters-sheet" aria-labelledby="filters-title">
+  <div class="sheet-head"><h2 id="filters-title">Filters</h2><button type="button" class="btn btn-icon btn-quiet" data-close aria-label="Close"><svg class="icon" aria-hidden="true"><use href="icons.svg#i-close"/></svg></button></div>
+  <div class="sheet-body">
+    <div class="filter-group"><h3 id="fg-time">Time</h3>
+      <div class="chips wrap" role="group" aria-labelledby="fg-time" data-single>
+        <button type="button" class="chip" aria-pressed="false">Under 1 h</button><button type="button" class="chip" aria-pressed="true">1 to 3 h</button><button type="button" class="chip" aria-pressed="false">3 h or more</button></div></div>
+    <div class="filter-group"><h3 id="fg-route">Route type</h3>
+      <div class="chips wrap" role="group" aria-labelledby="fg-route" data-single>
+        <button type="button" class="chip" aria-pressed="true">Loop</button><button type="button" class="chip" aria-pressed="false">One way</button></div></div>
+    <div class="filter-group"><h3 id="fg-feat">Features</h3>
+      <div class="chips wrap" role="group" aria-labelledby="fg-feat">
+        <button type="button" class="chip" aria-pressed="false">Views</button><button type="button" class="chip" aria-pressed="false">Waterfall</button><button type="button" class="chip" aria-pressed="false">Lake</button><button type="button" class="chip" aria-pressed="false">River</button><button type="button" class="chip" aria-pressed="false">Beach</button><button type="button" class="chip" aria-pressed="false">Forest</button><button type="button" class="chip" aria-pressed="false">Wildflowers</button><button type="button" class="chip" aria-pressed="false">Wildlife</button><button type="button" class="chip" aria-pressed="false">Historic</button><button type="button" class="chip" aria-pressed="false">Cave</button></div></div>
+    <div class="filter-group"><h3 id="fg-suit">Suitable for</h3>
+      <div class="chips wrap" role="group" aria-labelledby="fg-suit">
+        <button type="button" class="chip" aria-pressed="false">Dogs allowed (where tagged)</button><button type="button" class="chip" aria-pressed="false">Kid-friendly (where tagged)</button><button type="button" class="chip" aria-pressed="false">Wheelchair-friendly (where tagged)</button></div>
+      <p class="meta">Only trails where the map data says so. A trail without data isn't marked either way.</p></div>
+    <div class="filter-group"><h3 id="fg-surf">Surface</h3>
+      <div class="chips wrap" role="group" aria-labelledby="fg-surf">
+        <button type="button" class="chip" aria-pressed="false">Sealed</button><button type="button" class="chip" aria-pressed="false">Gravel</button><button type="button" class="chip" aria-pressed="false">Dirt</button></div></div>
+    <div class="filter-group"><h3 id="fg-dist">Distance from me</h3>
+      <div class="chips wrap" role="group" aria-labelledby="fg-dist" data-single>
+        <button type="button" class="chip" aria-pressed="false">Within 10 km</button><button type="button" class="chip" aria-pressed="false">25 km</button><button type="button" class="chip" aria-pressed="false">50 km</button><button type="button" class="chip" aria-pressed="false">100 km</button></div></div>
+    <div class="filter-group"><h3>Closures</h3>
+      <label class="switch-row"><span>Hide trails with closures</span><input class="switch" type="checkbox" role="switch"></label>
+      <p class="meta">Hides trails NSW NPWS lists as closed. Park-wide notices still show, because they don't close every trail.</p></div>
+  </div>
+  <div class="sheet-foot"><button type="button" class="btn">Clear all</button><button type="button" class="btn btn-primary" data-close>Show 18 trails</button></div>
+</dialog>
+
 <script>
   const { T, fillPhotos } = window.Dir;
-  document.getElementById("ex-h").textContent = `${T.length} of 37 trails near Canberra (sample)`;
-  document.getElementById("ex-cards").innerHTML = T.map(window.cardHtml).join("");
+  // Sample alert states for the mock-up: only NSW NPWS closures are tracked.
+  const badges = {
+    "Goorooyarroo Track": { state: "park", severity: "warning", text: "Park alert", from: "NSW NPWS", checked: "9:30 am" },
+    "Bradleys Creek Walk": { state: "closed", severity: "danger", text: "Closed until 12 Dec", from: "NSW NPWS", checked: "9:30 am" },
+  };
+  document.getElementById("ex-h").textContent = `${T.length} of 37 trails (sample)`;
+  document.getElementById("ex-cards").innerHTML = T.map((t) => window.cardHtml({ ...t, badge: badges[t.name] })).join("");
   fillPhotos();
+
+  // Search panel: opens on focus, groups appear once you type, Escape closes.
+  const q = document.getElementById("q");
+  const setSearch = (open) => { document.body.dataset.search = open ? "open" : "closed"; q.setAttribute("aria-expanded", String(open)); };
+  // Escape hands focus back to the box without reopening the panel; a click or typing reopens it.
+  let restoring = false;
+  q.addEventListener("focus", () => { if (!restoring) setSearch(true); });
+  q.addEventListener("click", () => setSearch(true));
+  q.addEventListener("input", () => {
+    setSearch(true);
+    document.body.dataset.q = q.value.trim() ? "typed" : "empty";
+    document.getElementById("q-echo").textContent = `Results for “${q.value.trim()}”, close spellings included`;
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.body.dataset.search === "open") { setSearch(false); restoring = true; q.focus(); restoring = false; } });
+  new MutationObserver(() => q.setAttribute("aria-expanded", String(document.body.dataset.search === "open"))).observe(document.body, { attributes: true, attributeFilter: ["data-search"] });
+
+  // List and map in step: hovering or focusing one of the first three cards highlights its pin.
+  document.querySelectorAll("#ex-cards .pcard").forEach((card, i) => {
+    const pin = document.querySelector(`[data-pin="${i}"]`);
+    if (!pin) return;
+    // Highlighted while hovered or focused; leaving one keeps it lit if the other still holds.
+    const state = { hover: false, focus: false };
+    const set = (key, v) => { state[key] = v; const hl = state.hover || state.focus; card.toggleAttribute("data-hl", hl); pin.toggleAttribute("data-hl", hl); };
+    card.addEventListener("mouseenter", () => set("hover", true));
+    card.addEventListener("mouseleave", () => set("hover", false));
+    card.addEventListener("focusin", () => set("focus", true));
+    card.addEventListener("focusout", (e) => { if (!card.contains(e.relatedTarget)) set("focus", false); });
+  });
 </script>
 </body>
 </html>

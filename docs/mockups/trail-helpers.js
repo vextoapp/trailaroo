@@ -80,8 +80,21 @@
 
   // A Golden hour trail card: photo with a mini route map, or a drawn cover when there's no photo.
   const label = { easy: "Easy", moderate: "Moderate", hard: "Hard" };
+  const step = (dir, name) => `<button type="button" class="step" data-dir="${dir}" aria-label="${dir < 0 ? "Previous" : "Next"} photo of ${name}"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></button>`;
+  // An official alert on the card always carries its source and time (t.badge is set per page, not in data.js).
+  const badge = (b) => {
+    if (!b) return "";
+    if (!b.from || !/\d/.test(b.checked ?? "")) throw new Error(`Alert badge "${b.text}" needs a source (from) and a check time (checked)`);
+    return `<p class="badge-alert" data-severity="${b.severity}" data-alert="${b.state}" role="note">${b.text}<span class="src"><span class="from">${b.from}</span>, checked <time>${b.checked}</time></span></p>`;
+  };
+  const cover = (t) => {
+    if (!t.photos.length) return `<div class="cover drawn">${route(t)}</div>`;
+    if (t.photos.length === 1) return `<div class="cover"><img data-photo="${t.photos[0]}" alt="" loading="lazy"><span class="chip-map">${route(t)}</span></div>`;
+    return `<div class="cover carousel"><div class="slides">${t.photos.map((p) => `<img data-photo="${p}" alt="" loading="lazy">`).join("")}</div>
+      ${step(-1, t.name)}${step(1, t.name)}<span class="photo-count">1 of ${t.photos.length}</span></div>`;
+  };
   window.cardHtml = (t) => `<article class="pcard">
-      <div class="cover${t.photos.length ? "" : " drawn"}">${t.photos.length ? `<img data-photo="${t.photos[0]}" alt="" loading="lazy"><span class="chip-map">${route(t)}</span>` : route(t)}</div>
+      ${cover(t)}${badge(t.badge)}
       <button type="button" class="heart" data-save aria-pressed="false" aria-label="Save ${t.name}"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-saved"/></svg></button>
       <div><h3><a class="title-link" href="trail.html">${t.name}</a></h3><p class="meta num">${t.place} · ${t.away} km away · ${km(t)} · ${t.time} · ${label[t.diff]}</p></div></article>`;
 

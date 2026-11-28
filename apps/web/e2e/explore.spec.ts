@@ -63,7 +63,7 @@ test("Length chips filter trails; someone browsing Explore isn't shown the intro
   await expect(heading).not.toHaveText(`${long} trails`);
   await page.locator(".pcard .title-link").first().click();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByRole("link", { name: "See what it does" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "See what it does" })).toBeHidden();
 });
 
 test("Climb chips filter trails and are kept in a shareable link", async ({ page }) => {
