@@ -206,8 +206,8 @@
   const { T, fillPhotos } = window.Dir;
   // Sample alert states for the mock-up: only NSW NPWS closures are tracked.
   const badges = {
-    "Goorooyarroo Track": { state: "park", severity: "warning", text: "Park alert", src: "NSW NPWS, checked 9:30 am" },
-    "Bradleys Creek Walk": { state: "closed", severity: "danger", text: "Closed", src: "NSW NPWS, until 12 Dec" },
+    "Goorooyarroo Track": { state: "park", severity: "warning", text: "Park alert", from: "NSW NPWS", checked: "9:30 am" },
+    "Bradleys Creek Walk": { state: "closed", severity: "danger", text: "Closed until 12 Dec", from: "NSW NPWS", checked: "9:30 am" },
   };
   document.getElementById("ex-h").textContent = `${T.length} of 37 trails (sample)`;
   document.getElementById("ex-cards").innerHTML = T.map((t) => window.cardHtml({ ...t, badge: badges[t.name] })).join("");
@@ -216,21 +216,29 @@
   // Search panel: opens on focus, groups appear once you type, Escape closes.
   const q = document.getElementById("q");
   const setSearch = (open) => { document.body.dataset.search = open ? "open" : "closed"; q.setAttribute("aria-expanded", String(open)); };
-  q.addEventListener("focus", () => setSearch(true));
+  // Escape hands focus back to the box without reopening the panel; a click or typing reopens it.
+  let restoring = false;
+  q.addEventListener("focus", () => { if (!restoring) setSearch(true); });
+  q.addEventListener("click", () => setSearch(true));
   q.addEventListener("input", () => {
+    setSearch(true);
     document.body.dataset.q = q.value.trim() ? "typed" : "empty";
     document.getElementById("q-echo").textContent = `Results for “${q.value.trim()}”, close spellings included`;
   });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.body.dataset.search === "open") { setSearch(false); q.focus(); } });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.body.dataset.search === "open") { setSearch(false); restoring = true; q.focus(); restoring = false; } });
   new MutationObserver(() => q.setAttribute("aria-expanded", String(document.body.dataset.search === "open"))).observe(document.body, { attributes: true, attributeFilter: ["data-search"] });
 
   // List and map in step: hovering or focusing one of the first three cards highlights its pin.
   document.querySelectorAll("#ex-cards .pcard").forEach((card, i) => {
     const pin = document.querySelector(`[data-pin="${i}"]`);
     if (!pin) return;
-    const on = (v) => { card.toggleAttribute("data-hl", v); pin.toggleAttribute("data-hl", v); };
-    ["mouseenter", "focusin"].forEach((ev) => card.addEventListener(ev, () => on(true)));
-    ["mouseleave", "focusout"].forEach((ev) => card.addEventListener(ev, () => on(false)));
+    // Highlighted while hovered or focused; leaving one keeps it lit if the other still holds.
+    const state = { hover: false, focus: false };
+    const set = (key, v) => { state[key] = v; const hl = state.hover || state.focus; card.toggleAttribute("data-hl", hl); pin.toggleAttribute("data-hl", hl); };
+    card.addEventListener("mouseenter", () => set("hover", true));
+    card.addEventListener("mouseleave", () => set("hover", false));
+    card.addEventListener("focusin", () => set("focus", true));
+    card.addEventListener("focusout", (e) => { if (!card.contains(e.relatedTarget)) set("focus", false); });
   });
 </script>
 </body>

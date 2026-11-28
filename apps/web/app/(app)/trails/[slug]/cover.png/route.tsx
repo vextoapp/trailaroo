@@ -33,7 +33,13 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
   const picked = getTrailPhotos(trail.osmId)[0];
   const photoSrc = picked && (await photoDataUrl(picked.file));
   const photo = photoSrc ? picked : undefined;
-  const credit = photo ? t("og.creditPhoto", { author: photo.author, licence: photo.licence }) : t("og.creditOsm");
+  // Credit every source the image shows: the photo, OSM (name, route, length), elevation (climb) and CAPAD (park).
+  const credit = [
+    photo && t("og.creditPhoto", { author: photo.author, licence: photo.licence }),
+    t("og.creditOsm"),
+    trail.stats && t("og.creditElevation"),
+    trail.park && t("og.creditCapad"),
+  ].filter(Boolean).join(". ");
   const route = routePath(trail);
   const facts = [formatDistance(trail.lengthM), trail.stats && t("explore.climb", { climb: formatClimb(trail.stats.gainM) })].filter(Boolean).join(" · ");
   return new ImageResponse(
@@ -52,7 +58,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
         <div style={{ fontSize: 32, opacity: 0.92 }}>{[trail.park, facts].filter(Boolean).join(" · ")}</div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 24, marginTop: 8 }}>
           <div style={{ fontSize: 28, color: WATTLE, fontWeight: 700 }}>{APP_NAME}</div>
-          <div style={{ fontSize: 18, opacity: 0.85 }}>{credit}</div>
+          <div style={{ fontSize: 18, opacity: 0.85, maxWidth: 820, textAlign: "right" }}>{credit}</div>
         </div>
       </div>
     </div>,

@@ -113,8 +113,12 @@ for (const f of htmlFiles) {
     let depth = 1, end = s.length;
     for (let t; depth && (t = re.exec(s)); ) { depth += t[0][1] === "/" ? -1 : 1; if (!depth) end = t.index; }
     const inner = s.slice(m.index, end);
-    const src = inner.match(/class="(?:[^"]*\s)?src(?:\s[^"]*)?"[^>]*>([\s\S]*?)</);
-    if (!src || !/\d/.test(src[1])) fail("alerts", `${rel(f)}: a [data-alert] has no .src with a time`);
+    if (!/<span class="from">[^<]*[A-Za-z][^<]*<\/span>/.test(inner)) fail("alerts", `${rel(f)}: a [data-alert] has no <span class="from"> naming its source`);
+    if (!/<time\b[^>]*>[^<]*\d[^<]*<\/time>/.test(inner)) fail("alerts", `${rel(f)}: a [data-alert] has no <time> saying when it was checked`);
+  }
+  // Alert badges built in script (cardHtml's t.badge): each sample needs a source and a check time.
+  for (const m of s.matchAll(/\{[^{}]*\bseverity:[^{}]*\}/g)) {
+    if (!/\bfrom:\s*"[^"]*[A-Za-z]/.test(m[0]) || !/\bchecked:\s*"[^"]*\d/.test(m[0])) fail("alerts", `${rel(f)}: an alert badge has no from (source) or checked (time)`);
   }
 }
 

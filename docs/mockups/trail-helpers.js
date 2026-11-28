@@ -82,7 +82,7 @@
   const label = { easy: "Easy", moderate: "Moderate", hard: "Hard" };
   const step = (dir, name) => `<button type="button" class="step" data-dir="${dir}" aria-label="${dir < 0 ? "Previous" : "Next"} photo of ${name}"><svg class="icon-s" aria-hidden="true"><use href="icons.svg#i-chevron"/></svg></button>`;
   // An official alert on the card always carries its source and time (t.badge is set per page, not in data.js).
-  const badge = (b) => b ? `<p class="badge-alert" data-severity="${b.severity}" data-alert="${b.state}" role="note">${b.text}<span class="src">${b.src}</span></p>` : "";
+  const badge = (b) => b ? `<p class="badge-alert" data-severity="${b.severity}" data-alert="${b.state}" role="note">${b.text}<span class="src"><span class="from">${b.from}</span>, checked <time>${b.checked}</time></span></p>` : "";
   const cover = (t) => {
     if (!t.photos.length) return `<div class="cover drawn">${route(t)}</div>`;
     if (t.photos.length === 1) return `<div class="cover"><img data-photo="${t.photos[0]}" alt="" loading="lazy"><span class="chip-map">${route(t)}</span></div>`;
