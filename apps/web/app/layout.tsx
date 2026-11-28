@@ -40,7 +40,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <SerwistProvider swUrl="/serwist/sw.js" disable={process.env.NODE_ENV === "development"}>
+        {/* No reload on reconnect: it would throw away what a person is doing (Chrome can even fire "online"
+            while offline, cancelling the link they tapped). Only the offline page reloads (ReloadWhenOnline). */}
+        <SerwistProvider swUrl="/serwist/sw.js" disable={process.env.NODE_ENV === "development"} reloadOnOnline={false}>
           <a className="skip" href="#main">{t("skip")}</a>
           {children}
         </SerwistProvider>

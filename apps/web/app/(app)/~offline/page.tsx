@@ -2,12 +2,14 @@ import { t } from "@trailaroo/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Icon } from "@/components/icon";
+import { ReloadWhenOnline } from "@/components/reload-when-online";
 
 export const metadata: Metadata = { title: t("offline.title") };
 
 export default function Offline() {
   return (
     <main id="main" className="app-main">
+      <ReloadWhenOnline />
       <div className="notice" data-severity="warning" role="status">
         <Icon id="i-cloud-off" />
         <div>
