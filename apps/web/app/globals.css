@@ -44,6 +44,7 @@ html { scroll-padding-top: calc(72px + env(safe-area-inset-top)); }
 .explore .float-switch { bottom: calc(var(--space-5) + env(safe-area-inset-bottom)); }
 .trail-top { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); padding: var(--space-4) 0; }
 .trail-top .newhere { flex: 1; min-width: 240px; }
+html[data-seen-home] .newhere { display: none; }
 .trail-cover { position: relative; aspect-ratio: 21 / 8; border-radius: var(--radius-m); overflow: hidden; }
 .trail-cover svg { width: 70%; height: 82%; }
 .cover > .cover-photo { position: absolute; inset: 0; }

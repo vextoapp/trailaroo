@@ -1,5 +1,5 @@
 import { SerwistProvider } from "@serwist/turbopack/react";
-import { APP_NAME, DEFAULT_LOCALE, THEME_KEY, t } from "@trailaroo/core";
+import { APP_NAME, DEFAULT_LOCALE, SEEN_HOME_KEY, THEME_KEY, t } from "@trailaroo/core";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { SITE_URL } from "@/lib/site";
@@ -29,8 +29,9 @@ export const viewport: Viewport = {
   ],
 };
 
-// Runs before first paint so the page never flashes the wrong theme.
-const themeScript = `(function(){var m;try{m=localStorage.getItem(${JSON.stringify(THEME_KEY)})}catch(e){}var d=m==="light"||m==="dark"?m:(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.dataset.theme=d})()`;
+// Runs before first paint so the page never flashes the wrong theme, and so returning visitors
+// never see the "New here?" strip appear and vanish (it hides with html[data-seen-home]).
+const themeScript = `(function(){var m,h;try{m=localStorage.getItem(${JSON.stringify(THEME_KEY)});h=localStorage.getItem(${JSON.stringify(SEEN_HOME_KEY)})}catch(e){}var r=document.documentElement,d=m==="light"||m==="dark"?m:(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");r.dataset.theme=d;if(h)r.dataset.seenHome=""})()`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

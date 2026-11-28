@@ -29,3 +29,8 @@ test("Trail pages are server-rendered with a title, link previews and JSON-LD", 
     expect(img.headers()["content-type"]).toBe("image/png");
   }
 });
+
+test("The New here strip is in the server HTML, so showing it never pushes the trail down", async ({ request }) => {
+  const html = await (await request.get("/trails/black-mountain-summit-walk-11325858")).text();
+  expect(html).toContain('class="newhere"');
+});
