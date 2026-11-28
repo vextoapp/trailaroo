@@ -2,13 +2,13 @@ import { SerwistProvider } from "@serwist/turbopack/react";
 import { APP_NAME, DEFAULT_LOCALE, THEME_KEY, t } from "@trailaroo/core";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { SITE_URL } from "@/lib/site";
 import { appBodyFont, appDisplayFont } from "./fonts";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   applicationName: APP_NAME,
   title: { default: `${APP_NAME}: ${t("home.titleTag")}`, template: `%s · ${APP_NAME}` },
   description: t("meta.description"),

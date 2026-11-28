@@ -2,9 +2,9 @@ import type { Position, Trail } from "@trailaroo/core";
 
 const BOX = 100, PAD = 8;
 
-/** The trail's real route, drawn to fit a square. Used for drawn covers when a trail has no photo.
+/** The SVG path of the trail's real route, fitted to a 100 × 100 box.
  *  `points` caps the points per line: small cards need far fewer than the trail page. */
-export function RouteSvg({ trail, points = 120 }: { trail: Pick<Trail, "lines" | "bbox">; points?: number }) {
+export function routePath(trail: Pick<Trail, "lines" | "bbox">, points = 120): string {
   const [w, s, e, n] = trail.bbox;
   const kx = Math.cos(((s + n) / 2) * (Math.PI / 180));
   const spanX = Math.max((e - w) * kx, 1e-9), spanY = Math.max(n - s, 1e-9);
@@ -12,13 +12,18 @@ export function RouteSvg({ trail, points = 120 }: { trail: Pick<Trail, "lines" |
   const ox = (BOX - spanX * scale) / 2, oy = (BOX - spanY * scale) / 2;
   const pt = ([lon, lat]: Position) => `${(ox + (lon - w) * kx * scale).toFixed(1)} ${(oy + (n - lat) * scale).toFixed(1)}`;
   // Always keep the last point.
-  const d = trail.lines
+  return trail.lines
     .map((line) => {
       const step = Math.max(1, Math.floor(line.length / points));
       const kept = line.filter((_, i) => i % step === 0 || i === line.length - 1);
       return `M${kept.map(pt).join("L")}`;
     })
     .join("");
+}
+
+/** The trail's real route, drawn to fit a square. Used for drawn covers when a trail has no photo. */
+export function RouteSvg({ trail, points }: { trail: Pick<Trail, "lines" | "bbox">; points?: number }) {
+  const d = routePath(trail, points);
   return (
     <svg viewBox={`0 0 ${BOX} ${BOX}`} aria-hidden="true">
       <path className="route-casing" d={d} />

@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, formatClimb, formatDistance, formatDuration, HOME_AREA, t } from "@trailaroo/core";
+import { DEFAULT_LOCALE, formatClimb, formatDistance, formatDuration, HOME_AREA, type Trail, t } from "@trailaroo/core";
 import { getTrail, getTrailPhotos, importedAt, trailFacts, trails } from "@trailaroo/core/trails";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -11,6 +11,7 @@ import { NewHere } from "@/components/new-here";
 import { PhotoCredit } from "@/components/photo-credit";
 import { PreviewBanner } from "@/components/preview-banner";
 import { asPhoto, TrailCover } from "@/components/trail-cover";
+import { OG_SIZE, SITE_URL } from "@/lib/site";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -22,14 +23,17 @@ export const generateStaticParams = () => trails.map((trail) => ({ slug: trail.s
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const trail = getTrail((await params).slug);
   if (!trail) return {};
-  const description = t("trail.metaDescription", { name: trail.name, length: formatDistance(trail.lengthM), area: HOME_AREA.name });
+  const description = metaDescription(trail);
   return {
     title: trail.name,
     description,
     alternates: { canonical: `/trails/${trail.slug}` },
-    openGraph: { title: trail.name, description, url: `/trails/${trail.slug}` },
+    openGraph: { title: trail.name, description, url: `/trails/${trail.slug}`, images: [{ url: `/trails/${trail.slug}/cover.png`, ...OG_SIZE, alt: t("og.alt") }] },
+    twitter: { card: "summary_large_image" },
   };
 }
+
+const metaDescription = (trail: Trail) => t("trail.metaDescription", { name: trail.name, length: formatDistance(trail.lengthM), area: HOME_AREA.name });
 
 const dateFmt = new Intl.DateTimeFormat(DEFAULT_LOCALE, { day: "numeric", month: "long", year: "numeric" });
 
@@ -48,11 +52,16 @@ export default async function TrailPage({ params }: Params) {
   const [capadBefore, capadAfter] = t("credit.capad").split("{capad}");
   const [elevCreditBefore, elevCreditAfter] = t("credit.elevation").split("{mapterhorn}");
   const [mapCreditBefore, mapCreditAfter] = t("credit.map", { osm: "OpenStreetMap" }).split("{protomaps}");
+  const url = `${SITE_URL}/trails/${trail.slug}`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "TouristAttraction",
     name: trail.name,
+    description: metaDescription(trail),
+    url,
+    image: `${url}/cover.png`,
     geo: { "@type": "GeoCoordinates", latitude: lat, longitude: lon },
+    ...(trail.park && { containedInPlace: { "@type": "Park", name: trail.park } }),
   };
 
   return (
