@@ -19,16 +19,17 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
   const trail = getTrail((await params).slug);
   if (!trail) notFound();
   const photo = getTrailPhotos(trail.osmId)[0];
+  const route = routePath(trail);
   const facts = [formatDistance(trail.lengthM), trail.stats && t("explore.climb", { climb: formatClimb(trail.stats.gainM) })].filter(Boolean).join(" · ");
   return new ImageResponse(
     <div style={{ width: "100%", height: "100%", display: "flex", color: "#FFFFFF", background: "radial-gradient(120% 90% at 20% 10%, #2F6B52 0%, #1F4D3A 55%, #163629 100%)" }}>
       {photo ? (
         // biome-ignore lint/performance/noImgElement: rendered to PNG by next/og, not shown in the page
-        <img src={`${TILES_URL}/${photo.file}`} alt="" width={1200} height={630} style={{ position: "absolute", inset: 0, objectFit: "cover" }} />
+        <img src={`${TILES_URL}/${photo.file}`} alt="" {...OG_SIZE} style={{ position: "absolute", inset: 0, objectFit: "cover" }} />
       ) : (
         <svg viewBox="0 0 100 100" width={560} height={560} style={{ position: "absolute", right: 40, top: 35 }} aria-hidden="true">
-          <path d={routePath(trail)} fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
-          <path d={routePath(trail)} fill="none" stroke={WATTLE} strokeWidth={1.1} strokeLinecap="round" strokeLinejoin="round" />
+          <path d={route} fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
+          <path d={route} fill="none" stroke={WATTLE} strokeWidth={1.1} strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       )}
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "column", gap: 12, padding: "120px 64px 56px", background: "linear-gradient(transparent, rgba(0,0,0,0.65))" }}>
