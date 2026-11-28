@@ -6,7 +6,6 @@ import { SITE_URL } from "@/lib/site";
 import { appBodyFont, appDisplayFont } from "./fonts";
 import "./globals.css";
 
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: APP_NAME,
