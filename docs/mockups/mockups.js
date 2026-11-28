@@ -102,6 +102,16 @@
         document.querySelector(`[data-focus-on="${t.dataset.set}"]`)?.focus();
       }
 
+      // Carousel: prev/next buttons move one photo; the counter and any [data-credit-for] follow.
+      if (t.matches(".carousel .step")) {
+        const c = t.closest(".carousel");
+        const n = c.querySelectorAll(".slides > img").length;
+        const i = (Number(c.style.getPropertyValue("--i") || 0) + Number(t.dataset.dir) + n) % n; // wraps, so focus never lands on a disabled button
+        c.style.setProperty("--i", i);
+        c.querySelector(".photo-count").textContent = `${i + 1} of ${n}`;
+        c.dispatchEvent(new CustomEvent("slide", { detail: i }));
+      }
+
       // data-toggle="id" shows or hides one element.
       if (t.dataset.toggle) {
         const target = document.getElementById(t.dataset.toggle);
