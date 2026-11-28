@@ -103,6 +103,21 @@ for (const f of htmlFiles) {
   if (s.includes(APP_NAME)) fail("app-name", `${rel(f)} hard-codes the app name; use data-app-name`);
 }
 
+// ---------- every alert shows its source and time (CLAUDE.md > Non-negotiables) ----------
+for (const f of htmlFiles) {
+  const s = read(f);
+  for (const m of s.matchAll(/<([a-z]+)\b[^>]*\bdata-alert\b[^>]*>/g)) {
+    const tag = m[1];
+    const re = new RegExp(`<${tag}\\b|</${tag}>`, "g");
+    re.lastIndex = m.index + m[0].length;
+    let depth = 1, end = s.length;
+    for (let t; depth && (t = re.exec(s)); ) { depth += t[0][1] === "/" ? -1 : 1; if (!depth) end = t.index; }
+    const inner = s.slice(m.index, end);
+    const src = inner.match(/class="(?:[^"]*\s)?src(?:\s[^"]*)?"[^>]*>([\s\S]*?)</);
+    if (!src || !/\d/.test(src[1])) fail("alerts", `${rel(f)}: a [data-alert] has no .src with a time`);
+  }
+}
+
 // ---------- screens exist and share the base files ----------
 const screens = ["home", "explore", "trail", "record", "saved", "activity", "profile"];
 if (existsSync(join(root, "index.html"))) {
@@ -119,4 +134,4 @@ if (failures.length) {
   console.error(`\n${failures.length} problem(s).`);
   process.exit(1);
 }
-console.log(`OK contrast, no-external, links, maps, app-name, screens (${files.length} files)`);
+console.log(`OK contrast, no-external, links, maps, app-name, alerts, screens (${files.length} files)`);
